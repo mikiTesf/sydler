@@ -13,15 +13,17 @@ class Member {
     @DatabaseField (id = true)
     private int id;
     @DatabaseField
-    private String fullName;
+    private String firstName;
+    @DatabaseField
+    private String lastName;
     @DatabaseField
     private boolean canBeStage;
     @DatabaseField
     private boolean canRotateMic;
     @DatabaseField
-    private boolean sundayException;
-    @DatabaseField
     private boolean canAssist2ndHall;
+    @DatabaseField
+    private boolean sundayException;
 
     static {
         try {
@@ -39,12 +41,20 @@ class Member {
         return memberDao;
     }
 
-    String getFullName() {
-        return fullName;
+    String getFirstName() {
+        return firstName;
     }
 
-    void setFullName(String fullName) {
-        this.fullName = fullName;
+    void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    String getLastName() {
+        return lastName;
+    }
+
+    void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     int getId() {

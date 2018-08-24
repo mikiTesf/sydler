@@ -2,11 +2,10 @@ soundSystemSchedule (mathematic approach).iml
 soundSystemSchedule (mathematic approach).ipr
 soundSystemSchedule (mathematic approach).iws
 out/
-src/main/java/DBConnection.java
-src/main/java/Populate.java
-src/main/java/Role.java
 target/
 pom.xml
 .ideaDataSources/
 dataSources/
 database/
+schdule.jpg
+schedule.xlsx
