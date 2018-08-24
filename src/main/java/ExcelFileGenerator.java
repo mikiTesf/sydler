@@ -18,7 +18,7 @@ class ExcelFileGenerator {
     // XSSFWorkbook, XSSFSheet, XSSFRow, XSSFCell
     private ExcelFileGenerator() {
         Populate populate = new Populate(1);
-        names = populate.getScheduleGrid();
+        names = populate.getNameGrid();
         // month to name map to translate a month's value (int) into an Amharic String
         AMMonths = new HashMap<>(12);
         AMMonths.put(1, "ጥር");
