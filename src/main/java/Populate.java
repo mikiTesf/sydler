@@ -1,11 +1,13 @@
 import java.sql.SQLException;
-import java.util.Collections;
+import java.util.Random;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Collections;
+import java.util.ArrayList;
 
 class Populate {
-    private int[][] scheduleGrid;
-    private HashMap<Integer, Double> ID_ASF;
+    private final int[][] scheduleGrid;
+    private final HashMap<Integer, Double> ID_ASF;
     private List<Member> allMembers;
 
     private final int STAGE = 0;
@@ -42,7 +44,7 @@ class Populate {
     // ***************************** column populating method *****************************
 
     private void fillRole(int roundRole) {
-        double roleException = 1, distance, numberBefore, qualify, occupied;
+        double roleException = 1, distance, numberBefore, qualify, occupied, asf;
 
         for (int day = 0; day < scheduleGrid.length; day++) {
             if (roundRole == HALL2 && day % 2 != 0) continue;
@@ -62,7 +64,8 @@ class Populate {
                 occupied     = isOccupied(day, member.getId());
                 distance     = distance(member.getId(), day, roundRole);
                 numberBefore = numberOfTimesBefore(member.getId(), day, roundRole);
-                ID_ASF.replace(member.getId(), asf(qualify, roleException, occupied, distance, numberBefore));
+                asf          = asf(qualify, roleException, occupied, distance, numberBefore);
+                ID_ASF.replace(member.getId(), asf);
             }
             scheduleGrid[day][roundRole] = keyFromValue(Collections.max(ID_ASF.values()));
         }
@@ -76,12 +79,8 @@ class Populate {
 
     private double isOccupied(int day, int memberID) {
         boolean occupied = false;
-        for (int role = STAGE; role <= HALL2; role++) {
+        for (int role = STAGE; role <= HALL2; role++)
             occupied = occupied || (scheduleGrid[day][role] == memberID);
-            // if ROLE is 'SECOND_HALL' then the loop must break after checking
-            // weather the member is playing the 'STAGE' role (1st iteration)
-//             if (ROLE == HALL2) break;
-        }
         return occupied ? 0 : 1;
     }
 
@@ -122,32 +121,23 @@ class Populate {
         if (numberOfTimesBefore == 0)
             return Double.POSITIVE_INFINITY;
         else
-            return qualify * exception * (distance / numberOfTimesBefore);
+            return (distance / numberOfTimesBefore);
     }
 
     // ***************************** other methods *****************************
 
-    private void showArray () {
-        for (int[] aScheduleGrid : scheduleGrid) {
-            for (int j = STAGE; j <= HALL2; j++)
-                System.out.print(aScheduleGrid[j] + " ");
-            System.out.println();
-        }
-    }
-
     private int keyFromValue (double value) {
-        int memberIdKey = -1;
+        Random randomKey = new Random();
+        ArrayList<Integer> keys = new ArrayList<>();
         for (Integer key: ID_ASF.keySet())
-            if (ID_ASF.get(key) == value) {
-                memberIdKey = key;
-                break;
-            }
-        return memberIdKey;
+            if (ID_ASF.get(key) == value)
+                keys.add(key);
+        return keys.get(randomKey.nextInt(keys.size()));
     }
 
-    String[][] getScheduleGrid () {
+    String[][] getNameGrid() {
         final int ROUND1_ROW1 = 1, ROUND1_ROW2 = 2, ROUND2_ROW1 = 3, ROUND2_ROW2 = 4;
-        //String[][] nameGrid = new String[scheduleGrid.length][scheduleGrid[0].length];
+        String[][] nameGrid = new String[scheduleGrid.length][scheduleGrid[0].length];
 
         fillRole(STAGE);
         fillRole(ROUND1_ROW1);
@@ -155,23 +145,20 @@ class Populate {
         fillRole(ROUND2_ROW1);
         fillRole(ROUND2_ROW2);
         fillRole(HALL2);
-        return null;
-//        for (int day = 0; day < scheduleGrid[0].length; day++)
-//            for (int role = STAGE; role <= HALL2; role++) {
-//                try {
-//                    nameGrid[day][role] = Member.getDao()
-//                                                .queryForId(scheduleGrid[day][role])
-//                                                .getFirstName();
-//                } catch (SQLException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        return nameGrid;
-    }
 
-    public static void main(String[] args) {
-        Populate populate = new Populate(1);
-        populate.getScheduleGrid();
-        populate.showArray();
+        for (int day = 0; day < scheduleGrid.length; day++)
+            for (int role = STAGE; role <= HALL2; role++)
+                try {
+                    // to avoid a java.lang.NullPointerException the id values for Sunday's 2nd Hall
+                    // assignment, which are 0, must be skipped
+                    if (scheduleGrid[day][role] == 0)
+                        continue;
+                    nameGrid[day][role] = Member.getDao()
+                            .queryForId(scheduleGrid[day][role])
+                            .getFirstName();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+        return nameGrid;
     }
 }

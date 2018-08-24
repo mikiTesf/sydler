@@ -35,7 +35,7 @@ class Member {
     }
 
     // a no-arg constructor (required by ORMLITE - I don't know the reason)
-    Member() { }
+    private Member() { }
 
     static Dao<Member, Integer> getDao() {
         return memberDao;
