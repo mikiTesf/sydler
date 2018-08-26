@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.sql.SQLException;
 import java.util.Random;
 import java.util.HashMap;
@@ -25,7 +26,12 @@ class Populate {
         try {
             allMembers = Member.getDao().queryForAll();
             if (allMembers.size() == 0) {
-                System.out.println("\nDatabase empty. Program will terminate now...");
+                JOptionPane.showMessageDialog
+                (
+                        null,
+                        "There are no members in the database",
+                        "", JOptionPane.ERROR_MESSAGE
+                );
                 System.exit(0);
             }
         } catch (SQLException e) {
@@ -37,7 +43,7 @@ class Populate {
         ID_ASF = new HashMap<>();
         // the ID of each member will be matched with +Infinity
         for (int i = 0; i < membersCount; i++)
-            ID_ASF.put(allMembers.get(i).getId(), Double.POSITIVE_INFINITY);
+            ID_ASF.put(allMembers.get(i).getId(), (double) 1);
         scheduleGrid = new int[month * 30][6];
     }
 
@@ -81,11 +87,11 @@ class Populate {
         boolean occupied = false;
         for (int role = STAGE; role <= HALL2; role++)
             occupied = occupied || (scheduleGrid[day][role] == memberID);
-        return occupied ? 0.5 : 1;
+        return occupied ? 0 : 1;
     }
 
     private double roleException(int day, boolean exception) {
-        return ( day % 2 != 0 && exception ) ? 0.5 : 1;
+        return ( day % 2 != 0 && exception ) ? 0 : 1;
     }
 
     private double distance (int memberID, int day, int role) {
