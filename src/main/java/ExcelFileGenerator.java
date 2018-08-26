@@ -5,6 +5,7 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.*;
 
+import javax.swing.JOptionPane;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -17,23 +18,23 @@ class ExcelFileGenerator {
     private final Map<Integer, String> AMMonths;
     private final Map<Integer, String> days;
     // XSSFWorkbook, XSSFSheet, XSSFRow, XSSFCell
-    private ExcelFileGenerator() {
-        Populate populate = new Populate(1);
+    ExcelFileGenerator(int months) {
+        Populate populate = new Populate(months);
         names = populate.getNameGrid();
         // month to name map to translate a month's value (int) into an Amharic String
         AMMonths = new HashMap<>(12);
         AMMonths.put(1, "ጥር");
-        AMMonths.put(2, "የካቲት");
-        AMMonths.put(3, "መጋቢት");
-        AMMonths.put(4, "ሚያዝያ");
-        AMMonths.put(5, "ግንቦት");
+        AMMonths.put(2, "የካ"); // ቲት
+        AMMonths.put(3, "መጋ"); // ቢት
+        AMMonths.put(4, "ሚያ"); // ዝያ
+        AMMonths.put(5, "ግን"); // ቦት
         AMMonths.put(6, "ሰኔ");
-        AMMonths.put(7, "ሐምሌ");
-        AMMonths.put(8, "ነሐሴ");
-        AMMonths.put(9, "መስከረም");
-        AMMonths.put(10, "ጥቅምት");
-        AMMonths.put(11, "ህዳር");
-        AMMonths.put(12, "ታህሳሥ");
+        AMMonths.put(7, "ሐም"); // ሌ
+        AMMonths.put(8, "ነሐ"); // ሴ
+        AMMonths.put(9, "መስ"); // ከረም
+        AMMonths.put(10, "ጥቅ"); // ምት
+        AMMonths.put(11, "ህዳ"); // ር
+        AMMonths.put(12, "ታህ"); // ሳሥ
 
         days = new HashMap<>(7);
         days.put(1, "ሰኞ");
@@ -45,7 +46,7 @@ class ExcelFileGenerator {
         days.put(7, "እሁድ");
     }
 
-    private void makeExcel() {
+    void makeExcel(int year, int month, int day1, String meetingDay, String savePath) {
         // The excel document
         XSSFWorkbook schedule = new XSSFWorkbook();
         // The excel sheet to put data in
@@ -99,7 +100,7 @@ class ExcelFileGenerator {
         row.getCell(7).setCellStyle(centerStyle);
 
         // here the starting date will be initialized
-        LocalDateTime midWeek = LocalDateTime.of(2018, 8, 13, 0, 0);
+        LocalDateTime midWeek = LocalDateTime.of(year, month, day1, 0, 0);
         String weekMonth, monthOnSunday;
         /* the following is the main for loop that fills the schedule by populating it with
          the week spans, member names and date information*/
@@ -114,10 +115,13 @@ class ExcelFileGenerator {
              The if block is important because week-spans are calculated once for
              every week. No need to calculate again on the sunday of the same week*/
             if (day % 2 == 0) {
+                row1.createCell(0);
                 if (weekMonth.equals(monthOnSunday))
-                    row1.createCell(0).setCellValue(weekMonth + " " + midWeek.getDayOfMonth() + " - " + midWeek.plusDays(6).getDayOfMonth());
+                    headerString.setString(weekMonth + " " + midWeek.getDayOfMonth() + " - " + midWeek.plusDays(6).getDayOfMonth());
                 else
-                    row1.createCell(0).setCellValue(weekMonth + " " + midWeek.getDayOfMonth() + " - " + monthOnSunday + " " + midWeek.plusDays(6).getDayOfMonth());
+                    headerString.setString(weekMonth + " " + midWeek.getDayOfMonth() + " - " + monthOnSunday + " " + midWeek.plusDays(6).getDayOfMonth());
+                headerString.applyFont(font);
+                row1.getCell(0).setCellValue(headerString);
                 sheet.addMergedRegion(new CellRangeAddress(row1.getRowNum(), row1.getRowNum() + 1, 0, 0));
                 row1.getCell(0).setCellStyle(boldFontStyle);
                 // change date for next week
@@ -125,7 +129,7 @@ class ExcelFileGenerator {
             }
             // put the name of the day in the next cell
             if (day % 2 == 0) // even = mid-week meeting
-                row1.createCell(1).setCellValue(" " + days.get(2));
+                row1.createCell(1).setCellValue(" " + meetingDay);
             else
                 row1.createCell(1).setCellValue(" " + days.get(7));
             // put the names of members in the next loop
@@ -140,16 +144,12 @@ class ExcelFileGenerator {
         sheet.autoSizeColumn(6); sheet.autoSizeColumn(7);
 
         try {
-            FileOutputStream out = new FileOutputStream(new File("schedule.xlsx"));
+            FileOutputStream out = new FileOutputStream(new File(savePath + "/schedule.xlsx"));
             schedule.write(out);
             out.close();
+            JOptionPane.showMessageDialog(null, "Schedule generated!", "Success", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
-    }
-
-    public static void main(String[] args) {
-        ExcelFileGenerator generator = new ExcelFileGenerator();
-        generator.makeExcel();
     }
 }
