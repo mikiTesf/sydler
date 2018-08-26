@@ -1,6 +1,7 @@
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.*;
 
@@ -57,7 +58,8 @@ class ExcelFileGenerator {
         font.setBold(true);
         // bold font style
         XSSFCellStyle boldFontStyle = schedule.createCellStyle();
-        boldFontStyle.setFont(font);
+        boldFontStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        boldFontStyle.setAlignment(HorizontalAlignment.CENTER);
         // center alignment cellStyle
         CellStyle centerStyle = schedule.createCellStyle();
         centerStyle.setAlignment(HorizontalAlignment.CENTER);
@@ -99,18 +101,18 @@ class ExcelFileGenerator {
         // here the starting date will be initialized
         LocalDateTime midWeek = LocalDateTime.of(2018, 8, 13, 0, 0);
         String weekMonth, monthOnSunday;
-        // the following is the main for loop that fills the schedule by populating it with
-        // the week spans, member names and date information
+        /* the following is the main for loop that fills the schedule by populating it with
+         the week spans, member names and date information*/
         for (int day = 0; day < names.length; day++) {
             Row row1 = sheet.createRow((short) (day + 1));
-            // The Monday and Sunday of a week may reside in different months.
-            // To include the name of the next month in the cell, the month after
-            // 6 days must be calculated and compared with the month on Monday
+            /* The Monday and Sunday of a week may reside in different months.
+             To include the name of the next month in the cell, the month after
+             6 days must be calculated and compared with the month on Monday*/
             weekMonth     = AMMonths.get(midWeek.getMonthValue());
             monthOnSunday = AMMonths.get(midWeek.plusDays(6).getMonthValue());
-            // Here, the months are compared and the appropriate week-span is put.
-            // The if block is important because week-spans are calculated once for
-            // every week. No need to calculate again on the sunday of the same week
+            /* Here, the months are compared and the appropriate week-span is put.
+             The if block is important because week-spans are calculated once for
+             every week. No need to calculate again on the sunday of the same week*/
             if (day % 2 == 0) {
                 if (weekMonth.equals(monthOnSunday))
                     row1.createCell(0).setCellValue(weekMonth + " " + midWeek.getDayOfMonth() + " - " + midWeek.plusDays(6).getDayOfMonth());
