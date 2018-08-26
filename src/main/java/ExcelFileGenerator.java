@@ -110,7 +110,7 @@ class ExcelFileGenerator {
             monthOnSunday = AMMonths.get(midWeek.plusDays(6).getMonthValue());
             // Here, the months are compared and the appropriate week-span is put.
             // The if block is important because week-spans are calculated once for
-            // every week. No need to calculate again on the sunday of the week
+            // every week. No need to calculate again on the sunday of the same week
             if (day % 2 == 0) {
                 if (weekMonth.equals(monthOnSunday))
                     row1.createCell(0).setCellValue(weekMonth + " " + midWeek.getDayOfMonth() + " - " + midWeek.plusDays(6).getDayOfMonth());

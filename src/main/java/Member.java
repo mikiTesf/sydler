@@ -10,11 +10,11 @@ import java.sql.SQLException;
 class Member {
     private static Dao<Member, Integer> memberDao;
 
-    @DatabaseField (id = true)
+    @DatabaseField (generatedId = true)
     private int id;
-    @DatabaseField
+    @DatabaseField (canBeNull = false)
     private String firstName;
-    @DatabaseField
+    @DatabaseField (canBeNull = false)
     private String lastName;
     @DatabaseField
     private boolean canBeStage;
@@ -35,7 +35,7 @@ class Member {
     }
 
     // a no-arg constructor (required by ORMLITE - I don't know the reason)
-    private Member() { }
+    Member() { }
 
     static Dao<Member, Integer> getDao() {
         return memberDao;
@@ -93,11 +93,13 @@ class Member {
         this.sundayException = sundayException;
     }
 
-    void save() {
+    boolean save() {
         try {
             memberDao.create(this);
+            return true;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            return false;
         }
     }
 }
