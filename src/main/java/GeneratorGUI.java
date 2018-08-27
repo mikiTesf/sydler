@@ -30,6 +30,11 @@ class GeneratorGUI extends JFrame {
     private String savePath = "/home/miki/Desktop/";
 
     private void setupGUI() {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException e) {
+            System.out.println(e.getMessage());
+        }
         setTitle("Sound System Schedule Generator");
         JMenuBar menuBar = new JMenuBar();
 
@@ -174,7 +179,7 @@ class GeneratorGUI extends JFrame {
             } catch (SQLException e1) {
                 System.out.println(e1.getMessage());
             }
-            JOptionPane.showMessageDialog(frame, "Member's properties updated");
+            JOptionPane.showMessageDialog(frame, member.getFirstName() + "'s properties updated");
         });
 
         setContentPane(tabbedPane);
