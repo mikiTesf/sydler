@@ -7,7 +7,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 class GeneratorGUI extends JFrame {
-    private JFrame frame = this;
+    private final JFrame frame = this;
     private JSpinner daySpinner;
     private JSpinner monthSpinner;
     private JSpinner yearSpinner;
@@ -30,6 +30,7 @@ class GeneratorGUI extends JFrame {
     private String savePath = "/home/miki/Desktop/";
 
     private void setupGUI() {
+        setTitle("Sound System Schedule Generator");
         JMenuBar menuBar = new JMenuBar();
 
         JMenu fileMenu = new JMenu("File");
@@ -77,7 +78,7 @@ class GeneratorGUI extends JFrame {
                             meetingDayMidweekComboBox.getSelectedItem().toString(),
                             savePath
                     )) {
-                JOptionPane.showMessageDialog(frame, "Schedule generated!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(frame, "Schedule generated", "Success", JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
             JOptionPane.showMessageDialog(frame, "An unknown error has occurred", "Error", JOptionPane.ERROR_MESSAGE);
@@ -130,7 +131,7 @@ class GeneratorGUI extends JFrame {
             member.setCanAssist2ndHall(a2ndHallCheckBox.isSelected());
             member.setSundayException(sundayExceptionCheckBox.isSelected());
             if (member.save()) {
-                JOptionPane.showMessageDialog(GeneratorGUI.getFrames()[0], "Member added!");
+                JOptionPane.showMessageDialog(GeneratorGUI.getFrames()[0], "Member added");
                 clearAddFields();
             }
             memberProperties[0] = member.getId();
