@@ -13,12 +13,12 @@ class Populate {
     private final int STAGE = 0;
     private final int HALL2 = 5;
 
-    Populate(int month) {
+    Populate(int weeks) {
         int membersCount = 0;
         try {
             membersCount = Member.getDao().queryForAll().size();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         // initially all members start with an Asf of +Infinity
         // to fill ID_ASF with memberID_Asf pairs, all members must be fetched first
@@ -28,7 +28,7 @@ class Populate {
                 System.exit(0);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         // ID_ASF = new HashMap<>(memberCount) is not initializing ID_ASF with membersCount.
         // It's size remains 0. Why? To avoid that problem I've set the stop condition for
@@ -37,7 +37,7 @@ class Populate {
         // the ID of each member will be matched with +Infinity
         for (int i = 0; i < membersCount; i++)
             ID_ASF.put(allMembers.get(i).getId(), (double) 1);
-        scheduleGrid = new int[8 * month][6];
+        scheduleGrid = new int[8 * weeks][6];
     }
 
     // ***************************** column populating method *****************************
@@ -152,7 +152,7 @@ class Populate {
                             .queryForId(scheduleGrid[day][role])
                             .getFirstName();
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    System.out.println(e.getMessage());
                 }
         return nameGrid;
     }

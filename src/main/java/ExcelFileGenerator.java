@@ -5,7 +5,6 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.*;
 
-import javax.swing.JOptionPane;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -18,8 +17,8 @@ class ExcelFileGenerator {
     private final Map<Integer, String> AMMonths;
     private final Map<Integer, String> days;
     // XSSFWorkbook, XSSFSheet, XSSFRow, XSSFCell
-    ExcelFileGenerator(int months) {
-        Populate populate = new Populate(months);
+    ExcelFileGenerator(int weeks) {
+        Populate populate = new Populate(weeks);
         names = populate.getNameGrid();
         // month to name map to translate a month's value (int) into an Amharic String
         AMMonths = new HashMap<>(12);
@@ -46,7 +45,7 @@ class ExcelFileGenerator {
         days.put(7, "እሁድ");
     }
 
-    void makeExcel(int year, int month, int day1, String meetingDay, String savePath) {
+    boolean makeExcel(int year, int month, int day1, String meetingDay, String savePath) {
         // The excel document
         XSSFWorkbook schedule = new XSSFWorkbook();
         // The excel sheet to put data in
@@ -147,9 +146,10 @@ class ExcelFileGenerator {
             FileOutputStream out = new FileOutputStream(new File(savePath + "/schedule.xlsx"));
             schedule.write(out);
             out.close();
-            JOptionPane.showMessageDialog(null, "Schedule generated!", "Success", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException e) {
             System.out.println(e.getMessage());
+            return false;
         }
+        return true;
     }
 }

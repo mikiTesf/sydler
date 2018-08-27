@@ -61,6 +61,10 @@ class Member {
         return id;
     }
 
+    void setId(int id) {
+        this.id = id;
+    }
+
     boolean canBeStage() {
         return canBeStage;
     }
@@ -101,5 +105,15 @@ class Member {
             System.out.println(e.getMessage());
             return false;
         }
+    }
+
+    static boolean remove (int id) {
+        try {
+            memberDao.deleteById(id);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+        return true;
     }
 }
