@@ -26,12 +26,6 @@ class Populate {
         try {
             allMembers = Member.getDao().queryForAll();
             if (allMembers.size() == 0) {
-                JOptionPane.showMessageDialog
-                (
-                        null,
-                        "There are no members in the database",
-                        "", JOptionPane.ERROR_MESSAGE
-                );
                 System.exit(0);
             }
         } catch (SQLException e) {
@@ -44,7 +38,7 @@ class Populate {
         // the ID of each member will be matched with +Infinity
         for (int i = 0; i < membersCount; i++)
             ID_ASF.put(allMembers.get(i).getId(), (double) 1);
-        scheduleGrid = new int[month * 30][6];
+        scheduleGrid = new int[8 * month][6];
     }
 
     // ***************************** column populating method *****************************
