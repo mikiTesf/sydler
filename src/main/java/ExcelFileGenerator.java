@@ -147,7 +147,7 @@ class ExcelFileGenerator {
             FileOutputStream out = new FileOutputStream(new File(savePath + "/schedule.xlsx"));
             schedule.write(out);
             out.close();
-            JOptionPane.showMessageDialog(null, "Schedule successfully generated!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Schedule generated!", "Success", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
