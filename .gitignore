@@ -4,3 +4,5 @@ scheduleGenerator_mathematicalApproach.ipr
 scheduleGenerator_mathematicalApproach.iws
 target/
 out/
+.ideaDataSources/
+dataSources/

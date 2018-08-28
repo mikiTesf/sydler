@@ -144,7 +144,21 @@ class GeneratorGUI extends JFrame {
         tableModel.addColumn("ሁለተኛው አዳራሽ");
         tableModel.addColumn("የእሁድ ልዩነት");
         table.setModel(tableModel);
+
+        table.getColumnModel().getColumn(2).setCellEditor(table.getDefaultEditor(Boolean.class));
+        table.getColumnModel().getColumn(2).setCellRenderer(table.getDefaultRenderer(Boolean.class));
+
+        table.getColumnModel().getColumn(3).setCellEditor(table.getDefaultEditor(Boolean.class));
+        table.getColumnModel().getColumn(3).setCellRenderer(table.getDefaultRenderer(Boolean.class));
+
+        table.getColumnModel().getColumn(4).setCellEditor(table.getDefaultEditor(Boolean.class));
+        table.getColumnModel().getColumn(4).setCellRenderer(table.getDefaultRenderer(Boolean.class));
+
+        table.getColumnModel().getColumn(5).setCellEditor(table.getDefaultEditor(Boolean.class));
+        table.getColumnModel().getColumn(5).setCellRenderer(table.getDefaultRenderer(Boolean.class));
+
         table.getTableHeader().setReorderingAllowed(false);
+        table.getTableHeader().setResizingAllowed(true);
 
         try {
             List<Member> allMembers = Member.getDao().queryForAll();
@@ -228,10 +242,10 @@ class GeneratorGUI extends JFrame {
                 member.setId(Integer.parseInt(table.getValueAt(selectedRow, 0).toString()));
                 member.setFirstName(firstLastName[0]);
                 member.setLastName(firstLastName[1]);
-                member.setCanBeStage(Boolean.parseBoolean(table.getValueAt(selectedRow, 2).toString()));
-                member.setCanRotateMic(Boolean.parseBoolean(table.getValueAt(selectedRow, 3).toString()));
-                member.setCanAssist2ndHall(Boolean.parseBoolean(table.getValueAt(selectedRow, 4).toString()));
-                member.setSundayException(Boolean.parseBoolean(table.getValueAt(selectedRow, 5).toString()));
+                member.setCanBeStage((boolean) table.getValueAt(selectedRow, 2));
+                member.setCanRotateMic((boolean) table.getValueAt(selectedRow, 3));
+                member.setCanAssist2ndHall((boolean) table.getValueAt(selectedRow, 4));
+                member.setSundayException((boolean) table.getValueAt(selectedRow, 5));
                 try {
                     Member.getDao().update(member);
                 } catch (SQLException e1) {
@@ -268,7 +282,7 @@ class GeneratorGUI extends JFrame {
 
 
     public static void main(String[] args) {
-        GeneratorGUI gui_2 = new GeneratorGUI();
-        gui_2.setupGUI();
+        GeneratorGUI gui = new GeneratorGUI();
+        gui.setupGUI();
     }
 }
