@@ -23,17 +23,17 @@ class ExcelFileGenerator {
         // month to name map to translate a month's value (int) into an Amharic String
         AMMonths = new HashMap<>(12);
         AMMonths.put(1, "ጥር");
-        AMMonths.put(2, "የካ"); // ቲት
-        AMMonths.put(3, "መጋ"); // ቢት
-        AMMonths.put(4, "ሚያ"); // ዝያ
-        AMMonths.put(5, "ግን"); // ቦት
+        AMMonths.put(2, "የካ");
+        AMMonths.put(3, "መጋ");
+        AMMonths.put(4, "ሚያ");
+        AMMonths.put(5, "ግን");
         AMMonths.put(6, "ሰኔ");
-        AMMonths.put(7, "ሐም"); // ሌ
-        AMMonths.put(8, "ነሐ"); // ሴ
-        AMMonths.put(9, "መስ"); // ከረም
-        AMMonths.put(10, "ጥቅ"); // ምት
-        AMMonths.put(11, "ህዳ"); // ር
-        AMMonths.put(12, "ታህ"); // ሳሥ
+        AMMonths.put(7, "ሐም");
+        AMMonths.put(8, "ነሐ");
+        AMMonths.put(9, "መስ");
+        AMMonths.put(10, "ጥቅ");
+        AMMonths.put(11, "ህዳ");
+        AMMonths.put(12, "ታህ");
 
         days = new HashMap<>(7);
         days.put(1, "ሰኞ");

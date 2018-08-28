@@ -3,6 +3,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.*;
@@ -11,7 +12,6 @@ import javax.swing.table.DefaultTableModel;
 class GeneratorGUI extends JFrame {
     private final JFrame frame = this;
     private JSpinner daySpinner;
-    private JSpinner monthSpinner;
     private JSpinner yearSpinner;
     private JComboBox meetingDayMidweekComboBox;
     private JSpinner howManyWeeksSpinner;
@@ -29,7 +29,25 @@ class GeneratorGUI extends JFrame {
     private DefaultTableModel tableModel;
     private JTabbedPane tabbedPane;
     private JScrollPane scrollPane;
+    private JComboBox<String> monthComboBox;
     private String savePath = "/home/miki/Desktop/";
+    private HashMap<String, Integer> AMMonths;
+
+    private GeneratorGUI() {
+        AMMonths = new HashMap<>(12);
+        AMMonths.put("ጥር", 1);
+        AMMonths.put("የካቲት", 2);
+        AMMonths.put("መጋቢት", 3);
+        AMMonths.put("ሚያዝያ", 4);
+        AMMonths.put("ግንቦት", 5);
+        AMMonths.put("ሰኔ", 6);
+        AMMonths.put("ሐምሌ", 7);
+        AMMonths.put("ነሐሴ", 8);
+        AMMonths.put("መስከረም", 9);
+        AMMonths.put("ጥቅምት", 10);
+        AMMonths.put("ህዳር", 11);
+        AMMonths.put("ታህሳሥ", 12);
+    }
 
     private void setupGUI() {
         try {
@@ -37,7 +55,7 @@ class GeneratorGUI extends JFrame {
         } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException e) {
             System.out.println(e.getMessage());
         }
-        setTitle("Sound System Schedule Generator");
+        setTitle("የድምጽ ክፍል ፕሮግራም አመንጪ");
 
         JMenuBar menuBar = new JMenuBar();
         AboutForm aboutForm = new AboutForm();
@@ -54,7 +72,7 @@ class GeneratorGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser excelLocation = new JFileChooser();
-                excelLocation.setDialogTitle("Save excel file to...");
+                excelLocation.setDialogTitle("Excel ፋይሉ የት ይቀመጥ?");
                 excelLocation.setCurrentDirectory(new File("/home/miki/Desktop/"));
                 excelLocation.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                 excelLocation.setMultiSelectionEnabled(false);
@@ -102,24 +120,24 @@ class GeneratorGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 ExcelFileGenerator excelFileGenerator = new ExcelFileGenerator((int) howManyWeeksSpinner.getValue());
                 //noinspection ConstantConditions
-                if (excelFileGenerator.makeExcel
-                        (
+                if (excelFileGenerator.makeExcel (
                                 (int) yearSpinner.getValue(),
-                                (int) monthSpinner.getValue(),
+                                AMMonths.get(monthComboBox.getSelectedItem().toString()),
                                 (int) daySpinner.getValue(),
                                 meetingDayMidweekComboBox.getSelectedItem().toString(),
                                 savePath
-                        )) {
-                    JOptionPane.showMessageDialog(frame, "Schedule generated", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        )
+                ) {
+                    JOptionPane.showMessageDialog(frame, "ፕሮግራሙ ተፈጥሯል", "ተሳክቷል", JOptionPane.INFORMATION_MESSAGE);
                     return;
                 }
-                JOptionPane.showMessageDialog(frame, "An unknown error has occurred", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(frame, "ያልታወቀ ችግር ተፈጥሯል", "ስህተት", JOptionPane.ERROR_MESSAGE);
 
             }
         });
 
         tableModel = new DefaultTableModel();
-        tableModel.addColumn("id");
+        tableModel.addColumn("ID");
         tableModel.addColumn("ስም");
         tableModel.addColumn("መድረክ");
         tableModel.addColumn("ድምጽ ማጉያ");
@@ -149,7 +167,6 @@ class GeneratorGUI extends JFrame {
         scrollPane.setPreferredSize(new Dimension((int) tableDimension.getWidth(), (int) tableDimension.getHeight()));
 
         daySpinner.setModel(new SpinnerNumberModel(1, 1, 31, 1));
-        monthSpinner.setModel(new SpinnerNumberModel(1, 1, 12, 1));
         yearSpinner.setModel(new SpinnerNumberModel(2018, 2018, 3000, 1));
         howManyWeeksSpinner.setModel(new SpinnerNumberModel(1, 1, 100, 1));
 
@@ -167,7 +184,7 @@ class GeneratorGUI extends JFrame {
                 member.setCanAssist2ndHall(a2ndHallCheckBox.isSelected());
                 member.setSundayException(sundayExceptionCheckBox.isSelected());
                 if (member.save()) {
-                    JOptionPane.showMessageDialog(GeneratorGUI.getFrames()[0], "Member added");
+                    JOptionPane.showMessageDialog(GeneratorGUI.getFrames()[0], member.getFirstName() + " ተጨምሯል");
                     GeneratorGUI.this.clearAddFields();
                 }
                 memberProperties[0] = member.getId();
@@ -187,12 +204,14 @@ class GeneratorGUI extends JFrame {
                 int selection = table.getSelectedRow();
                 if (selection == -1)
                     return;
-                int option = JOptionPane.showConfirmDialog(frame, "Are you sure?", "Remove member...", JOptionPane.YES_NO_OPTION);
+                int option = JOptionPane.showConfirmDialog(frame, "እርግጠኛ ነህ?", "", JOptionPane.YES_NO_OPTION);
                 if (option == JOptionPane.NO_OPTION)
                     return;
                 int selectedRow = table.getSelectedRow();
+                String selectedName = table.getValueAt(selectedRow, 1).toString();
+                int indexOfSpace = selectedName.indexOf(" ");
                 if (Member.remove((int) table.getValueAt(selectedRow, 0)))
-                    JOptionPane.showMessageDialog(frame, "Member removed...", "", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(frame, selectedName.substring(0, indexOfSpace) + " ወጥቷል...", "", JOptionPane.INFORMATION_MESSAGE);
                 tableModel.removeRow(selectedRow);
             }
         });
@@ -218,7 +237,7 @@ class GeneratorGUI extends JFrame {
                 } catch (SQLException e1) {
                     System.out.println(e1.getMessage());
                 }
-                JOptionPane.showMessageDialog(frame, member.getFirstName() + "'s properties updated");
+                JOptionPane.showMessageDialog(frame, member.getFirstName() + " አይነታዎች ተዘምነዋል");
             }
         });
 

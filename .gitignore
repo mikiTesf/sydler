@@ -2,3 +2,5 @@ database/
 scheduleGenerator_mathematicalApproach.iml
 scheduleGenerator_mathematicalApproach.ipr
 scheduleGenerator_mathematicalApproach.iws
+target/
+out/
