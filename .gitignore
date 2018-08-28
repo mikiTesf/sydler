@@ -1,12 +1,4 @@
-soundSystemSchedule (mathematic approach).iml
-soundSystemSchedule (mathematic approach).ipr
-soundSystemSchedule (mathematic approach).iws
-out/
-target/
-pom.xml
-.ideaDataSources/
-dataSources/
 database/
-schdule.jpg
-schedule.xlsx
-src/main/java/META-INF/
+scheduleGenerator_mathematicalApproach.iml
+scheduleGenerator_mathematicalApproach.ipr
+scheduleGenerator_mathematicalApproach.iws
