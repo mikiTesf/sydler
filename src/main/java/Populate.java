@@ -20,8 +20,8 @@ class Populate {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        // initially all members start with an Asf of +Infinity
-        // to fill ID_ASF with memberID_Asf pairs, all members must be fetched first
+        /* Initially all members start with equal Asf values. To fill ID_ASF
+         with memberID_Asf pairs, all members must be fetched first */
         try {
             allMembers = Member.getDao().queryForAll();
             if (allMembers.size() == 0) {
@@ -30,14 +30,13 @@ class Populate {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        // ID_ASF = new HashMap<>(memberCount) is not initializing ID_ASF with membersCount.
-        // It's size remains 0. Why? To avoid that problem I've set the stop condition for
-        // the for loop to be the number of members count
+        /* ID_ASF = new HashMap<>(memberCount) is not initializing ID_ASF with 'membersCount'.
+         It's size remains 0 (I still don't know why). To avoid that problem I've set the stop condition for
+         the for "loop" to be the count of members */
         ID_ASF = new HashMap<>();
-        // the ID of each member will be matched with +Infinity
         for (int i = 0; i < membersCount; i++)
             ID_ASF.put(allMembers.get(i).getId(), (double) 1);
-        scheduleGrid = new int[8 * weeks][6];
+        scheduleGrid = new int[2 * weeks][6];
     }
 
     // ***************************** column populating method *****************************
@@ -89,7 +88,7 @@ class Populate {
 
     private double distance (int memberID, int day, int role) {
         double distance = 0;
-        // the maximum attainable distance is outside of the loop
+        // the maximum attainable distance is outside of the array
         if (day == 0) return scheduleGrid.length;
         else
             do {
@@ -98,6 +97,8 @@ class Populate {
                 break;
             day -= 1;
         } while (day > 0);
+        /* if day equals -1 it means that a member with id 'memberID' has not been found
+           till the begining of the array. Hence, day will go past the first day being -1. */
         if (day == -1) return scheduleGrid.length;
         return distance;
     }
@@ -145,7 +146,7 @@ class Populate {
             for (int role = STAGE; role <= HALL2; role++)
                 try {
                     /* to avoid an NPE the id values for Sunday's 2nd Hall assignment,
-                     which are 0, must be skipped*/
+                     which are 0, must be skipped */
                     if (scheduleGrid[day][role] == 0)
                         continue;
                     nameGrid[day][role] = Member.getDao()

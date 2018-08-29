@@ -57,34 +57,14 @@ class GeneratorGUI extends JFrame {
         }
         setTitle("የድምጽ ክፍል ፕሮግራም አመንጪ");
 
-        JMenuBar menuBar = new JMenuBar();
+        JMenuBar menuBar    = new JMenuBar();
         AboutForm aboutForm = new AboutForm();
 
-        JMenu fileMenu = new JMenu("File");
-        JMenuItem changeDirectoryItem = new JMenuItem("Save to");
-        JMenuItem exitItem = new JMenuItem("Exit...");
+        JMenu fileMenu      = new JMenu("File");
+        JMenuItem exitItem  = new JMenuItem("Exit...");
 
-        JMenu aboutMenu = new JMenu("Help");
+        JMenu aboutMenu     = new JMenu("Help");
         JMenuItem aboutItem = new JMenuItem("About...");
-
-        //noinspection Convert2Lambda
-        changeDirectoryItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JFileChooser excelLocation = new JFileChooser();
-                excelLocation.setDialogTitle("Excel ፋይሉ የት ይቀመጥ?");
-                excelLocation.setCurrentDirectory(new File("/home/miki/Desktop/"));
-                excelLocation.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                excelLocation.setMultiSelectionEnabled(false);
-                excelLocation.setAcceptAllFileFilterUsed(false);
-
-                int choice = excelLocation.showDialog(frame, "Select");
-                if (choice == JFileChooser.CANCEL_OPTION)
-                    return;
-                savePath = excelLocation.getSelectedFile().getPath();
-
-            }
-        });
 
         //noinspection Convert2Lambda
         exitItem.addActionListener(new ActionListener() {
@@ -104,7 +84,6 @@ class GeneratorGUI extends JFrame {
             }
         });
 
-        fileMenu.add(changeDirectoryItem);
         fileMenu.add(exitItem);
 
         aboutMenu.add(aboutItem);
@@ -118,6 +97,17 @@ class GeneratorGUI extends JFrame {
         generateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                JFileChooser excelLocation = new JFileChooser();
+                excelLocation.setDialogTitle("Excel ፋይሉ የት ይቀመጥ?");
+                excelLocation.setCurrentDirectory(new File("/home/miki/Desktop/"));
+                excelLocation.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                excelLocation.setMultiSelectionEnabled(false);
+                excelLocation.setAcceptAllFileFilterUsed(false);
+
+                int choice = excelLocation.showDialog(frame, "Select");
+                if (choice == JFileChooser.CANCEL_OPTION)
+                    return;
+                savePath = excelLocation.getSelectedFile().getPath();
                 ExcelFileGenerator excelFileGenerator = new ExcelFileGenerator((int) howManyWeeksSpinner.getValue());
                 //noinspection ConstantConditions
                 if (excelFileGenerator.makeExcel (
@@ -188,8 +178,9 @@ class GeneratorGUI extends JFrame {
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (!GeneratorGUI.this.validMemberInfo()) return;
-                Member member = new Member();
+                if (!GeneratorGUI.this.validMemberInfo())
+                    return;
+                Member member             = new Member();
                 Object[] memberProperties = new Object[6];
                 member.setFirstName(FirstNameTextField.getText());
                 member.setLastName(lastNameTextField.getText());
@@ -221,9 +212,9 @@ class GeneratorGUI extends JFrame {
                 int option = JOptionPane.showConfirmDialog(frame, "እርግጠኛ ነህ?", "", JOptionPane.YES_NO_OPTION);
                 if (option == JOptionPane.NO_OPTION)
                     return;
-                int selectedRow = table.getSelectedRow();
+                int selectedRow     = table.getSelectedRow();
                 String selectedName = table.getValueAt(selectedRow, 1).toString();
-                int indexOfSpace = selectedName.indexOf(" ");
+                int indexOfSpace    = selectedName.indexOf(" ");
                 if (Member.remove((int) table.getValueAt(selectedRow, 0)))
                     JOptionPane.showMessageDialog(frame, selectedName.substring(0, indexOfSpace) + " ወጥቷል...", "", JOptionPane.INFORMATION_MESSAGE);
                 tableModel.removeRow(selectedRow);
@@ -237,7 +228,7 @@ class GeneratorGUI extends JFrame {
                 int selectedRow = table.getSelectedRow();
                 if (selectedRow == -1)
                     return;
-                Member member = new Member();
+                Member member          = new Member();
                 String[] firstLastName = table.getValueAt(selectedRow, 1).toString().split(" ");
                 member.setId(Integer.parseInt(table.getValueAt(selectedRow, 0).toString()));
                 member.setFirstName(firstLastName[0]);
