@@ -215,9 +215,10 @@ class GeneratorGUI extends JFrame {
                 int selectedRow     = table.getSelectedRow();
                 String selectedName = table.getValueAt(selectedRow, 1).toString();
                 int indexOfSpace    = selectedName.indexOf(" ");
-                if (Member.remove((int) table.getValueAt(selectedRow, 0)))
+                if (Member.remove((int) table.getValueAt(selectedRow, 0))) {
+                    tableModel.removeRow(selectedRow);
                     JOptionPane.showMessageDialog(frame, selectedName.substring(0, indexOfSpace) + " ወጥቷል...", "", JOptionPane.INFORMATION_MESSAGE);
-                tableModel.removeRow(selectedRow);
+                }
             }
         });
 

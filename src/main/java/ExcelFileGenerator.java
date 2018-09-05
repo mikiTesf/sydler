@@ -136,6 +136,7 @@ class ExcelFileGenerator {
                 if (!(names[day][k] == null))
                     row1.createCell(j).setCellValue(" " + names[day][k]);
         }
+        System.out.println("excel sheet populated...");
         // auto-size columns to fit the text inside the cells
         sheet.autoSizeColumn(0); sheet.autoSizeColumn(1);
         sheet.autoSizeColumn(2); sheet.autoSizeColumn(3);
@@ -145,6 +146,7 @@ class ExcelFileGenerator {
         try {
             FileOutputStream out = new FileOutputStream(new File(savePath + "/schedule.xlsx"));
             schedule.write(out);
+            System.out.println("excel file generated...");
             out.close();
         } catch (IOException e) {
             System.out.println(e.getMessage());
