@@ -243,7 +243,7 @@ class GeneratorGUI extends JFrame {
                 } catch (SQLException e1) {
                     System.out.println(e1.getMessage());
                 }
-                JOptionPane.showMessageDialog(frame, member.getFirstName() + " አይነታዎች ተዘምነዋል");
+                JOptionPane.showMessageDialog(frame, "የ" + member.getFirstName() + " አይነታዎች ተዘምነዋል");
             }
         });
 

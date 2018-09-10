@@ -24,7 +24,7 @@
             </constraints>
             <properties>
               <font name="Maven Pro" size="22" style="1"/>
-              <text value="Schedule Generator 1.0"/>
+              <text value="Schedule Generator 1.0.1"/>
             </properties>
           </component>
           <component id="128f3" class="javax.swing.JLabel">
@@ -33,7 +33,7 @@
             </constraints>
             <properties>
               <font name="Maven Pro" size="16" style="0"/>
-              <text value="Built on August 28, 2018"/>
+              <text value="Built on September 10, 2018"/>
             </properties>
           </component>
           <component id="55ffc" class="javax.swing.JLabel">
