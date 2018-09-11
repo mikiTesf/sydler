@@ -6,7 +6,7 @@ class DBConnection {
     private static ConnectionSource connectionSource;
     static {
         // C:\ScheduleGenerator\
-        String dbURL = "jdbc:sqlite:/home/miki/Documents/projects/java/scheduleGenerator_mathematicalApproach/database/members.db";
+        String dbURL = "jdbc:sqlite:src/main/resources/database/members.db";
         try{
             connectionSource = new JdbcConnectionSource(dbURL);
         } catch (SQLException e){

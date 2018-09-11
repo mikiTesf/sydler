@@ -209,11 +209,12 @@
             <children>
               <component id="f2f18" class="javax.swing.JLabel">
                 <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <labelFor value="1d001"/>
-                  <text value="የመጀመሪያ ስም"/>
+                  <text value="ስም"/>
+                  <toolTipText value="ስም"/>
                 </properties>
               </component>
               <component id="1d001" class="javax.swing.JTextField" binding="FirstNameTextField" default-binding="true">
@@ -223,16 +224,16 @@
                   </grid>
                 </constraints>
                 <properties>
-                  <toolTipText value="First name"/>
+                  <toolTipText value=""/>
                 </properties>
               </component>
               <component id="1901a" class="javax.swing.JLabel">
                 <constraints>
-                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <labelFor value="9da6c"/>
-                  <text value="የመጨረሻ ስም"/>
+                  <text value="&lt;html&gt;የአባት&lt;br/&gt;ስም&lt;/html&gt;"/>
                 </properties>
               </component>
               <component id="9da6c" class="javax.swing.JTextField" binding="lastNameTextField" default-binding="true">
@@ -242,7 +243,7 @@
                   </grid>
                 </constraints>
                 <properties>
-                  <toolTipText value="Last name"/>
+                  <toolTipText value=""/>
                 </properties>
               </component>
               <component id="bd00c" class="javax.swing.JCheckBox" binding="stageCheckBox" default-binding="true">

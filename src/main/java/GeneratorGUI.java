@@ -26,12 +26,12 @@ class GeneratorGUI extends JFrame {
     private JButton modifyButton;
     private JButton removeButton;
     private JTable table;
-    private DefaultTableModel tableModel;
+    private final DefaultTableModel tableModel;
     private JTabbedPane tabbedPane;
     private JScrollPane scrollPane;
     private JComboBox<String> monthComboBox;
     private String savePath = "/home/miki/Desktop/";
-    private HashMap<String, Integer> AMMonths;
+    private final HashMap<String, Integer> AMMonths;
 
     private GeneratorGUI() {
         AMMonths = new HashMap<>(12);
@@ -47,6 +47,13 @@ class GeneratorGUI extends JFrame {
         AMMonths.put("ጥቅምት", 10);
         AMMonths.put("ህዳር", 11);
         AMMonths.put("ታህሳሥ", 12);
+
+        tableModel = new DefaultTableModel() {
+          @Override
+          public boolean isCellEditable(int row, int column) {
+              return column != 0;
+          }
+        };
     }
 
     private void setupGUI() {
@@ -126,7 +133,6 @@ class GeneratorGUI extends JFrame {
             }
         });
 
-        tableModel = new DefaultTableModel();
         tableModel.addColumn("ID");
         tableModel.addColumn("ስም");
         tableModel.addColumn("መድረክ");
@@ -166,9 +172,9 @@ class GeneratorGUI extends JFrame {
             System.out.println(e.getMessage());
         }
 
-        table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         Dimension tableDimension = table.getPreferredSize();
-        scrollPane.setPreferredSize(new Dimension((int) tableDimension.getWidth(), (int) tableDimension.getHeight()));
+        scrollPane.setPreferredSize(new Dimension((int) tableDimension.getWidth(), (int) tableDimension.getHeight() + 40));
 
         daySpinner.setModel(new SpinnerNumberModel(1, 1, 31, 1));
         yearSpinner.setModel(new SpinnerNumberModel(2018, 2018, 3000, 1));
@@ -178,8 +184,10 @@ class GeneratorGUI extends JFrame {
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (!GeneratorGUI.this.validMemberInfo())
+                if (!validMemberInfo()) {
+                    JOptionPane.showMessageDialog(frame, "የወንድም ሙሉ ስም አልተሞላም", "ስህተት", JOptionPane.ERROR_MESSAGE);
                     return;
+                }
                 Member member             = new Member();
                 Object[] memberProperties = new Object[6];
                 member.setFirstName(FirstNameTextField.getText());
