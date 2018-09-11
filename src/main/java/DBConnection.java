@@ -5,7 +5,7 @@ import java.sql.SQLException;
 class DBConnection {
     private static ConnectionSource connectionSource;
     static {
-        // C:\\ScheduleGenerator\\
+        // C:\ScheduleGenerator\
         String dbURL = "jdbc:sqlite:/home/miki/Documents/projects/java/scheduleGenerator_mathematicalApproach/database/members.db";
         try{
             connectionSource = new JdbcConnectionSource(dbURL);

@@ -45,7 +45,7 @@ class ExcelFileGenerator {
         days.put(7, "እሁድ");
     }
 
-    boolean makeExcel(int year, int month, int day1, String meetingDay, String savePath) {
+    boolean makeExcel(int year, int month, int day, String meetingDay, String savePath) {
         // The excel document
         XSSFWorkbook schedule = new XSSFWorkbook();
         // The excel sheet to put data in
@@ -99,12 +99,12 @@ class ExcelFileGenerator {
         row.getCell(7).setCellStyle(centerStyle);
 
         // here the starting date will be initialized
-        LocalDateTime midWeek = LocalDateTime.of(year, month, day1, 0, 0);
+        LocalDateTime midWeek = LocalDateTime.of(year, month, day, 0, 0);
         String weekMonth, monthOnSunday;
         /* the following is the main for loop that fills the schedule by populating it with
          the week spans, member names and date information*/
-        for (int day = 0; day < names.length; day++) {
-            Row row1 = sheet.createRow((short) (day + 1));
+        for (int day1 = 0; day1 < names.length; day1++) {
+            Row row1 = sheet.createRow((short) (day1 + 1));
             /* The Monday and Sunday of a week may reside in different months.
              To include the name of the next month in the cell, the month after
              6 days must be calculated and compared with the month on Monday*/
@@ -113,7 +113,7 @@ class ExcelFileGenerator {
             /* Here, the months are compared and the appropriate week-span is put.
              The if block is important because week-spans are calculated once for
              every week. No need to calculate again on the sunday of the same week*/
-            if (day % 2 == 0) {
+            if (day1 % 2 == 0) {
                 row1.createCell(0);
                 if (weekMonth.equals(monthOnSunday))
                     headerString.setString(weekMonth + " " + midWeek.getDayOfMonth() + " - " + midWeek.plusDays(6).getDayOfMonth());
@@ -127,14 +127,14 @@ class ExcelFileGenerator {
                 midWeek = midWeek.plusDays(7);
             }
             // put the name of the day in the next cell
-            if (day % 2 == 0) // even = mid-week meeting
+            if (day1 % 2 == 0) // even = mid-week meeting
                 row1.createCell(1).setCellValue(" " + meetingDay);
             else
                 row1.createCell(1).setCellValue(" " + days.get(7));
             // put the names of members in the next loop
             for (int j = 2, k = 0; j < 8; j++, k++)
-                if (!(names[day][k] == null))
-                    row1.createCell(j).setCellValue(" " + names[day][k]);
+                if (!(names[day1][k] == null))
+                    row1.createCell(j).setCellValue(" " + names[day1][k]);
         }
         System.out.println("excel sheet populated...");
         // auto-size columns to fit the text inside the cells
@@ -144,9 +144,10 @@ class ExcelFileGenerator {
         sheet.autoSizeColumn(6); sheet.autoSizeColumn(7);
 
         try {
-            FileOutputStream out = new FileOutputStream(new File(savePath + "/schedule.xlsx"));
+            String filePath = savePath + "/" + day + "_" + month + "_" + year + ".xlsx";
+            FileOutputStream out = new FileOutputStream(new File(filePath));
             schedule.write(out);
-            System.out.println("excel file generated...");
+            System.out.println("excel file saved under " + filePath + "...");
             out.close();
         } catch (IOException e) {
             System.out.println(e.getMessage());
