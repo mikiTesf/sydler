@@ -22,10 +22,10 @@ class GeneratorGUI extends JFrame {
     private JCheckBox micCheckBox;
     private JCheckBox a2ndHallCheckBox;
     private JCheckBox sundayExceptionCheckBox;
-    private JButton addButton;
-    private JButton modifyButton;
-    private JButton removeButton;
-    private JTable table;
+    private JButton addMemberButton;
+    private JButton modifyMemberButton;
+    private JButton removeMemberButton;
+    private JTable membersTable;
     private final DefaultTableModel tableModel;
     private JTabbedPane tabbedPane;
     private JScrollPane scrollPane;
@@ -104,17 +104,17 @@ class GeneratorGUI extends JFrame {
         generateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JFileChooser excelLocation = new JFileChooser();
-                excelLocation.setDialogTitle("Excel ፋይሉ የት ይቀመጥ?");
-                excelLocation.setCurrentDirectory(new File("/home/miki/Desktop/"));
-                excelLocation.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                excelLocation.setMultiSelectionEnabled(false);
-                excelLocation.setAcceptAllFileFilterUsed(false);
+                JFileChooser saveLocation = new JFileChooser();
+                saveLocation.setDialogTitle("Excel ፋይሉ የት ይቀመጥ?");
+                saveLocation.setCurrentDirectory(new File("/home/miki/Desktop/"));
+                saveLocation.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                saveLocation.setMultiSelectionEnabled(false);
+                saveLocation.setAcceptAllFileFilterUsed(false);
 
-                int choice = excelLocation.showDialog(frame, "Select");
+                int choice = saveLocation.showDialog(frame, "save");
                 if (choice == JFileChooser.CANCEL_OPTION)
                     return;
-                savePath = excelLocation.getSelectedFile().getPath();
+                savePath = saveLocation.getSelectedFile().getPath();
                 ExcelFileGenerator excelFileGenerator = new ExcelFileGenerator((int) howManyWeeksSpinner.getValue());
                 //noinspection ConstantConditions
                 if (excelFileGenerator.makeExcel (
@@ -133,28 +133,31 @@ class GeneratorGUI extends JFrame {
             }
         });
 
-        tableModel.addColumn("ID");
+        tableModel.addColumn("#");
         tableModel.addColumn("ስም");
         tableModel.addColumn("መድረክ");
         tableModel.addColumn("ድምጽ ማጉያ");
         tableModel.addColumn("ሁለተኛው አዳራሽ");
         tableModel.addColumn("የእሁድ ልዩነት");
-        table.setModel(tableModel);
+        membersTable.setModel(tableModel);
 
-        table.getColumnModel().getColumn(2).setCellEditor(table.getDefaultEditor(Boolean.class));
-        table.getColumnModel().getColumn(2).setCellRenderer(table.getDefaultRenderer(Boolean.class));
+        membersTable.getColumnModel().getColumn(0).setMinWidth(50);
+        membersTable.getColumnModel().getColumn(0).setMaxWidth(50);
 
-        table.getColumnModel().getColumn(3).setCellEditor(table.getDefaultEditor(Boolean.class));
-        table.getColumnModel().getColumn(3).setCellRenderer(table.getDefaultRenderer(Boolean.class));
+        membersTable.getColumnModel().getColumn(2).setCellEditor(membersTable.getDefaultEditor(Boolean.class));
+        membersTable.getColumnModel().getColumn(2).setCellRenderer(membersTable.getDefaultRenderer(Boolean.class));
 
-        table.getColumnModel().getColumn(4).setCellEditor(table.getDefaultEditor(Boolean.class));
-        table.getColumnModel().getColumn(4).setCellRenderer(table.getDefaultRenderer(Boolean.class));
+        membersTable.getColumnModel().getColumn(3).setCellEditor(membersTable.getDefaultEditor(Boolean.class));
+        membersTable.getColumnModel().getColumn(3).setCellRenderer(membersTable.getDefaultRenderer(Boolean.class));
 
-        table.getColumnModel().getColumn(5).setCellEditor(table.getDefaultEditor(Boolean.class));
-        table.getColumnModel().getColumn(5).setCellRenderer(table.getDefaultRenderer(Boolean.class));
+        membersTable.getColumnModel().getColumn(4).setCellEditor(membersTable.getDefaultEditor(Boolean.class));
+        membersTable.getColumnModel().getColumn(4).setCellRenderer(membersTable.getDefaultRenderer(Boolean.class));
 
-        table.getTableHeader().setReorderingAllowed(false);
-        table.getTableHeader().setResizingAllowed(true);
+        membersTable.getColumnModel().getColumn(5).setCellEditor(membersTable.getDefaultEditor(Boolean.class));
+        membersTable.getColumnModel().getColumn(5).setCellRenderer(membersTable.getDefaultRenderer(Boolean.class));
+
+        membersTable.getTableHeader().setReorderingAllowed(false);
+        membersTable.getTableHeader().setResizingAllowed(true);
 
         try {
             List<Member> allMembers = Member.getDao().queryForAll();
@@ -172,8 +175,8 @@ class GeneratorGUI extends JFrame {
             System.out.println(e.getMessage());
         }
 
-        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        Dimension tableDimension = table.getPreferredSize();
+        membersTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        Dimension tableDimension = membersTable.getPreferredSize();
         scrollPane.setPreferredSize(new Dimension((int) tableDimension.getWidth(), (int) tableDimension.getHeight() + 40));
 
         daySpinner.setModel(new SpinnerNumberModel(1, 1, 31, 1));
@@ -181,7 +184,7 @@ class GeneratorGUI extends JFrame {
         howManyWeeksSpinner.setModel(new SpinnerNumberModel(1, 1, 100, 1));
 
         //noinspection Convert2Lambda
-        addButton.addActionListener(new ActionListener() {
+        addMemberButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!validMemberInfo()) {
@@ -211,19 +214,19 @@ class GeneratorGUI extends JFrame {
         });
 
         //noinspection Convert2Lambda
-        removeButton.addActionListener(new ActionListener() {
+        removeMemberButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int selection = table.getSelectedRow();
+                int selection = membersTable.getSelectedRow();
                 if (selection == -1)
                     return;
                 int option = JOptionPane.showConfirmDialog(frame, "እርግጠኛ ነህ?", "", JOptionPane.YES_NO_OPTION);
                 if (option == JOptionPane.NO_OPTION)
                     return;
-                int selectedRow     = table.getSelectedRow();
-                String selectedName = table.getValueAt(selectedRow, 1).toString();
+                int selectedRow     = membersTable.getSelectedRow();
+                String selectedName = membersTable.getValueAt(selectedRow, 1).toString();
                 int indexOfSpace    = selectedName.indexOf(" ");
-                if (Member.remove((int) table.getValueAt(selectedRow, 0))) {
+                if (Member.remove((int) membersTable.getValueAt(selectedRow, 0))) {
                     tableModel.removeRow(selectedRow);
                     JOptionPane.showMessageDialog(frame, selectedName.substring(0, indexOfSpace) + " ወጥቷል...", "", JOptionPane.INFORMATION_MESSAGE);
                 }
@@ -231,21 +234,21 @@ class GeneratorGUI extends JFrame {
         });
 
         //noinspection Convert2Lambda
-        modifyButton.addActionListener(new ActionListener() {
+        modifyMemberButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int selectedRow = table.getSelectedRow();
+                int selectedRow = membersTable.getSelectedRow();
                 if (selectedRow == -1)
                     return;
                 Member member          = new Member();
-                String[] firstLastName = table.getValueAt(selectedRow, 1).toString().split(" ");
-                member.setId(Integer.parseInt(table.getValueAt(selectedRow, 0).toString()));
+                String[] firstLastName = membersTable.getValueAt(selectedRow, 1).toString().split(" ");
+                member.setId(Integer.parseInt(membersTable.getValueAt(selectedRow, 0).toString()));
                 member.setFirstName(firstLastName[0]);
                 member.setLastName(firstLastName[1]);
-                member.setCanBeStage((boolean) table.getValueAt(selectedRow, 2));
-                member.setCanRotateMic((boolean) table.getValueAt(selectedRow, 3));
-                member.setCanAssist2ndHall((boolean) table.getValueAt(selectedRow, 4));
-                member.setSundayException((boolean) table.getValueAt(selectedRow, 5));
+                member.setCanBeStage((boolean) membersTable.getValueAt(selectedRow, 2));
+                member.setCanRotateMic((boolean) membersTable.getValueAt(selectedRow, 3));
+                member.setCanAssist2ndHall((boolean) membersTable.getValueAt(selectedRow, 4));
+                member.setSundayException((boolean) membersTable.getValueAt(selectedRow, 5));
                 try {
                     Member.getDao().update(member);
                 } catch (SQLException e1) {

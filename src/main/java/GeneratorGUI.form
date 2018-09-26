@@ -2,7 +2,7 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="GeneratorGUI">
   <tabbedpane id="8446d" binding="tabbedPane">
     <constraints>
-      <xy x="13" y="20" width="433" height="312"/>
+      <xy x="13" y="20" width="457" height="312"/>
     </constraints>
     <properties>
       <enabled value="true"/>
@@ -117,6 +117,7 @@
             </constraints>
             <properties>
               <font swing-font="Button.font"/>
+              <icon value="icons/generateExcel.png"/>
               <text value="አዘጋጅ"/>
             </properties>
           </component>
@@ -282,11 +283,12 @@
                   <toolTipText value="&lt;html&gt;እሁድ እሁድ፤ መድረክ ላይ&lt;br/&gt;&#10;መመደብ የለበትም&lt;/html&gt;"/>
                 </properties>
               </component>
-              <component id="7c73e" class="javax.swing.JButton" binding="addButton" default-binding="true">
+              <component id="7c73e" class="javax.swing.JButton" binding="addMemberButton" default-binding="true">
                 <constraints>
                   <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
+                  <icon value="icons/addMember.png"/>
                   <text value="ጨምር"/>
                 </properties>
               </component>
@@ -320,7 +322,7 @@
                   <title-color color="-10128514"/>
                 </border>
                 <children>
-                  <component id="17ff4" class="javax.swing.JTable" binding="table" default-binding="true">
+                  <component id="17ff4" class="javax.swing.JTable" binding="membersTable" default-binding="true">
                     <constraints/>
                     <properties>
                       <autoCreateRowSorter value="true"/>
@@ -337,25 +339,27 @@
                   </component>
                 </children>
               </scrollpane>
-              <component id="bb1b5" class="javax.swing.JButton" binding="modifyButton" default-binding="true">
+              <component id="bb1b5" class="javax.swing.JButton" binding="modifyMemberButton" default-binding="true">
                 <constraints>
                   <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
+                  <icon value="icons/updateMember.png"/>
                   <text value="አዘምን"/>
                 </properties>
               </component>
-              <component id="ee9a2" class="javax.swing.JButton" binding="removeButton" default-binding="true">
+              <component id="ee9a2" class="javax.swing.JButton" binding="removeMemberButton" default-binding="true">
                 <constraints>
                   <grid row="1" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
+                  <icon value="icons/deleteIcon.png"/>
                   <text value="አውጣ"/>
                 </properties>
               </component>
               <hspacer id="da6c">
                 <constraints>
-                  <grid row="1" column="4" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="1" column="1" row-span="1" col-span="8" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
               </hspacer>
             </children>
