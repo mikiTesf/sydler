@@ -22,9 +22,9 @@ class GeneratorGUI extends JFrame {
     private JCheckBox micCheckBox;
     private JCheckBox a2ndHallCheckBox;
     private JCheckBox sundayExceptionCheckBox;
-    private JButton addButton;
-    private JButton modifyButton;
-    private JButton removeButton;
+    private JButton addMemberButton;
+    private JButton modifyMemberButton;
+    private JButton removeMemberButton;
     private JTable membersTable;
     private final DefaultTableModel tableModel;
     private JTabbedPane tabbedPane;
@@ -104,17 +104,17 @@ class GeneratorGUI extends JFrame {
         generateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JFileChooser excelLocation = new JFileChooser();
-                excelLocation.setDialogTitle("Excel ፋይሉ የት ይቀመጥ?");
-                excelLocation.setCurrentDirectory(new File("/home/miki/Desktop/"));
-                excelLocation.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                excelLocation.setMultiSelectionEnabled(false);
-                excelLocation.setAcceptAllFileFilterUsed(false);
+                JFileChooser saveLocation = new JFileChooser();
+                saveLocation.setDialogTitle("Excel ፋይሉ የት ይቀመጥ?");
+                saveLocation.setCurrentDirectory(new File("/home/miki/Desktop/"));
+                saveLocation.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                saveLocation.setMultiSelectionEnabled(false);
+                saveLocation.setAcceptAllFileFilterUsed(false);
 
-                int choice = excelLocation.showDialog(frame, "Select");
+                int choice = saveLocation.showDialog(frame, "save");
                 if (choice == JFileChooser.CANCEL_OPTION)
                     return;
-                savePath = excelLocation.getSelectedFile().getPath();
+                savePath = saveLocation.getSelectedFile().getPath();
                 ExcelFileGenerator excelFileGenerator = new ExcelFileGenerator((int) howManyWeeksSpinner.getValue());
                 //noinspection ConstantConditions
                 if (excelFileGenerator.makeExcel (
@@ -133,7 +133,7 @@ class GeneratorGUI extends JFrame {
             }
         });
 
-        tableModel.addColumn("ID");
+        tableModel.addColumn("#");
         tableModel.addColumn("ስም");
         tableModel.addColumn("መድረክ");
         tableModel.addColumn("ድምጽ ማጉያ");
@@ -184,7 +184,7 @@ class GeneratorGUI extends JFrame {
         howManyWeeksSpinner.setModel(new SpinnerNumberModel(1, 1, 100, 1));
 
         //noinspection Convert2Lambda
-        addButton.addActionListener(new ActionListener() {
+        addMemberButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!validMemberInfo()) {
@@ -214,7 +214,7 @@ class GeneratorGUI extends JFrame {
         });
 
         //noinspection Convert2Lambda
-        removeButton.addActionListener(new ActionListener() {
+        removeMemberButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int selection = membersTable.getSelectedRow();
@@ -234,7 +234,7 @@ class GeneratorGUI extends JFrame {
         });
 
         //noinspection Convert2Lambda
-        modifyButton.addActionListener(new ActionListener() {
+        modifyMemberButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int selectedRow = membersTable.getSelectedRow();

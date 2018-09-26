@@ -7,7 +7,7 @@ class DBConnection {
     static {
         // C:\ScheduleGenerator\
         String dbURL = "jdbc:sqlite:src/main/resources/database/members.db";
-        try{
+        try {
             connectionSource = new JdbcConnectionSource(dbURL);
         } catch (SQLException e){
             System.out.println(e.getMessage());
