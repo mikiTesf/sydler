@@ -41,14 +41,14 @@ class Populate {
         ID_ASF_ALL    = new HashMap<>();
         ID_ASF_ROUND1 = new HashMap<>();
         for (int i = 0; i < membersCount; i++) {
-            ID_ASF_ALL.put(allMembers.get(i).getId(), (double) 1);
+            ID_ASF_ALL.put(allMembers.get(i).getId(), 1.0);
         }
         scheduleGrid = new int[2 * weeks][6];
     }
 
     // ***************************** column populating method *****************************
 
-    private void fillRole(int role, HashMap<Integer, Double> ID_ASF_PAIR) {
+    private void fillRole (int role, HashMap<Integer, Double> ID_ASF_PAIR) {
         double qualify, occupied, roleException = 1, distance, numberBefore, numberToday, asf;
         List<Member> memberList = allMembers;
 
@@ -99,21 +99,21 @@ class Populate {
         return qualify ? 1 : 0;
     }
 
-    private double isOccupied(int day, int memberID) {
+    private double isOccupied (int day, int memberID) {
         boolean occupied = false;
         for (int role = STAGE; role <= HALL2; role++) {
             occupied = occupied || (scheduleGrid[day][role] == memberID);
-            /* The schedule generator is built around the idea that a person who is assigned to
-             manage the stage that day should not play any other role as he will be busy (especially
-             on mid-week meeting days). Therefore, 'isOccupied' must return the least possible value
-             in such cases */
+            /* The schedule generator is built around what I would like to call 'The Stage Policy'.
+             The Stage Policy: is the idea that a person who is assigned to manage the stage that day
+             should not play any other role as he will be busy (especially on mid-week meeting days).
+             Therefore, 'isOccupied' must return the least possible value in such cases */
             if (role == STAGE && occupied)
                 return 0;
         }
         return occupied ? 1 : 2;
     }
 
-    private double roleException(int day, boolean exception) {
+    private double roleException (int day, boolean exception) {
         return ( day % 2 != 0 && exception ) ? 1 : 2;
     }
 
@@ -147,9 +147,9 @@ class Populate {
     }
 
     /* In the case where the number of members is too small (five and less), every member ranks the same
-       after being assigned once to a role. That opens a door to violate the stage policy. To solve that
-       a variable that represents the number of times a person has appeared in a day must be included in
-       the formula */
+       after being assigned once to a role. That opens a door to violate 'The Stage Policy' (read the
+       comment under the 'isOccupied' method). To solve that, a variable that represents the number of times
+       a person has appeared in a day must be included in the formula */
     private double numberOfTimesToday (int memberID, int day) {
         double count = 0;
         for (int role = STAGE; role <= HALL2; role++) {
@@ -159,20 +159,21 @@ class Populate {
         return count;
     }
 
-    private double asf(double qualify, double exception, double occupied, double distance, double numberOfTimesBefore, double numberOfTimesToday) {
+    private double asf (double qualify, double exception, double occupied, double distance, double numberOfTimesBefore, double numberOfTimesToday) {
         return qualify * exception * occupied * distance / ( (numberOfTimesBefore + 1) * (numberOfTimesToday + 1) );
     }
 
     // ***************************** other methods *****************************
 
-    private int keyFromValue (double value, HashMap<Integer, Double> ID_ASF_PAIR) {
+    private int keyFromValue (double maxRank, HashMap<Integer, Double> ID_ASF_PAIR) {
         Random randomKey = new Random();
-        ArrayList<Integer> keys = new ArrayList<>();
-        for (Integer key: ID_ASF_PAIR.keySet())
-            if (ID_ASF_PAIR.get(key) == value)
-                keys.add(key);
-        Collections.shuffle(keys);
-        return keys.get(randomKey.nextInt(keys.size()));
+        ArrayList<Integer> maxValuedKeys = new ArrayList<>();
+        for (Integer key: ID_ASF_PAIR.keySet()) {
+            if (ID_ASF_PAIR.get(key) == maxRank)
+                maxValuedKeys.add(key);
+        }
+        Collections.shuffle(maxValuedKeys);
+        return maxValuedKeys.get(randomKey.nextInt(maxValuedKeys.size()));
     }
 
     String[][] getNameGrid() {

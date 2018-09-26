@@ -320,7 +320,7 @@
                   <title-color color="-10128514"/>
                 </border>
                 <children>
-                  <component id="17ff4" class="javax.swing.JTable" binding="table" default-binding="true">
+                  <component id="17ff4" class="javax.swing.JTable" binding="membersTable" default-binding="true">
                     <constraints/>
                     <properties>
                       <autoCreateRowSorter value="true"/>

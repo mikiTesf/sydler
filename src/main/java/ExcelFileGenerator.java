@@ -1,7 +1,4 @@
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.*;
 
@@ -16,7 +13,8 @@ class ExcelFileGenerator {
     private final String[][] names;
     private final Map<Integer, String> AMMonths;
     private final Map<Integer, String> days;
-    // XSSFWorkbook, XSSFSheet, XSSFRow, XSSFCell
+    private XSSFWorkbook schedule;
+
     ExcelFileGenerator(int weeks) {
         Populate populate = new Populate(weeks);
         names = populate.getNameGrid();
@@ -47,7 +45,7 @@ class ExcelFileGenerator {
 
     boolean makeExcel(int year, int month, int day, String meetingDay, String savePath) {
         // The excel document
-        XSSFWorkbook schedule = new XSSFWorkbook();
+        schedule = new XSSFWorkbook();
         // The excel sheet to put data in
         XSSFSheet sheet = schedule.createSheet("schedule sheet");
         // put column names at the header of the sheet
@@ -56,47 +54,40 @@ class ExcelFileGenerator {
         XSSFFont font  = schedule.createFont();
         font.setFontHeightInPoints((short) 10);
         font.setBold(true);
-        // bold font style
-        XSSFCellStyle boldFontStyle = schedule.createCellStyle();
-        boldFontStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-        boldFontStyle.setAlignment(HorizontalAlignment.CENTER);
-        // center alignment cellStyle
-        CellStyle centerStyle = schedule.createCellStyle();
-        centerStyle.setAlignment(HorizontalAlignment.CENTER);
         // here goes the header titles
         XSSFRichTextString headerString = new XSSFRichTextString();
 
         headerString.setString("ሳምንት");
         headerString.applyFont(font);
         row.createCell(0).setCellValue(headerString);
-        row.getCell(0).setCellStyle(centerStyle);
+        row.getCell(0).setCellStyle(getCellStyle(true));
 
         headerString.setString("ቀን");
         headerString.applyFont(font);
         row.createCell(1).setCellValue(headerString);
-        row.getCell(1).setCellStyle(centerStyle);
+        row.getCell(1).setCellStyle(getCellStyle(true));
 
         headerString.setString("መድረክ");
         headerString.applyFont(font);
         row.createCell(2).setCellValue(headerString);
-        row.getCell(2).setCellStyle(centerStyle);
+        row.getCell(2).setCellStyle(getCellStyle(true));
 
         headerString.setString("በመጀመሪያው ዙር");
         headerString.applyFont(font);
         row.createCell(3).setCellValue(headerString);
         sheet.addMergedRegion(new CellRangeAddress(0, 0, 3, 4));
-        row.getCell(3).setCellStyle(centerStyle);
+        row.getCell(3).setCellStyle(getCellStyle(true));
 
         headerString.setString("በሁለተኛው ዙር");
         headerString.applyFont(font);
         row.createCell(5).setCellValue(headerString);
         sheet.addMergedRegion(new CellRangeAddress(0, 0, 5, 6));
-        row.getCell(5).setCellStyle(centerStyle);
+        row.getCell(5).setCellStyle(getCellStyle(true));
 
         headerString.setString("በሁለተኛው አዳራሽ");
         headerString.applyFont(font);
         row.createCell(7).setCellValue(headerString);
-        row.getCell(7).setCellStyle(centerStyle);
+        row.getCell(7).setCellStyle(getCellStyle(true));
 
         // here the starting date will be initialized
         LocalDateTime midWeek = LocalDateTime.of(year, month, day, 0, 0);
@@ -122,7 +113,7 @@ class ExcelFileGenerator {
                 headerString.applyFont(font);
                 row1.getCell(0).setCellValue(headerString);
                 sheet.addMergedRegion(new CellRangeAddress(row1.getRowNum(), row1.getRowNum() + 1, 0, 0));
-                row1.getCell(0).setCellStyle(boldFontStyle);
+                row1.getCell(0).setCellStyle(getCellStyle(true));
                 // change date for next week
                 midWeek = midWeek.plusDays(7);
             }
@@ -131,10 +122,15 @@ class ExcelFileGenerator {
                 row1.createCell(1).setCellValue(" " + meetingDay);
             else
                 row1.createCell(1).setCellValue(" " + days.get(7));
+            row1.getCell(1).setCellStyle(getCellStyle(true));
             // put the names of members in the next loop
-            for (int j = 2, k = 0; j < 8; j++, k++)
-                if (!(names[day1][k] == null))
-                    row1.createCell(j).setCellValue(" " + names[day1][k]);
+            for (int j = 2, k = 0; j < 8; j++, k++) {
+                row1.createCell(j);
+                if (!(names[day1][k] == null)) {
+                    row1.getCell(j).setCellValue(names[day1][k]);
+                }
+                row1.getCell(j).setCellStyle(getCellStyle(false));
+            }
         }
         System.out.println("excel sheet populated...");
         // auto-size columns to fit the text inside the cells
@@ -154,5 +150,19 @@ class ExcelFileGenerator {
             return false;
         }
         return true;
+    }
+
+    private CellStyle getCellStyle(boolean centerAligned) {
+        CellStyle cellStyle = schedule.createCellStyle();
+
+        cellStyle.setAlignment(centerAligned ? HorizontalAlignment.CENTER : HorizontalAlignment.LEFT);
+        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+
+        cellStyle.setBorderTop(BorderStyle.THIN);
+        cellStyle.setBorderBottom(BorderStyle.THIN);
+        cellStyle.setBorderLeft(BorderStyle.THIN);
+        cellStyle.setBorderRight(BorderStyle.THIN);
+
+        return cellStyle;
     }
 }
