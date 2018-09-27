@@ -105,7 +105,7 @@ class GeneratorGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser saveLocation = new JFileChooser();
-                saveLocation.setDialogTitle("Excel ፋይሉ የት ይቀመጥ?");
+                saveLocation.setDialogTitle("Excel ሰነዱ የት ይቀመጥ?");
                 saveLocation.setCurrentDirectory(new File("/home/miki/Desktop/"));
                 saveLocation.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                 saveLocation.setMultiSelectionEnabled(false);

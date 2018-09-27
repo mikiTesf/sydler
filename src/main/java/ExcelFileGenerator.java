@@ -1,6 +1,9 @@
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -52,8 +55,8 @@ class ExcelFileGenerator {
         sheet.getPrintSetup().setPaperSize(PrintSetup.A4_PAPERSIZE);
         XSSFRichTextString formattedText = new XSSFRichTextString();
         XSSFFont font  = schedule.createFont();
-        font.setFontHeightInPoints((short) 24);
         font.setBold(true);
+        font.setFontHeightInPoints((short) 24);
         // title at the top of sheet
         Row programTitleRow = sheet.createRow(0);
         formattedText.setString("የአዲስ ሰፈር ጉባኤ የድምጽ ክፍል ፕሮግራም");
@@ -129,14 +132,14 @@ class ExcelFileGenerator {
             if (day1 % 2 == 0) // even = mid-week meeting
                 row.createCell(row.getLastCellNum()).setCellValue(" " + meetingDay);
             else
-                row.createCell(1).setCellValue(" " + days.get(7));
-            row.getCell(row.getLastCellNum() - 1).setCellStyle(getCellStyle(true, true));
+                row.createCell(row.getLastCellNum()).setCellValue(" " + days.get(7));
+            row.getCell(row.getLastCellNum() - 1).setCellStyle(getCellStyle(false, true));
             // put the names of members in the next loop
             for (int j = 2, k = 0; j < 8; j++, k++) {
                 row.createCell(j);
                 row.getCell(j).setCellStyle(getCellStyle(false, true));
                 if (!(names[day1][k] == null)) {
-                    row.getCell(j).setCellValue(names[day1][k]);
+                    row.getCell(j).setCellValue(" " + names[day1][k]);
                 }
             }
         }

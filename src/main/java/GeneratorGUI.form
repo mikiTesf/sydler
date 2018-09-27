@@ -18,7 +18,7 @@
           <enabled value="true"/>
           <font name="Maven Pro" size="12"/>
         </properties>
-        <border type="line" title="Schedule Details" title-justification="1" title-position="2">
+        <border type="line" title="የፕሮግራሙ ዝርዝሮች" title-justification="1" title-position="2">
           <font name="Maven Pro" size="12"/>
           <title-color color="-10128514"/>
           <color color="-10128514"/>
@@ -202,7 +202,7 @@
             <properties>
               <font name="Maven Pro" size="12"/>
             </properties>
-            <border type="line" title="Add" title-justification="1" title-position="2">
+            <border type="line" title="ጨምር" title-justification="1" title-position="2">
               <font name="Maven Pro" size="12"/>
               <title-color color="-10128514"/>
               <color color="-10128514"/>
@@ -302,7 +302,7 @@
             <properties>
               <font name="Maven Pro" size="12"/>
             </properties>
-            <border type="line" title="Modify or Remove" title-justification="1" title-position="2">
+            <border type="line" title="አዘምን ወይም ሰርዝ" title-justification="1" title-position="2">
               <font name="Maven Pro" size="12"/>
               <title-color color="-10128514"/>
               <color color="-10128514"/>
