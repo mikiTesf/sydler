@@ -16,6 +16,8 @@ class Member {
     private String firstName;
     @DatabaseField (canBeNull = false)
     private String lastName;
+    @DatabaseField (canBeNull = false)
+    private boolean hasDuplicateFirstName;
     @DatabaseField
     private boolean canBeStage;
     @DatabaseField
@@ -63,6 +65,14 @@ class Member {
 
     void setId(int id) {
         this.id = id;
+    }
+
+    public boolean hasDuplicateFirstName() {
+        return hasDuplicateFirstName;
+    }
+
+    public void setHasDuplicateFirstName(boolean hasDuplicateFirstName) {
+        this.hasDuplicateFirstName = hasDuplicateFirstName;
     }
 
     boolean canBeStage() {

@@ -11,9 +11,9 @@ import java.util.Map;
 
 class ExcelFileGenerator {
     private final String[][] names;
-    private final Map<Integer, String> AMMonths;
-    private final Map<String, String> ENMonths;
-    private final Map<Integer, String> days;
+    private final HashMap<Integer, String> AMMonths;
+    private final HashMap ENMonths;
+    private final HashMap<Integer, String> days;
     // common column indexes
     private final int WEEK_SPAN          = 0;
     private final int MEETING_DAY_NAME   = 1;
@@ -168,9 +168,6 @@ class ExcelFileGenerator {
                 row.createCell(j);
                 row.getCell(j).setCellStyle(getCellStyle(false, true, false));
                 if (!(names[day1][k] == null)) {
-                    // TODO: Here, you must check if the first name of the guy
-                    // (at names[day1][k]) is a duplicate. Because if it is then
-                    // the last name paired with it must be included in the cell
                     row.getCell(j).setCellValue(" " + names[day1][k]);
                 }
             }

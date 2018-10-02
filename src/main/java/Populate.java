@@ -189,9 +189,10 @@ class Populate {
                      which are 0, must be skipped */
                     if (scheduleGrid[day][role] == 0)
                         continue;
-                    nameGrid[day][role] = Member.getDao()
-                            .queryForId(scheduleGrid[day][role])
-                            .getFirstName();
+                    Member member = Member.getDao().queryForId(scheduleGrid[day][role]);
+                    nameGrid[day][role] = (member.hasDuplicateFirstName() ?
+                            member.getFirstName() + "\n" + member.getLastName() : member.getFirstName()
+                    );
                 } catch (SQLException e) {
                     System.out.println(e.getMessage());
                 }

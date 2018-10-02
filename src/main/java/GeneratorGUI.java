@@ -3,10 +3,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -25,7 +25,7 @@ class GeneratorGUI extends JFrame {
     private JCheckBox a2ndHallCheckBox;
     private JCheckBox sundayExceptionCheckBox;
     private JButton addMemberButton;
-    private JButton modifyMemberButton;
+    private JButton updateMemberButton;
     private JButton removeMemberButton;
     private JTable membersTable;
     private final DefaultTableModel tableModel;
@@ -119,7 +119,7 @@ class GeneratorGUI extends JFrame {
                 savePath = saveLocation.getSelectedFile().getPath();
                 LocalDateTime date = LocalDateTime.of(
                         (int) yearSpinner.getValue(),
-                        AMMonths.get(monthComboBox.getSelectedItem().toString()),
+                        AMMonths.get(Objects.requireNonNull(monthComboBox.getSelectedItem()).toString()),
                         (int) daySpinner.getValue(), 0, 0
                 );
                 ExcelFileGenerator excelFileGenerator = new ExcelFileGenerator((int) howManyWeeksSpinner.getValue());
@@ -195,6 +195,15 @@ class GeneratorGUI extends JFrame {
                 Object[] memberProperties = new Object[6];
                 member.setFirstName(FirstNameTextField.getText());
                 member.setLastName(lastNameTextField.getText());
+                try {
+                    member.setHasDuplicateFirstName(
+                            Member.getDao().queryBuilder()
+                                    .where().eq("firstName", member.getFirstName())
+                                    .query().size() > 1
+                    );
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
                 member.setCanBeStage(stageCheckBox.isSelected());
                 member.setCanRotateMic(micCheckBox.isSelected());
                 member.setCanAssist2ndHall(a2ndHallCheckBox.isSelected());
@@ -234,7 +243,7 @@ class GeneratorGUI extends JFrame {
         });
 
         //noinspection Convert2Lambda
-        modifyMemberButton.addActionListener(new ActionListener() {
+        updateMemberButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int selectedRow = membersTable.getSelectedRow();
@@ -250,6 +259,11 @@ class GeneratorGUI extends JFrame {
                 member.setCanAssist2ndHall((boolean) membersTable.getValueAt(selectedRow, 4));
                 member.setSundayException((boolean) membersTable.getValueAt(selectedRow, 5));
                 try {
+                    member.setHasDuplicateFirstName(
+                            Member.getDao().queryBuilder()
+                                    .where().eq("firstName", member.getFirstName())
+                                    .query().size() > 1
+                    );
                     Member.getDao().update(member);
                 } catch (SQLException e1) {
                     System.out.println(e1.getMessage());
