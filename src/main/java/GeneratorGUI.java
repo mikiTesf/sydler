@@ -3,6 +3,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 
@@ -115,16 +117,14 @@ class GeneratorGUI extends JFrame {
                 if (choice == JFileChooser.CANCEL_OPTION)
                     return;
                 savePath = saveLocation.getSelectedFile().getPath();
+                LocalDateTime date = LocalDateTime.of(
+                        (int) yearSpinner.getValue(),
+                        AMMonths.get(monthComboBox.getSelectedItem().toString()),
+                        (int) daySpinner.getValue(), 0, 0
+                );
                 ExcelFileGenerator excelFileGenerator = new ExcelFileGenerator((int) howManyWeeksSpinner.getValue());
                 //noinspection ConstantConditions
-                if (excelFileGenerator.makeExcel (
-                                (int) yearSpinner.getValue(),
-                                AMMonths.get(monthComboBox.getSelectedItem().toString()),
-                                (int) daySpinner.getValue(),
-                                meetingDayMidweekComboBox.getSelectedItem().toString(),
-                                savePath
-                        )
-                ) {
+                if (excelFileGenerator.makeExcel (date , meetingDayMidweekComboBox.getSelectedItem().toString(), savePath)) {
                     JOptionPane.showMessageDialog(frame, "ፕሮግራሙ ተፈጥሯል", "ተሳክቷል", JOptionPane.INFORMATION_MESSAGE);
                     return;
                 }

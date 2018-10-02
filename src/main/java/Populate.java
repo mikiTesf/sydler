@@ -1,21 +1,16 @@
 import java.sql.SQLException;
-import java.util.Random;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Collections;
-import java.util.ArrayList;
+import java.util.*;
 
 class Populate {
     private final int[][] scheduleGrid;
     private final HashMap<Integer, Double> ID_ASF_ALL;
     private final HashMap<Integer, Double> ID_ASF_ROUND1;
-    private List<Member> allMembers;
-    private List<Member> firstRoundMembers;
-
-    private final int STAGE       = 0;
+    private final int STAGE = 0;
     private final int ROUND1_ROW1 = 1;
     private final int ROUND1_ROW2 = 2;
-    private final int HALL2       = 5;
+    private final int HALL2 = 5;
+    private List<Member> allMembers;
+    private List<Member> firstRoundMembers;
 
     Populate(int weeks) {
         int membersCount = 0;
@@ -38,7 +33,7 @@ class Populate {
         /* ID_ASF_ALL = new HashMap<>(memberCount) is not initializing ID_ASF_ALL with 'membersCount'.
          It's size remains 0 (I still don't know why). To avoid that problem I've set the stop condition for
          the for "loop" to be the count of members */
-        ID_ASF_ALL    = new HashMap<>();
+        ID_ASF_ALL = new HashMap<>();
         ID_ASF_ROUND1 = new HashMap<>();
         for (int i = 0; i < membersCount; i++) {
             ID_ASF_ALL.put(allMembers.get(i).getId(), 1.0);
@@ -48,8 +43,8 @@ class Populate {
 
     // ***************************** column populating method *****************************
 
-    private void fillRole (int role, HashMap<Integer, Double> ID_ASF_PAIR) {
-        double qualify, occupied, roleException = 1, distance, numberBefore, numberToday, asf;
+    private void fillRole(int role, HashMap<Integer, Double> ID_ASF_PAIR) {
+        double qualify, occupied, sundayException = 1, distance, numberBefore, numberToday, asf;
         List<Member> memberList = allMembers;
 
         for (int day = 0; day < scheduleGrid.length; day++) {
@@ -72,8 +67,8 @@ class Populate {
             for (Member member : memberList) {
                 switch (role) {
                     case STAGE:
-                        qualify       = qualify(member.canBeStage());
-                        roleException = roleException(day, member.hasSundayException());
+                        qualify         = qualify(member.canBeStage());
+                        sundayException = sundayException(day, member.hasSundayException());
                         break;
                     case HALL2:
                         qualify = qualify(member.canBeSecondHall());
@@ -86,7 +81,7 @@ class Populate {
                 distance     = distance(member.getId(), day, role);
                 numberBefore = numberOfTimesBefore(member.getId(), day, role);
                 numberToday  = numberOfTimesToday(member.getId(), day);
-                asf          = asf(qualify, roleException, occupied, distance, numberBefore, numberToday);
+                asf = asf(qualify, sundayException, occupied, distance, numberBefore, numberToday);
                 ID_ASF_PAIR.replace(member.getId(), asf);
             }
             scheduleGrid[day][role] = keyFromValue(Collections.max(ID_ASF_PAIR.values()), ID_ASF_PAIR);
@@ -95,11 +90,11 @@ class Populate {
 
     // ***************************** variable calculating methods *****************************
 
-    private double qualify (boolean qualify) {
+    private double qualify(boolean qualify) {
         return qualify ? 1 : 0;
     }
 
-    private double isOccupied (int day, int memberID) {
+    private double isOccupied(int day, int memberID) {
         boolean occupied = false;
         for (int role = STAGE; role <= HALL2; role++) {
             occupied = occupied || (scheduleGrid[day][role] == memberID);
@@ -113,28 +108,28 @@ class Populate {
         return occupied ? 1 : 2;
     }
 
-    private double roleException (int day, boolean exception) {
-        return ( day % 2 != 0 && exception ) ? 1 : 2;
+    private double sundayException(int day, boolean exception) {
+        return (day % 2 != 0 && exception) ? 1 : 2;
     }
 
-    private double distance (int memberID, int day, int role) {
+    private double distance(int memberID, int day, int role) {
         double distance = 0;
         // the maximum attainable distance is outside of the array
         if (day == 0) return scheduleGrid.length;
         else
             do {
-            ++distance;
-            if (scheduleGrid[day - 1][role] == memberID)
-                break;
-            day -= 1;
-        } while (day > 0);
+                ++distance;
+                if (scheduleGrid[day - 1][role] == memberID)
+                    break;
+                day -= 1;
+            } while (day > 0);
         /* if day equals -1 it means that a member with id 'memberID' has not been found
            till the beginning of the array. Hence, day will go past the first day being -1. */
         if (day == -1) return scheduleGrid.length;
         return distance;
     }
 
-    private double numberOfTimesBefore (int memberId, int day, int role) {
+    private double numberOfTimesBefore(int memberId, int day, int role) {
         double count = 0;
         int skip = 1;
         if (role == HALL2)
@@ -150,7 +145,7 @@ class Populate {
        after being assigned once to a role. That opens a door to violate 'The Stage Policy' (read the
        comment under the 'isOccupied' method). To solve that, a variable that represents the number of times
        a person has appeared in a day must be included in the formula */
-    private double numberOfTimesToday (int memberID, int day) {
+    private double numberOfTimesToday(int memberID, int day) {
         double count = 0;
         for (int role = STAGE; role <= HALL2; role++) {
             if (scheduleGrid[day][role] == memberID)
@@ -159,16 +154,16 @@ class Populate {
         return count;
     }
 
-    private double asf (double qualify, double exception, double occupied, double distance, double numberOfTimesBefore, double numberOfTimesToday) {
-        return qualify * exception * occupied * distance / ( (numberOfTimesBefore + 1) * (numberOfTimesToday + 1) );
+    private double asf(double qualify, double exception, double occupied, double distance, double numberOfTimesBefore, double numberOfTimesToday) {
+        return qualify * exception * occupied * distance / ((numberOfTimesBefore + 1) * (numberOfTimesToday + 1));
     }
 
     // ***************************** other methods *****************************
 
-    private int keyFromValue (double maxRank, HashMap<Integer, Double> ID_ASF_PAIR) {
+    private int keyFromValue(double maxRank, HashMap<Integer, Double> ID_ASF_PAIR) {
         Random randomKey = new Random();
         ArrayList<Integer> maxValuedKeys = new ArrayList<>();
-        for (Integer key: ID_ASF_PAIR.keySet()) {
+        for (Integer key : ID_ASF_PAIR.keySet()) {
             if (ID_ASF_PAIR.get(key) == maxRank)
                 maxValuedKeys.add(key);
         }

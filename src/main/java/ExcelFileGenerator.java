@@ -1,9 +1,6 @@
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.XSSFFont;
-import org.apache.poi.xssf.usermodel.XSSFRichTextString;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -15,8 +12,8 @@ import java.util.Map;
 class ExcelFileGenerator {
     private final String[][] names;
     private final Map<Integer, String> AMMonths;
+    private final Map<String, String> ENMonths;
     private final Map<Integer, String> days;
-    private XSSFWorkbook schedule;
     // common column indexes
     private final int WEEK_SPAN          = 0;
     private final int MEETING_DAY_NAME   = 1;
@@ -26,10 +23,10 @@ class ExcelFileGenerator {
     private final int SECOND_ROUND_RIGHT = 5;
     private final int SECOND_ROUND_LEFT  = 6;
     private final int SECOND_HALL        = 7;
+    private XSSFWorkbook schedule;
 
     ExcelFileGenerator(int weeks) {
-        Populate populate = new Populate(weeks);
-        names = populate.getNameGrid();
+        names = new Populate(weeks).getNameGrid();
         // month to name map to translate a month's value (int) into an Amharic String
         AMMonths = new HashMap<>(12);
         AMMonths.put(1, "ጥር");
@@ -45,6 +42,20 @@ class ExcelFileGenerator {
         AMMonths.put(11, "ህዳ");
         AMMonths.put(12, "ታህ");
 
+        ENMonths = new HashMap(12);
+        ENMonths.put("SEPTEMBER", "መስከረም");
+        ENMonths.put("OCTOBER", "ጥቅምት");
+        ENMonths.put("NOVEMBER", "ህዳር");
+        ENMonths.put("DECEMBER", "ታህሳሥ");
+        ENMonths.put("JANUARY", "ጥር");
+        ENMonths.put("FEBRUARY", "የካቲት");
+        ENMonths.put("MARCH", "መጋቢት");
+        ENMonths.put("APRIL", "ሚያዝያ");
+        ENMonths.put("MAY", "ግንቦት");
+        ENMonths.put("JUNE", "ሰኔ");
+        ENMonths.put("JULY", "ሐምሌ");
+        ENMonths.put("AUGUST", "ነሐሴ");
+
         days = new HashMap<>(7);
         days.put(1, "ሰኞ");
         days.put(2, "ማክሰኞ");
@@ -55,7 +66,8 @@ class ExcelFileGenerator {
         days.put(7, "እሁድ");
     }
 
-    boolean makeExcel(int year, int month, int day, String meetingDay, String savePath) {
+    boolean makeExcel(LocalDateTime date, String meetingDay, String savePath) {
+        String filePath = savePath + "/" + date.getDayOfMonth() + "_" + date.getMonth() + "_" + date.getYear() + ".xlsx";
         // The excel document
         schedule = new XSSFWorkbook();
         // The excel sheet to put data in
@@ -63,17 +75,24 @@ class ExcelFileGenerator {
         // setup sheet (page) properties
         sheet.getPrintSetup().setPaperSize(PrintSetup.A4_PAPERSIZE);
         XSSFRichTextString formattedText = new XSSFRichTextString();
-        XSSFFont font  = schedule.createFont();
+        XSSFFont font = schedule.createFont();
         font.setBold(true);
         font.setFontHeightInPoints((short) 24);
         // title at the top of sheet
         Row programTitleRow = sheet.createRow(0);
-        formattedText.setString("የአዲስ ሰፈር ጉባኤ የድምጽ ክፍል ፕሮግራም");
-        // TODO: put the span of the program in square braces like this -> "[startDate to endDate]"
+        formattedText.setString(
+                "የአዲስ ሰፈር ጉባኤ የድምጽ ክፍል ፕሮግራም\n"
+                + "("  + ENMonths.get(date.getMonth().toString()) + " " + date.getDayOfMonth()
+                + ", " + date.getYear() + " → " + ENMonths.get(date.plusWeeks(names.length / 2 - 1).plusDays(6).getMonth().toString())
+                + " "  + date.plusWeeks(names.length / 2 - 1).plusDays(6).getDayOfMonth()
+                + ", " + date.plusWeeks(names.length / 2 - 1).plusDays(6).getYear() + ") "
+        );
         formattedText.applyFont(font);
+        font.setFontHeightInPoints((short) 14);
+        formattedText.applyFont(formattedText.getString().indexOf('('), formattedText.getString().length() - 1, font);
         programTitleRow.createCell(0).setCellValue(formattedText);
-        programTitleRow.getCell(0).setCellStyle(getCellStyle(true, false));
-        sheet.addMergedRegion(new CellRangeAddress(programTitleRow.getRowNum(), programTitleRow.getRowNum(), 0, 7));
+        programTitleRow.getCell(0).setCellStyle(getCellStyle(true, false, false));
+        sheet.addMergedRegion(new CellRangeAddress(programTitleRow.getRowNum(), programTitleRow.getRowNum(), WEEK_SPAN, SECOND_HALL));
         // the titles in each column get initialized next
         Row headerRow = sheet.createRow(sheet.getLastRowNum() + 1);
         // put column names at the header of the sheet
@@ -81,37 +100,37 @@ class ExcelFileGenerator {
         formattedText.setString("ሳምንት");
         formattedText.applyFont(font);
         headerRow.createCell(WEEK_SPAN).setCellValue(formattedText);
-        headerRow.getCell(WEEK_SPAN).setCellStyle(getCellStyle(true, true));
+        headerRow.getCell(WEEK_SPAN).setCellStyle(getCellStyle(true, true, true));
 
         formattedText.setString("ቀን");
         formattedText.applyFont(font);
         headerRow.createCell(MEETING_DAY_NAME).setCellValue(formattedText);
-        headerRow.getCell(MEETING_DAY_NAME).setCellStyle(getCellStyle(true, true));
+        headerRow.getCell(MEETING_DAY_NAME).setCellStyle(getCellStyle(true, true, true));
 
         formattedText.setString("መድረክ");
         formattedText.applyFont(font);
         headerRow.createCell(STAGE).setCellValue(formattedText);
-        headerRow.getCell(STAGE).setCellStyle(getCellStyle(true, true));
+        headerRow.getCell(STAGE).setCellStyle(getCellStyle(true, true, true));
 
         formattedText.setString("በመጀመሪያው ዙር");
         formattedText.applyFont(font);
         headerRow.createCell(FIRST_ROUND_RIGHT).setCellValue(formattedText);
         sheet.addMergedRegion(new CellRangeAddress(headerRow.getRowNum(), headerRow.getRowNum(), 3, 4));
-        headerRow.getCell(FIRST_ROUND_RIGHT).setCellStyle(getCellStyle(true, true));
+        headerRow.getCell(FIRST_ROUND_RIGHT).setCellStyle(getCellStyle(true, true, true));
 
         formattedText.setString("በሁለተኛው ዙር");
         formattedText.applyFont(font);
         headerRow.createCell(SECOND_ROUND_RIGHT).setCellValue(formattedText);
         sheet.addMergedRegion(new CellRangeAddress(headerRow.getRowNum(), headerRow.getRowNum(), 5, 6));
-        headerRow.getCell(SECOND_ROUND_RIGHT).setCellStyle(getCellStyle(true, true));
+        headerRow.getCell(SECOND_ROUND_RIGHT).setCellStyle(getCellStyle(true, true, true));
 
         formattedText.setString("በሁለተኛው አዳራሽ");
         formattedText.applyFont(font);
         headerRow.createCell(SECOND_HALL).setCellValue(formattedText);
-        headerRow.getCell(SECOND_HALL).setCellStyle(getCellStyle(true, true));
+        headerRow.getCell(SECOND_HALL).setCellStyle(getCellStyle(true, true, true));
 
         // here the starting date will be initialized
-        LocalDateTime midWeek = LocalDateTime.of(year, month, day, 0, 0);
+//        LocalDateTime date = LocalDateTime.of(year, month, day, 0, 0);
         String weekMonth, monthOnSunday;
         /* the following is the main for loop that fills the schedule by populating it with
          the week spans, member names and date information*/
@@ -120,34 +139,34 @@ class ExcelFileGenerator {
             /* The Monday and Sunday of a week may reside in different months.
              To include the name of the next month in the cell, the month after
              6 days must be calculated and compared with the month on Monday */
-            weekMonth     = AMMonths.get(midWeek.getMonthValue());
-            monthOnSunday = AMMonths.get(midWeek.plusDays(6).getMonthValue());
+            weekMonth     = AMMonths.get(date.getMonthValue());
+            monthOnSunday = AMMonths.get(date.plusDays(6).getMonthValue());
             /* Here, the months are compared and the appropriate week-span is put.
              The if block is important because week-spans are calculated once for
              every week. No need to calculate again on the sunday of the same week*/
             row.createCell(WEEK_SPAN);
             if (day1 % 2 == 0) {
                 if (weekMonth.equals(monthOnSunday))
-                    formattedText.setString(weekMonth + " " + midWeek.getDayOfMonth() + " - " + midWeek.plusDays(6).getDayOfMonth());
+                    formattedText.setString(weekMonth + " " + date.getDayOfMonth() + " - " + date.plusDays(6).getDayOfMonth());
                 else
-                    formattedText.setString(weekMonth + " " + midWeek.getDayOfMonth() + " - " + monthOnSunday + " " + midWeek.plusDays(6).getDayOfMonth());
+                    formattedText.setString(weekMonth + " " + date.getDayOfMonth() + " - " + monthOnSunday + " " + date.plusDays(6).getDayOfMonth());
                 formattedText.applyFont(font);
                 row.getCell(row.getLastCellNum() - 1).setCellValue(formattedText);
                 sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum() + 1, 0, 0));
                 // change date for next week
-                midWeek = midWeek.plusDays(7);
+                date = date.plusDays(7);
             }
-            row.getCell(row.getLastCellNum() - 1).setCellStyle(getCellStyle(true, true));
+            row.getCell(row.getLastCellNum() - 1).setCellStyle(getCellStyle(true, true, false));
             // put the name of the day in the next cell
             if (day1 % 2 == 0) // even = mid-week meeting
                 row.createCell(row.getLastCellNum()).setCellValue(" " + meetingDay);
             else
                 row.createCell(row.getLastCellNum()).setCellValue(" " + days.get(7));
-            row.getCell(row.getLastCellNum() - 1).setCellStyle(getCellStyle(false, true));
+            row.getCell(row.getLastCellNum() - 1).setCellStyle(getCellStyle(false, true, false));
             // put the names of members in the next loop
             for (int j = STAGE, k = 0; j <= SECOND_HALL; j++, k++) {
                 row.createCell(j);
-                row.getCell(j).setCellStyle(getCellStyle(false, true));
+                row.getCell(j).setCellStyle(getCellStyle(false, true, false));
                 if (!(names[day1][k] == null)) {
                     // TODO: Here, you must check if the first name of the guy
                     // (at names[day1][k]) is a duplicate. Because if it is then
@@ -158,15 +177,18 @@ class ExcelFileGenerator {
         }
         System.out.println("excel sheet populated...");
         // auto-size columns to fit the text inside the cells
-        sheet.autoSizeColumn(WEEK_SPAN);         sheet.autoSizeColumn(MEETING_DAY_NAME);
-        sheet.autoSizeColumn(STAGE);             sheet.autoSizeColumn(FIRST_ROUND_RIGHT);
-        sheet.autoSizeColumn(FIRST_ROUND_LEFT);  sheet.autoSizeColumn(SECOND_ROUND_RIGHT);
-        sheet.autoSizeColumn(SECOND_ROUND_LEFT); sheet.autoSizeColumn(SECOND_HALL);
-        
+        sheet.autoSizeColumn(WEEK_SPAN);
+        sheet.autoSizeColumn(MEETING_DAY_NAME);
+        sheet.autoSizeColumn(STAGE);
+        sheet.autoSizeColumn(FIRST_ROUND_RIGHT);
+        sheet.autoSizeColumn(FIRST_ROUND_LEFT);
+        sheet.autoSizeColumn(SECOND_ROUND_RIGHT);
+        sheet.autoSizeColumn(SECOND_ROUND_LEFT);
+        sheet.autoSizeColumn(SECOND_HALL);
+
         sheet.setFitToPage(true);
 
         try {
-            String filePath = savePath + "/" + day + "_" + month + "_" + year + ".xlsx";
             FileOutputStream out = new FileOutputStream(new File(filePath));
             schedule.write(out);
             System.out.println("excel file saved under " + filePath + "...");
@@ -178,8 +200,8 @@ class ExcelFileGenerator {
         return true;
     }
 
-    private CellStyle getCellStyle(boolean centerAligned, boolean fullyBordered) {
-        CellStyle cellStyle = schedule.createCellStyle();
+    private CellStyle getCellStyle(boolean centerAligned, boolean fullyBordered, boolean filledBackground) {
+        XSSFCellStyle cellStyle = schedule.createCellStyle();
 
         cellStyle.setWrapText(true);
         cellStyle.setAlignment(centerAligned ? HorizontalAlignment.CENTER : HorizontalAlignment.LEFT);
@@ -190,6 +212,12 @@ class ExcelFileGenerator {
             cellStyle.setBorderBottom(BorderStyle.THIN);
             cellStyle.setBorderLeft(BorderStyle.THIN);
             cellStyle.setBorderRight(BorderStyle.THIN);
+        }
+
+        if (filledBackground) {
+            cellStyle.setFillBackgroundColor(new XSSFColor(new java.awt.Color(200, 200, 200)));
+            cellStyle.setFillForegroundColor(new XSSFColor(new java.awt.Color(200, 200, 200)));
+            cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         }
 
         return cellStyle;
