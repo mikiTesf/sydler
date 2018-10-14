@@ -196,11 +196,13 @@ class GeneratorGUI extends JFrame {
                 member.setFirstName(FirstNameTextField.getText());
                 member.setLastName(lastNameTextField.getText());
                 try {
-                    member.setHasDuplicateFirstName(
-                            Member.getDao().queryBuilder()
-                                    .where().eq("firstName", member.getFirstName())
-                                    .query().size() > 1
-                    );
+                    List<Member> duplicateNamedMembers = Member.getDao().queryBuilder().where()
+                            .eq("firstName", member.getFirstName()).query();
+                    member.setHasDuplicateFirstName(duplicateNamedMembers.size() > 0);
+                    for (Member duplicateNamedMember : duplicateNamedMembers) {
+                        duplicateNamedMember.setHasDuplicateFirstName(true);
+                        Member.getDao().update(duplicateNamedMember);
+                    }
                 } catch (SQLException e1) {
                     e1.printStackTrace();
                 }
@@ -237,7 +239,23 @@ class GeneratorGUI extends JFrame {
                 int indexOfSpace    = selectedName.indexOf(" ");
                 if (Member.remove((int) membersTable.getValueAt(selectedRow, 0))) {
                     tableModel.removeRow(selectedRow);
-                    JOptionPane.showMessageDialog(frame, selectedName.substring(0, indexOfSpace) + " ወጥቷል...", "", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(
+                            frame,
+                            selectedName.substring(0, indexOfSpace) + " ወጥቷል...",
+                            "", JOptionPane.INFORMATION_MESSAGE
+                    );
+                }
+                /* once a member is removed from the database any other member with first name similar to
+                   the member who just got removed must have his 'hasDuplicateFirstName' attribute updated */
+                try {
+                    List<Member> members = Member.getDao()
+                            .queryBuilder().where().eq("firstName", selectedName.substring(0, indexOfSpace)).query();
+                    for (Member member : members) {
+                        member.setHasDuplicateFirstName(false);
+                        Member.getDao().update(member);
+                    }
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
                 }
             }
         });
@@ -259,12 +277,15 @@ class GeneratorGUI extends JFrame {
                 member.setCanAssist2ndHall((boolean) membersTable.getValueAt(selectedRow, 4));
                 member.setSundayException((boolean) membersTable.getValueAt(selectedRow, 5));
                 try {
-                    member.setHasDuplicateFirstName(
-                            Member.getDao().queryBuilder()
-                                    .where().eq("firstName", member.getFirstName())
-                                    .query().size() > 1
-                    );
+                    List<Member> members = Member.getDao().queryBuilder().where()
+                            .eq("firstName", member.getFirstName()).query();
+                    member.setHasDuplicateFirstName(members.size() > 0);
                     Member.getDao().update(member);
+
+                    for (Member _member : members) {
+                        _member.setHasDuplicateFirstName(true);
+                        Member.getDao().update(_member);
+                    }
                 } catch (SQLException e1) {
                     System.out.println(e1.getMessage());
                 }

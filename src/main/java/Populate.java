@@ -1,5 +1,9 @@
 import java.sql.SQLException;
-import java.util.*;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Collections;
+import java.util.Random;
 
 class Populate {
     private final int[][] scheduleGrid;
