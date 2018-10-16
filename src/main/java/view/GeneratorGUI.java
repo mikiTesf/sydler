@@ -1,3 +1,8 @@
+package view;
+
+import domain.Member;
+import controller.ExcelFileGenerator;
+
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -87,8 +92,7 @@ class GeneratorGUI extends JFrame {
         aboutItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                aboutForm.getFrame().setLocation(frame.getLocationOnScreen().x + frame.getWidth() / 4,
-                                                 frame.getLocationOnScreen().y / 2 + frame.getHeight() / 2);
+                aboutForm.getFrame().setLocationRelativeTo(frame);
                 aboutForm.getFrame().setVisible(true);
             }
         });
@@ -195,17 +199,6 @@ class GeneratorGUI extends JFrame {
                 Object[] memberProperties = new Object[6];
                 member.setFirstName(FirstNameTextField.getText());
                 member.setLastName(lastNameTextField.getText());
-                try {
-                    List<Member> duplicateNamedMembers = Member.getDao().queryBuilder().where()
-                            .eq("firstName", member.getFirstName()).query();
-                    member.setHasDuplicateFirstName(duplicateNamedMembers.size() > 0);
-                    for (Member duplicateNamedMember : duplicateNamedMembers) {
-                        duplicateNamedMember.setHasDuplicateFirstName(true);
-                        Member.getDao().update(duplicateNamedMember);
-                    }
-                } catch (SQLException e1) {
-                    e1.printStackTrace();
-                }
                 member.setCanBeStage(stageCheckBox.isSelected());
                 member.setCanRotateMic(micCheckBox.isSelected());
                 member.setCanAssist2ndHall(a2ndHallCheckBox.isSelected());
@@ -221,39 +214,9 @@ class GeneratorGUI extends JFrame {
                 memberProperties[4] = member.canBeSecondHall();
                 memberProperties[5] = member.hasSundayException();
                 tableModel.addRow(memberProperties);
-            }
-        });
-
-        //noinspection Convert2Lambda
-        removeMemberButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int selection = membersTable.getSelectedRow();
-                if (selection == -1)
-                    return;
-                int option = JOptionPane.showConfirmDialog(frame, "እርግጠኛ ነህ?", "", JOptionPane.YES_NO_OPTION);
-                if (option == JOptionPane.NO_OPTION)
-                    return;
-                int selectedRow     = membersTable.getSelectedRow();
-                String selectedName = membersTable.getValueAt(selectedRow, 1).toString();
-                int indexOfSpace    = selectedName.indexOf(" ");
-                if (Member.remove((int) membersTable.getValueAt(selectedRow, 0))) {
-                    tableModel.removeRow(selectedRow);
-                    JOptionPane.showMessageDialog(
-                            frame,
-                            selectedName.substring(0, indexOfSpace) + " ወጥቷል...",
-                            "", JOptionPane.INFORMATION_MESSAGE
-                    );
-                }
-                /* once a member is removed from the database any other member with first name similar to
-                   the member who just got removed must have his 'hasDuplicateFirstName' attribute updated */
+                // handling duplicateFirstName attribute issue(s)
                 try {
-                    List<Member> members = Member.getDao()
-                            .queryBuilder().where().eq("firstName", selectedName.substring(0, indexOfSpace)).query();
-                    for (Member member : members) {
-                        member.setHasDuplicateFirstName(false);
-                        Member.getDao().update(member);
-                    }
+                    updateDuplicateAttributeOnAddition(member);
                 } catch (SQLException e1) {
                     e1.printStackTrace();
                 }
@@ -267,6 +230,7 @@ class GeneratorGUI extends JFrame {
                 int selectedRow = membersTable.getSelectedRow();
                 if (selectedRow == -1)
                     return;
+
                 Member member          = new Member();
                 String[] firstLastName = membersTable.getValueAt(selectedRow, 1).toString().split(" ");
                 member.setId(Integer.parseInt(membersTable.getValueAt(selectedRow, 0).toString()));
@@ -277,15 +241,9 @@ class GeneratorGUI extends JFrame {
                 member.setCanAssist2ndHall((boolean) membersTable.getValueAt(selectedRow, 4));
                 member.setSundayException((boolean) membersTable.getValueAt(selectedRow, 5));
                 try {
-                    List<Member> members = Member.getDao().queryBuilder().where()
-                            .eq("firstName", member.getFirstName()).query();
-                    member.setHasDuplicateFirstName(members.size() > 0);
+                    String oldName = Member.getDao().queryForId(member.getId()).getFirstName();
                     Member.getDao().update(member);
-
-                    for (Member _member : members) {
-                        _member.setHasDuplicateFirstName(true);
-                        Member.getDao().update(_member);
-                    }
+                    updateMemberDuplicateAttributeOnUpdate(member, oldName);
                 } catch (SQLException e1) {
                     System.out.println(e1.getMessage());
                 }
@@ -293,20 +251,88 @@ class GeneratorGUI extends JFrame {
             }
         });
 
+        //noinspection Convert2Lambda
+        removeMemberButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = membersTable.getSelectedRow();
+                if (selectedRow == -1)  return;
+
+                int option = JOptionPane.showConfirmDialog(frame, "እርግጠኛ ነህ?", "", JOptionPane.YES_NO_OPTION);
+                if (option == JOptionPane.NO_OPTION) return;
+
+                int memberID = (int) membersTable.getValueAt(selectedRow, 0);
+                Member member = new Member();
+                try {
+                    member = Member.getDao().queryForId(memberID);
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+                if (Member.remove(memberID)) {
+                    tableModel.removeRow(selectedRow);
+                    JOptionPane.showMessageDialog(
+                            frame,
+                            member.getFirstName() + " ወጥቷል...",
+                            "",
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
+                }
+
+                try {
+                    updateDuplicateAttributeOnDelete(member);
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+
         setContentPane(tabbedPane);
         pack();
         setResizable(false);
-        setLocation(500, 250);
+        setLocationRelativeTo(null);
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     private boolean validMemberInfo() {
         /* as the input is likely to be constructed using Amharic letters,
-         I see no way I can use regex to test for it's validity*/
+         I see no way I can use regex to test for it's validity */
         boolean validFirstName = !FirstNameTextField.getText().equals("");
         boolean validLastName  = !lastNameTextField.getText().equals("");
         return validFirstName && validLastName;
+    }
+
+    private void updateDuplicateAttributeOnAddition(Member member) throws SQLException {
+        List<Member> members = Member.getDao().queryBuilder().where()
+                .eq("firstName", member.getFirstName()).query();
+        if (members.size() > 1) {
+            for (Member _member : members) {
+                try {
+                    _member.setHasDuplicateFirstName(true);
+                    Member.getDao().update(_member);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private void updateMemberDuplicateAttributeOnUpdate (Member member, String oldName) throws SQLException {
+        updateDuplicateAttributeOnAddition(member);
+        member.setFirstName(oldName);
+        updateDuplicateAttributeOnDelete(member);
+    }
+
+    private void updateDuplicateAttributeOnDelete(Member member) throws SQLException {
+        List<Member> members = Member.getDao().queryBuilder().where()
+                .eq("firstName", member.getFirstName()).query();
+        // if this condition is met, then the returned list will have only one member
+        if (members.size() <= 1) {
+            for (Member _member : members) {
+                _member.setHasDuplicateFirstName(false);
+                Member.getDao().update(_member);
+            }
+        }
     }
 
     private void clearAddFields() {

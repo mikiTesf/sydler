@@ -1,3 +1,7 @@
+package controller;
+
+import domain.Member;
+
 import java.sql.SQLException;
 import java.util.List;
 import java.util.ArrayList;
@@ -17,15 +21,9 @@ class Populate {
     private List<Member> firstRoundMembers;
 
     Populate(int weeks) {
-        int membersCount = 0;
         try {
-            membersCount = Member.getDao().queryForAll().size();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        /* Initially all members start with equal Asf values. To fill ID_ASF_ALL
-         with memberID_Asf pairs, all members must be fetched first */
-        try {
+            /* Initially all members start with equal Asf values. To fill ID_ASF_ALL
+               with memberID_Asf pairs, all members must be fetched first */
             allMembers = Member.getDao().queryForAll();
             if (allMembers.size() == 0) {
                 System.exit(0);
@@ -33,14 +31,15 @@ class Populate {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+
         firstRoundMembers = new ArrayList<>(2);
         /* ID_ASF_ALL = new HashMap<>(memberCount) is not initializing ID_ASF_ALL with 'membersCount'.
          It's size remains 0 (I still don't know why). To avoid that problem I've set the stop condition for
          the for "loop" to be the count of members */
-        ID_ASF_ALL = new HashMap<>();
+        ID_ASF_ALL    = new HashMap<>();
         ID_ASF_ROUND1 = new HashMap<>();
-        for (int i = 0; i < membersCount; i++) {
-            ID_ASF_ALL.put(allMembers.get(i).getId(), 1.0);
+        for (Member member : allMembers) {
+            ID_ASF_ALL.put(member.getId(), 1.0);
         }
         scheduleGrid = new int[2 * weeks][6];
     }
@@ -128,20 +127,19 @@ class Populate {
                 day -= 1;
             } while (day > 0);
         /* if day equals -1 it means that a member with id 'memberID' has not been found
-           till the beginning of the array. Hence, day will go past the first day being -1. */
+           till the beginning of the array. Hence, day will go past the first day becoming -1 */
         if (day == -1) return scheduleGrid.length;
         return distance;
     }
 
     private double numberOfTimesBefore(int memberId, int day, int role) {
         double count = 0;
-        int skip = 1;
-        if (role == HALL2)
-            skip = 2;
+        int skip = (role == HALL2) ? 2 : 1;
         day -= skip; // the counting must start before 'day' as no member is assigned on the current day/role
-        for (; day > -1; day -= skip)
+        for (; day > -1; day -= skip) {
             if (scheduleGrid[day][role] == memberId)
                 ++count;
+        }
         return count;
     }
 
@@ -171,7 +169,7 @@ class Populate {
             if (ID_ASF_PAIR.get(key) == maxRank)
                 maxValuedKeys.add(key);
         }
-        Collections.shuffle(maxValuedKeys);
+        Collections.shuffle(maxValuedKeys, randomKey);
         return maxValuedKeys.get(randomKey.nextInt(maxValuedKeys.size()));
     }
 
@@ -186,8 +184,8 @@ class Populate {
         fillRole(ROUND2_ROW2, ID_ASF_ALL);
         fillRole(HALL2, ID_ASF_ROUND1);
 
-        for (int day = 0; day < scheduleGrid.length; day++)
-            for (int role = STAGE; role <= HALL2; role++)
+        for (int day = 0; day < scheduleGrid.length; day++) {
+            for (int role = STAGE; role <= HALL2; role++) {
                 try {
                     /* to avoid an NPE the id values for Sunday's 2nd Hall assignment,
                      which are 0, must be skipped */
@@ -200,6 +198,8 @@ class Populate {
                 } catch (SQLException e) {
                     System.out.println(e.getMessage());
                 }
+            }
+        }
         return nameGrid;
     }
 }

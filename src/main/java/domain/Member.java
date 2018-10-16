@@ -1,3 +1,5 @@
+package domain;
+
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.field.DatabaseField;
@@ -7,7 +9,7 @@ import com.j256.ormlite.table.TableUtils;
 import java.sql.SQLException;
 
 @DatabaseTable (tableName = "member_info")
-class Member {
+public class Member {
     private static Dao<Member, Integer> memberDao;
 
     @DatabaseField (generatedId = true)
@@ -36,34 +38,37 @@ class Member {
         }
     }
 
-    // a no-arg constructor (required by ORMLITE - I don't know the reason)
-    Member() { }
+    // a no-arg constructor (required by ORMLITE - I still don't know the reason)
+    public Member() {
+        this.setHasDuplicateFirstName(false);
+        this.setId(-1);
+    }
 
-    static Dao<Member, Integer> getDao() {
+    public static Dao<Member, Integer> getDao() {
         return memberDao;
     }
 
-    String getFirstName() {
+    public String getFirstName() {
         return firstName;
     }
 
-    void setFirstName(String firstName) {
+    public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
-    String getLastName() {
+    public String getLastName() {
         return lastName;
     }
 
-    void setLastName(String lastName) {
+    public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
-    int getId() {
+    public int getId() {
         return id;
     }
 
-    void setId(int id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -75,39 +80,39 @@ class Member {
         this.hasDuplicateFirstName = hasDuplicateFirstName;
     }
 
-    boolean canBeStage() {
+    public boolean canBeStage() {
         return canBeStage;
     }
 
-    void setCanBeStage(boolean canBeStage) {
+    public void setCanBeStage(boolean canBeStage) {
         this.canBeStage = canBeStage;
     }
 
-    boolean canRotateMic() {
+    public boolean canRotateMic() {
         return canRotateMic;
     }
 
-    void setCanRotateMic(boolean canRotateMic) {
+    public void setCanRotateMic(boolean canRotateMic) {
         this.canRotateMic = canRotateMic;
     }
 
-    boolean canBeSecondHall() {
+    public boolean canBeSecondHall() {
         return canAssist2ndHall;
     }
 
-    void setCanAssist2ndHall(boolean canAssist2ndHall) {
+    public void setCanAssist2ndHall(boolean canAssist2ndHall) {
         this.canAssist2ndHall = canAssist2ndHall;
     }
 
-    boolean hasSundayException() {
+    public boolean hasSundayException() {
         return sundayException;
     }
 
-    void setSundayException(boolean sundayException) {
+    public void setSundayException(boolean sundayException) {
         this.sundayException = sundayException;
     }
 
-    boolean save() {
+    public boolean save() {
         try {
             memberDao.create(this);
             return true;
@@ -117,7 +122,7 @@ class Member {
         }
     }
 
-    static boolean remove (int id) {
+    public static boolean remove (int id) {
         try {
             memberDao.deleteById(id);
         } catch (SQLException e) {

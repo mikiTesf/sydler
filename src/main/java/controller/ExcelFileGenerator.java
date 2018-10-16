@@ -1,3 +1,5 @@
+package controller;
+
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.*;
@@ -7,25 +9,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.Map;
 
-class ExcelFileGenerator {
+public class ExcelFileGenerator {
     private final String[][] names;
     private final HashMap<Integer, String> AMMonths;
-    private final HashMap ENMonths;
+    private final HashMap<String, String> ENMonths;
     private final HashMap<Integer, String> days;
-    // common column indexes
-    private final int WEEK_SPAN          = 0;
-    private final int MEETING_DAY_NAME   = 1;
-    private final int STAGE              = 2;
-    private final int FIRST_ROUND_RIGHT  = 3;
-    private final int FIRST_ROUND_LEFT   = 4;
-    private final int SECOND_ROUND_RIGHT = 5;
-    private final int SECOND_ROUND_LEFT  = 6;
-    private final int SECOND_HALL        = 7;
     private XSSFWorkbook schedule;
 
-    ExcelFileGenerator(int weeks) {
+    public ExcelFileGenerator(int weeks) {
         names = new Populate(weeks).getNameGrid();
         // month to name map to translate a month's value (int) into an Amharic String
         AMMonths = new HashMap<>(12);
@@ -42,7 +34,7 @@ class ExcelFileGenerator {
         AMMonths.put(11, "ህዳ");
         AMMonths.put(12, "ታህ");
 
-        ENMonths = new HashMap(12);
+        ENMonths = new HashMap<>(12);
         ENMonths.put("SEPTEMBER", "መስከረም");
         ENMonths.put("OCTOBER", "ጥቅምት");
         ENMonths.put("NOVEMBER", "ህዳር");
@@ -66,8 +58,16 @@ class ExcelFileGenerator {
         days.put(7, "እሁድ");
     }
 
-    boolean makeExcel(LocalDateTime date, String meetingDay, String savePath) {
+    public boolean makeExcel(LocalDateTime date, String meetingDay, String savePath) {
         String filePath = savePath + "/" + date.getDayOfMonth() + "_" + date.getMonth() + "_" + date.getYear() + ".xlsx";
+        final int WEEK_SPAN          = 0;
+        final int MEETING_DAY_NAME   = 1;
+        final int STAGE              = 2;
+        final int FIRST_ROUND_RIGHT  = 3;
+        final int FIRST_ROUND_LEFT   = 4;
+        final int SECOND_ROUND_RIGHT = 5;
+        final int SECOND_ROUND_LEFT  = 6;
+        final int SECOND_HALL        = 7;
         // The excel document
         schedule = new XSSFWorkbook();
         // The excel sheet to put data in
@@ -83,6 +83,8 @@ class ExcelFileGenerator {
         formattedText.setString(
                 "የአዲስ ሰፈር ጉባኤ የድምጽ ክፍል ፕሮግራም\n"
                 + "("  + ENMonths.get(date.getMonth().toString()) + " " + date.getDayOfMonth()
+                /* Each week has two days. [names.length] is the sum of mid-week and sunday meeting days. Therefore,
+                   the total number of weeks is equal to [names.length / 2] */
                 + ", " + date.getYear() + " → " + ENMonths.get(date.plusWeeks(names.length / 2 - 1).plusDays(6).getMonth().toString())
                 + " "  + date.plusWeeks(names.length / 2 - 1).plusDays(6).getDayOfMonth()
                 + ", " + date.plusWeeks(names.length / 2 - 1).plusDays(6).getYear() + ") "
@@ -129,12 +131,10 @@ class ExcelFileGenerator {
         headerRow.createCell(SECOND_HALL).setCellValue(formattedText);
         headerRow.getCell(SECOND_HALL).setCellStyle(getCellStyle(true, true, true));
 
-        // here the starting date will be initialized
-//        LocalDateTime date = LocalDateTime.of(year, month, day, 0, 0);
         String weekMonth, monthOnSunday;
         /* the following is the main for loop that fills the schedule by populating it with
          the week spans, member names and date information*/
-        for (int day1 = 0; day1 < names.length; day1++) {
+        for (int day = 0; day < names.length; day++) {
             Row row = sheet.createRow(sheet.getLastRowNum() + 1);
             /* The Monday and Sunday of a week may reside in different months.
              To include the name of the next month in the cell, the month after
@@ -145,7 +145,7 @@ class ExcelFileGenerator {
              The if block is important because week-spans are calculated once for
              every week. No need to calculate again on the sunday of the same week*/
             row.createCell(WEEK_SPAN);
-            if (day1 % 2 == 0) {
+            if (day % 2 == 0) {
                 if (weekMonth.equals(monthOnSunday))
                     formattedText.setString(weekMonth + " " + date.getDayOfMonth() + " - " + date.plusDays(6).getDayOfMonth());
                 else
@@ -158,7 +158,7 @@ class ExcelFileGenerator {
             }
             row.getCell(row.getLastCellNum() - 1).setCellStyle(getCellStyle(true, true, false));
             // put the name of the day in the next cell
-            if (day1 % 2 == 0) // even = mid-week meeting
+            if (day % 2 == 0) // even = mid-week meeting
                 row.createCell(row.getLastCellNum()).setCellValue(" " + meetingDay);
             else
                 row.createCell(row.getLastCellNum()).setCellValue(" " + days.get(7));
@@ -167,13 +167,13 @@ class ExcelFileGenerator {
             for (int j = STAGE, k = 0; j <= SECOND_HALL; j++, k++) {
                 row.createCell(j);
                 row.getCell(j).setCellStyle(getCellStyle(false, true, false));
-                if (!(names[day1][k] == null)) {
-                    row.getCell(j).setCellValue(" " + names[day1][k]);
+                if (!(names[day][k] == null)) {
+                    row.getCell(j).setCellValue(" " + names[day][k]);
                 }
             }
         }
         System.out.println("excel sheet populated...");
-        // auto-size columns to fit the text inside the cells
+        
         sheet.autoSizeColumn(WEEK_SPAN);
         sheet.autoSizeColumn(MEETING_DAY_NAME);
         sheet.autoSizeColumn(STAGE);

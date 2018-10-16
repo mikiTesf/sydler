@@ -1,15 +1,20 @@
+package view;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTextPane;
 import java.awt.Dimension;
 
 class AboutForm extends JFrame {
 
-    private JPanel panel1;
+    private JPanel panel;
+    @SuppressWarnings("unused")
+    private JTextPane columnHeadersInTheTextPane;
 
     AboutForm () {
-        this.setContentPane(panel1);
+        this.setContentPane(panel);
         setTitle("About Schedule Generator");
-        setSize(new Dimension(280, 170));
+        setSize(new Dimension(350, 200));
         setResizable(false);
         setAlwaysOnTop(true);
     }
