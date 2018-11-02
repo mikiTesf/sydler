@@ -145,7 +145,7 @@ public class ExcelFileGenerator {
              The if block is important because week-spans are calculated once for
              every week. No need to calculate again on the sunday of the same week*/
             row.createCell(WEEK_SPAN);
-            if (day % 2 == 0) {
+            if (isMid_Week(day)) {
                 if (weekMonth.equals(monthOnSunday))
                     formattedText.setString(weekMonth + " " + date.getDayOfMonth() + " - " + date.plusDays(6).getDayOfMonth());
                 else
@@ -158,7 +158,7 @@ public class ExcelFileGenerator {
             }
             row.getCell(row.getLastCellNum() - 1).setCellStyle(getCellStyle(true, true, false));
             // put the name of the day in the next cell
-            if (day % 2 == 0) // even = mid-week meeting
+            if (isMid_Week(day))
                 row.createCell(row.getLastCellNum()).setCellValue(" " + meetingDay);
             else
                 row.createCell(row.getLastCellNum()).setCellValue(" " + days.get(7));
@@ -195,6 +195,10 @@ public class ExcelFileGenerator {
             return false;
         }
         return true;
+    }
+
+    private boolean isMid_Week(int day) {
+        return day % 2 == 0;
     }
 
     private CellStyle getCellStyle(boolean centerAligned, boolean fullyBordered, boolean filledBackground) {

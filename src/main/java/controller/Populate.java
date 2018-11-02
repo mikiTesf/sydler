@@ -13,19 +13,19 @@ class Populate {
     private final int[][] scheduleGrid;
     private final HashMap<Integer, Double> ID_ASF_ALL;
     private final HashMap<Integer, Double> ID_ASF_ROUND1;
-    private final int STAGE = 0;
+    private final int STAGE       = 0;
     private final int ROUND1_ROW1 = 1;
     private final int ROUND1_ROW2 = 2;
-    private final int HALL2 = 5;
+    private final int HALL2       = 5;
     private List<Member> allMembers;
     private List<Member> firstRoundMembers;
 
     Populate(int weeks) {
         try {
             /* Initially all members start with equal Asf values. To fill ID_ASF_ALL
-               with memberID_Asf pairs, all members must be fetched first */
+               with memberID:Asf pairs, all members must be fetched first */
             allMembers = Member.getDao().queryForAll();
-            if (allMembers.size() == 0) {
+            if (allMembers.isEmpty()) {
                 System.exit(0);
             }
         } catch (SQLException e) {
@@ -41,6 +41,8 @@ class Populate {
         for (Member member : allMembers) {
             ID_ASF_ALL.put(member.getId(), 1.0);
         }
+        /* the 2 below is the number of meeting days
+        *  in a week and the 6 is the number of roles */
         scheduleGrid = new int[2 * weeks][6];
     }
 
@@ -51,9 +53,9 @@ class Populate {
         List<Member> memberList = allMembers;
 
         for (int day = 0; day < scheduleGrid.length; day++) {
-            if (role == HALL2 && day % 2 != 0) continue;
-
             if (role == HALL2) {
+                if (isSunday(day)) continue;
+
                 firstRoundMembers.clear();
                 ID_ASF_ROUND1.clear();
                 ID_ASF_ROUND1.put(scheduleGrid[day][ROUND1_ROW1], null);
@@ -84,7 +86,7 @@ class Populate {
                 distance     = distance(member.getId(), day, role);
                 numberBefore = numberOfTimesBefore(member.getId(), day, role);
                 numberToday  = numberOfTimesToday(member.getId(), day);
-                asf = asf(qualify, sundayException, occupied, distance, numberBefore, numberToday);
+                asf          = asf(qualify, sundayException, occupied, distance, numberBefore, numberToday);
                 ID_ASF_PAIR.replace(member.getId(), asf);
             }
             scheduleGrid[day][role] = keyFromValue(Collections.max(ID_ASF_PAIR.values()), ID_ASF_PAIR);
@@ -102,7 +104,7 @@ class Populate {
         for (int role = STAGE; role <= HALL2; role++) {
             occupied = occupied || (scheduleGrid[day][role] == memberID);
             /* The schedule generator is built around what I would like to call 'The Stage Policy'.
-             The Stage Policy: is the idea that a person who is assigned to manage the stage that day
+             The Stage Policy: A a person who is assigned to manage the stage that day
              should not play any other role as he will be busy (especially on mid-week meeting days).
              Therefore, 'isOccupied' must return the least possible value in such cases */
             if (role == STAGE && occupied)
@@ -112,7 +114,7 @@ class Populate {
     }
 
     private double sundayException(int day, boolean exception) {
-        return (day % 2 != 0 && exception) ? 1 : 2;
+        return (isSunday(day) && exception) ? 1 : 2;
     }
 
     private double distance(int memberID, int day, int role) {
@@ -161,6 +163,10 @@ class Populate {
     }
 
     // ***************************** other methods *****************************
+
+    private boolean isSunday(int day) {
+        return day % 2 != 0;
+    }
 
     private int keyFromValue(double maxRank, HashMap<Integer, Double> ID_ASF_PAIR) {
         Random randomKey = new Random();
