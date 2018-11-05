@@ -138,9 +138,16 @@ class Populate {
         double count = 0;
         int skip = (role == HALL2) ? 2 : 1;
         day -= skip; // the counting must start before 'day' as no member is assigned on the current day/role
-        for (; day > -1; day -= skip) {
-            if (scheduleGrid[day][role] == memberId)
-                ++count;
+//        for (; day > -1; day -= skip) {
+//            if (scheduleGrid[day][role] == memberId)
+//                ++count;
+//        }
+        for (int[] idArray : scheduleGrid) {
+            for (int id : idArray) {
+                if (id == memberId) {
+                    ++count;
+                }
+            }
         }
         return count;
     }
