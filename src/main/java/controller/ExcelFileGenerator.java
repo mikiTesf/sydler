@@ -4,6 +4,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.*;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -216,8 +217,8 @@ public class ExcelFileGenerator {
         }
 
         if (filledBackground) {
-            cellStyle.setFillBackgroundColor(new XSSFColor(new java.awt.Color(200, 200, 200)));
-            cellStyle.setFillForegroundColor(new XSSFColor(new java.awt.Color(200, 200, 200)));
+            cellStyle.setFillBackgroundColor(new XSSFColor(new Color(200, 200, 200)));
+            cellStyle.setFillForegroundColor(new XSSFColor(new Color(200, 200, 200)));
             cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         }
 

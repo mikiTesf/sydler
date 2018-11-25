@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="view.GeneratorSettings">
+  <grid id="27dc6" binding="panel1" default-binding="true" layout-manager="GridLayoutManager" row-count="4" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
+    <constraints>
+      <xy x="20" y="20" width="500" height="400"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <component id="e18db" class="javax.swing.JCheckBox" binding="control2ndHallChooserCheckbox">
+        <constraints>
+          <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <enabled value="true"/>
+          <selected value="false"/>
+          <text value="&lt;html&gt;&#10;choose 2nd hall&lt;br/&gt;&#10;members from the&lt;br/&gt;&#10;members who rotated&lt;br/&gt;&#10;the mic on the 1st&lt;br/&gt;&#10;round&#10;&lt;/html&gt;"/>
+        </properties>
+      </component>
+      <hspacer id="4de4f">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+      </hspacer>
+      <hspacer id="76299">
+        <constraints>
+          <grid row="2" column="4" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+      </hspacer>
+      <vspacer id="2402b">
+        <constraints>
+          <grid row="3" column="1" row-span="1" col-span="3" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+        </constraints>
+      </vspacer>
+      <component id="51715" class="javax.swing.JTextArea" binding="checkBoxPurposeDeskcribingTextArea" default-binding="true">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="5" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="50"/>
+          </grid>
+        </constraints>
+        <properties>
+          <editable value="false"/>
+          <text value="&#10;- The first checkbox controls the calculation of&#10;  the factor that is used to decide the rate at&#10;  which a member should appear in any role. If it&#10;  is checked, the scheduler assigns those members&#10;  with less roles to the roles they are registered&#10;  for more frequently.&#10;&#10;- The second checkbox allows you to decide weather&#10;  the member to be assigned to assist a 2nd hall&#10;  meeting should be chosen from those members who&#10;  rotated the mic during the 1st round mic-rotation&#10;  or from any available member who may or may not&#10;  have appeared at a role that day.&#10;"/>
+        </properties>
+      </component>
+      <component id="7241f" class="javax.swing.JCheckBox" binding="controlCounterCheckbox">
+        <constraints>
+          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="&lt;html&gt;&#10;count the appearance&lt;br/&gt;&#10;of a member from all&lt;br/&gt;&#10;roles&#10;&lt;/html&gt;"/>
+        </properties>
+      </component>
+      <component id="becc7" class="javax.swing.JToolBar$Separator">
+        <constraints>
+          <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="86550" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="5" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font style="1"/>
+          <text value="Current Settings"/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+</form>
