@@ -1,5 +1,6 @@
 package view;
 
+import controller.Initializer;
 import domain.Member;
 import controller.ExcelFileGenerator;
 
@@ -364,6 +365,8 @@ class GeneratorGUI extends JFrame {
 
 
     public static void main(String[] args) {
+        Initializer initializer = new Initializer();
+        initializer.initialize();
         GeneratorGUI gui = new GeneratorGUI();
         gui.setupGUI();
     }

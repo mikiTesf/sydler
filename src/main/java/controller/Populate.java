@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Collections;
 import java.util.Random;
 
-class Populate {
+public class Populate {
     private final int[][] scheduleGrid;
     private final HashMap<Integer, Double> ID_ASF_ALL;
     private final HashMap<Integer, Double> ID_ASF_ROUND1;
@@ -19,6 +19,9 @@ class Populate {
     private final int HALL2       = 5;
     private List<Member> allMembers;
     private List<Member> firstRoundMembers;
+    // calculation settings
+    private boolean COUNT_FROM_ALL_ROLES;
+    private boolean CHOOSE_FROM_1ST_ROUND;
 
     Populate(int weeks) {
         try {
@@ -44,29 +47,36 @@ class Populate {
         /* the 2 below is the number of meeting days
         *  in a week and the 6 is the number of roles */
         scheduleGrid = new int[2 * weeks][6];
+        // the preferences set by the user must be fetched from the json file before proceeding
+        COUNT_FROM_ALL_ROLES  = Initializer.settings.getBoolean(Initializer.COUNT_FROM_ALL_KEY);
+        CHOOSE_FROM_1ST_ROUND = Initializer.settings.getBoolean(Initializer.CHOOSE_FROM_1ST_ROUND_KEY);
     }
 
-    // ***************************** column populating method *****************************
+    /******************************* column populating method *******************************/
 
-    private void fillRole(int role, HashMap<Integer, Double> ID_ASF_PAIR) {
-        double qualify, occupied, sundayException = 1, distance, numberBefore, numberToday, asf;
+    private void fillRole(int role) {
+        double qualify, occupied, sundayException = 1, distance, numberBefore, numberToday, rank;
         List<Member> memberList = allMembers;
+        HashMap<Integer, Double> ID_RANK_PAIR = ID_ASF_ALL;
 
         for (int day = 0; day < scheduleGrid.length; day++) {
             if (role == HALL2) {
                 if (isSunday(day)) continue;
 
-                firstRoundMembers.clear();
-                ID_ASF_ROUND1.clear();
-                ID_ASF_ROUND1.put(scheduleGrid[day][ROUND1_ROW1], null);
-                ID_ASF_ROUND1.put(scheduleGrid[day][ROUND1_ROW2], null);
-                try {
-                    firstRoundMembers.add(Member.getDao().queryForId(scheduleGrid[day][ROUND1_ROW1]));
-                    firstRoundMembers.add(Member.getDao().queryForId(scheduleGrid[day][ROUND1_ROW2]));
-                } catch (SQLException e) {
-                    e.printStackTrace();
+                if (CHOOSE_FROM_1ST_ROUND) {
+                    firstRoundMembers.clear();
+                    ID_ASF_ROUND1.clear();
+                    ID_ASF_ROUND1.put(scheduleGrid[day][ROUND1_ROW1], null);
+                    ID_ASF_ROUND1.put(scheduleGrid[day][ROUND1_ROW2], null);
+                    try {
+                        firstRoundMembers.add(Member.getDao().queryForId(scheduleGrid[day][ROUND1_ROW1]));
+                        firstRoundMembers.add(Member.getDao().queryForId(scheduleGrid[day][ROUND1_ROW2]));
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                    memberList   = firstRoundMembers;
+                    ID_RANK_PAIR = ID_ASF_ROUND1;
                 }
-                memberList = firstRoundMembers;
             }
 
             for (Member member : memberList) {
@@ -86,14 +96,14 @@ class Populate {
                 distance     = distance(member.getId(), day, role);
                 numberBefore = numberOfTimesBefore(member.getId(), day, role);
                 numberToday  = numberOfTimesToday(member.getId(), day);
-                asf          = asf(qualify, sundayException, occupied, distance, numberBefore, numberToday);
-                ID_ASF_PAIR.replace(member.getId(), asf);
+                rank         = rank(qualify, sundayException, occupied, distance, numberBefore, numberToday);
+                ID_RANK_PAIR.replace(member.getId(), rank);
             }
-            scheduleGrid[day][role] = keyFromValue(Collections.max(ID_ASF_PAIR.values()), ID_ASF_PAIR);
+            scheduleGrid[day][role] = keyFromValue(Collections.max(ID_RANK_PAIR.values()), ID_RANK_PAIR);
         }
     }
 
-    // ***************************** variable calculating methods *****************************
+    /******************************* variable calculating methods *******************************/
 
     private double qualify(boolean qualify) {
         return qualify ? 1 : 0;
@@ -136,17 +146,20 @@ class Populate {
 
     private double numberOfTimesBefore(int memberId, int day, int role) {
         double count = 0;
-        int skip = (role == HALL2) ? 2 : 1;
-        day -= skip; // the counting must start before 'day' as no member is assigned on the current day/role
-//        for (; day > -1; day -= skip) {
-//            if (scheduleGrid[day][role] == memberId)
-//                ++count;
-//        }
-        for (int[] idArray : scheduleGrid) {
-            for (int id : idArray) {
-                if (id == memberId) {
-                    ++count;
+        if (COUNT_FROM_ALL_ROLES) {
+            for (int[] idArray : scheduleGrid) {
+                for (int id : idArray) {
+                    if (id == memberId) {
+                        ++count;
+                    }
                 }
+            }
+        } else { /* count from current role only */
+            int skip = (role == HALL2) ? 2 : 1;
+            day -= skip; // counting must start before 'day' as no member is assigned on the current day/role
+            for (; day > -1; day -= skip) {
+                if (scheduleGrid[day][role] == memberId)
+                    ++count;
             }
         }
         return count;
@@ -165,11 +178,11 @@ class Populate {
         return count;
     }
 
-    private double asf(double qualify, double exception, double occupied, double distance, double numberOfTimesBefore, double numberOfTimesToday) {
+    private double rank(double qualify, double exception, double occupied, double distance, double numberOfTimesBefore, double numberOfTimesToday) {
         return qualify * exception * occupied * distance / ((numberOfTimesBefore + 1) * (numberOfTimesToday + 1));
     }
 
-    // ***************************** other methods *****************************
+    /******************************* other methods *******************************/
 
     private boolean isSunday(int day) {
         return day % 2 != 0;
@@ -190,12 +203,12 @@ class Populate {
         final int ROUND2_ROW1 = 3, ROUND2_ROW2 = 4;
         String[][] nameGrid = new String[scheduleGrid.length][scheduleGrid[0].length];
 
-        fillRole(STAGE, ID_ASF_ALL);
-        fillRole(ROUND1_ROW1, ID_ASF_ALL);
-        fillRole(ROUND1_ROW2, ID_ASF_ALL);
-        fillRole(ROUND2_ROW1, ID_ASF_ALL);
-        fillRole(ROUND2_ROW2, ID_ASF_ALL);
-        fillRole(HALL2, ID_ASF_ROUND1);
+        fillRole(STAGE);
+        fillRole(ROUND1_ROW1);
+        fillRole(ROUND1_ROW2);
+        fillRole(ROUND2_ROW1);
+        fillRole(ROUND2_ROW2);
+        fillRole(HALL2);
 
         for (int day = 0; day < scheduleGrid.length; day++) {
             for (int role = STAGE; role <= HALL2; role++) {
