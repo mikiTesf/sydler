@@ -11,8 +11,8 @@ import java.util.Random;
 
 public class Populate {
     private final int[][] scheduleGrid;
-    private final HashMap<Integer, Double> ID_ASF_ALL;
-    private final HashMap<Integer, Double> ID_ASF_ROUND1;
+    private final HashMap<Integer, Double> ID_RANK_ALL;
+    private final HashMap<Integer, Double> ID_RANK_ROUND1;
     private final int STAGE       = 0;
     private final int ROUND1_ROW1 = 1;
     private final int ROUND1_ROW2 = 2;
@@ -25,39 +25,33 @@ public class Populate {
 
     Populate(int weeks) {
         try {
-            /* Initially all members start with equal Asf values. To fill ID_ASF_ALL
-               with memberID:Asf pairs, all members must be fetched first */
+            /* Initially all members start with equal ranks. To fill ID_RANK_ALL
+               with memberID:rank pairs, all members must be fetched first */
             allMembers = Member.getDao().queryForAll();
-            if (allMembers.isEmpty()) {
-                System.exit(0);
-            }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
 
         firstRoundMembers = new ArrayList<>(2);
-        /* ID_ASF_ALL = new HashMap<>(memberCount) is not initializing ID_ASF_ALL with 'membersCount'.
-         It's size remains 0 (I still don't know why). To avoid that problem I've set the stop condition for
-         the for "loop" to be the count of members */
-        ID_ASF_ALL    = new HashMap<>();
-        ID_ASF_ROUND1 = new HashMap<>();
+        ID_RANK_ALL    = new HashMap<>();
+        ID_RANK_ROUND1 = new HashMap<>();
         for (Member member : allMembers) {
-            ID_ASF_ALL.put(member.getId(), 1.0);
+            ID_RANK_ALL.put(member.getId(), 1.0);
         }
         /* the 2 below is the number of meeting days
         *  in a week and the 6 is the number of roles */
         scheduleGrid = new int[2 * weeks][6];
-        // the preferences set by the user must be fetched from the json file before proceeding
+        // the preferences set by the user must be fetched from the JSON file before proceeding
         COUNT_FROM_ALL_ROLES  = Initializer.settings.getBoolean(Initializer.COUNT_FROM_ALL_KEY);
         CHOOSE_FROM_1ST_ROUND = Initializer.settings.getBoolean(Initializer.CHOOSE_FROM_1ST_ROUND_KEY);
     }
 
-    /******************************* column populating method *******************************/
+    /********************************* column populating method *********************************/
 
     private void fillRole(int role) {
         double qualify, occupied, sundayException = 1, distance, numberBefore, numberToday, rank;
         List<Member> memberList = allMembers;
-        HashMap<Integer, Double> ID_RANK_PAIR = ID_ASF_ALL;
+        HashMap<Integer, Double> ID_RANK_PAIR = ID_RANK_ALL;
 
         for (int day = 0; day < scheduleGrid.length; day++) {
             if (role == HALL2) {
@@ -65,9 +59,9 @@ public class Populate {
 
                 if (CHOOSE_FROM_1ST_ROUND) {
                     firstRoundMembers.clear();
-                    ID_ASF_ROUND1.clear();
-                    ID_ASF_ROUND1.put(scheduleGrid[day][ROUND1_ROW1], null);
-                    ID_ASF_ROUND1.put(scheduleGrid[day][ROUND1_ROW2], null);
+                    ID_RANK_ROUND1.clear();
+                    ID_RANK_ROUND1.put(scheduleGrid[day][ROUND1_ROW1], null);
+                    ID_RANK_ROUND1.put(scheduleGrid[day][ROUND1_ROW2], null);
                     try {
                         firstRoundMembers.add(Member.getDao().queryForId(scheduleGrid[day][ROUND1_ROW1]));
                         firstRoundMembers.add(Member.getDao().queryForId(scheduleGrid[day][ROUND1_ROW2]));
@@ -75,7 +69,7 @@ public class Populate {
                         e.printStackTrace();
                     }
                     memberList   = firstRoundMembers;
-                    ID_RANK_PAIR = ID_ASF_ROUND1;
+                    ID_RANK_PAIR = ID_RANK_ROUND1;
                 }
             }
 
@@ -86,7 +80,7 @@ public class Populate {
                         sundayException = sundayException(day, member.hasSundayException());
                         break;
                     case HALL2:
-                        qualify = qualify(member.canBeSecondHall());
+                        qualify = qualify(member.canBe2ndHall());
                         break;
                     default:
                         qualify = qualify(member.canRotateMic());
@@ -99,7 +93,7 @@ public class Populate {
                 rank         = rank(qualify, sundayException, occupied, distance, numberBefore, numberToday);
                 ID_RANK_PAIR.replace(member.getId(), rank);
             }
-            scheduleGrid[day][role] = keyFromValue(Collections.max(ID_RANK_PAIR.values()), ID_RANK_PAIR);
+            scheduleGrid[day][role] = getHighestRankingMember(ID_RANK_PAIR);
         }
     }
 
@@ -128,28 +122,26 @@ public class Populate {
     }
 
     private double distance(int memberID, int day, int role) {
-        double distance = 0;
         // the maximum attainable distance is outside of the array
         if (day == 0) return scheduleGrid.length;
-        else
-            do {
-                ++distance;
-                if (scheduleGrid[day - 1][role] == memberID)
-                    break;
-                day -= 1;
-            } while (day > 0);
-        /* if day equals -1 it means that a member with id 'memberID' has not been found
-           till the beginning of the array. Hence, day will go past the first day becoming -1 */
-        if (day == -1) return scheduleGrid.length;
-        return distance;
+        double distance = 0;
+        do {
+            ++distance;
+            if (scheduleGrid[day - 1][role] == memberID)
+                break;
+            day -= 1;
+        } while (day > 0);
+        /* if day equals -1 it means that a member with ID 'memberID' has not been found till
+		   the beginning of the array. Hence, 'day' will go past the first day becoming -1 */
+        return (day == -1) ? scheduleGrid.length : distance;
     }
 
     private double numberOfTimesBefore(int memberId, int day, int role) {
         double count = 0;
         if (COUNT_FROM_ALL_ROLES) {
-            for (int[] idArray : scheduleGrid) {
-                for (int id : idArray) {
-                    if (id == memberId) {
+            for (int[] IDArray : scheduleGrid) {
+                for (int ID : IDArray) {
+                    if (ID == memberId) {
                         ++count;
                     }
                 }
@@ -182,21 +174,23 @@ public class Populate {
         return qualify * exception * occupied * distance / ((numberOfTimesBefore + 1) * (numberOfTimesToday + 1));
     }
 
-    /******************************* other methods *******************************/
+    /************************************** other methods **************************************/
 
     private boolean isSunday(int day) {
-        return day % 2 != 0;
+        return (day % 2) != 0;
     }
 
-    private int keyFromValue(double maxRank, HashMap<Integer, Double> ID_ASF_PAIR) {
-        Random randomKey = new Random();
-        ArrayList<Integer> maxValuedKeys = new ArrayList<>();
-        for (Integer key : ID_ASF_PAIR.keySet()) {
-            if (ID_ASF_PAIR.get(key) == maxRank)
-                maxValuedKeys.add(key);
+    private int getHighestRankingMember(HashMap<Integer, Double> ID_RANK_PAIR) {
+        double maxRank = Collections.max(ID_RANK_PAIR.values());
+        Random random  = new Random();
+        ArrayList<Integer> maxValuedIDs = new ArrayList<>();
+
+        for (Integer memberID : ID_RANK_PAIR.keySet()) {
+            if (ID_RANK_PAIR.get(memberID) == maxRank)
+                maxValuedIDs.add(memberID);
         }
-        Collections.shuffle(maxValuedKeys, randomKey);
-        return maxValuedKeys.get(randomKey.nextInt(maxValuedKeys.size()));
+        Collections.shuffle(maxValuedIDs, random);
+        return maxValuedIDs.get(random.nextInt(maxValuedIDs.size()));
     }
 
     String[][] getNameGrid() {
@@ -213,14 +207,13 @@ public class Populate {
         for (int day = 0; day < scheduleGrid.length; day++) {
             for (int role = STAGE; role <= HALL2; role++) {
                 try {
-                    /* to avoid an NPE the id values for Sunday's 2nd Hall assignment,
+                    /* to avoid an NPE the ID values for Sunday's 2nd Hall assignment,
                      which are 0, must be skipped */
-                    if (scheduleGrid[day][role] == 0)
-                        continue;
+                    if (scheduleGrid[day][role] == 0) continue;
+
                     Member member = Member.getDao().queryForId(scheduleGrid[day][role]);
                     nameGrid[day][role] = (member.hasDuplicateFirstName() ?
-                            member.getFirstName() + "\n" + member.getLastName() : member.getFirstName()
-                    );
+                            member.getFirstName() + "\n" + member.getLastName() : member.getFirstName());
                 } catch (SQLException e) {
                     System.out.println(e.getMessage());
                 }

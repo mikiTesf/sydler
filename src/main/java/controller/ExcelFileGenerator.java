@@ -15,12 +15,21 @@ public class ExcelFileGenerator {
     private final String[][] names;
     private final HashMap<Integer, String> AMMonths;
     private final HashMap<String, String> ENMonths;
-    private final HashMap<Integer, String> days;
     private XSSFWorkbook schedule;
+    private final HashMap<String, Integer> dayNameToNumber;
 
     public ExcelFileGenerator(int weeks) {
         names = new Populate(weeks).getNameGrid();
-        // month to name map to translate a month's value (int) into an Amharic String
+
+        dayNameToNumber = new HashMap<>();
+        dayNameToNumber.put("ሰኞ", 1);
+        dayNameToNumber.put("ማክሰኞ", 2);
+        dayNameToNumber.put("ዕሮብ", 3);
+        dayNameToNumber.put("ሐሙስ", 4);
+        dayNameToNumber.put("አርብ", 5);
+        dayNameToNumber.put("ቅዳሜ", 6);
+        dayNameToNumber.put("እሁድ", 7);
+
         AMMonths = new HashMap<>(12);
         AMMonths.put(1, "ጥር");
         AMMonths.put(2, "የካ");
@@ -48,19 +57,11 @@ public class ExcelFileGenerator {
         ENMonths.put("JUNE", "ሰኔ");
         ENMonths.put("JULY", "ሐምሌ");
         ENMonths.put("AUGUST", "ነሐሴ");
-
-        days = new HashMap<>(7);
-        days.put(1, "ሰኞ");
-        days.put(2, "ማክሰኞ");
-        days.put(3, "ዕሮብ");
-        days.put(4, "ሐሙስ");
-        days.put(5, "አርብ");
-        days.put(6, "ቅዳሜ");
-        days.put(7, "እሁድ");
     }
 
-    public boolean makeExcel(LocalDateTime date, String meetingDay, String savePath) {
+    public boolean makeExcel(LocalDateTime date, String midweekMeetingDay, String weekendMeetingDay, String savePath) {
         String filePath = savePath + "/" + date.getDayOfMonth() + "_" + date.getMonth() + "_" + date.getYear() + ".xlsx";
+        final int daysBetweenMeetingDays = dayNameToNumber.get(weekendMeetingDay) - dayNameToNumber.get(midweekMeetingDay);
         final int WEEK_SPAN          = 0;
         final int MEETING_DAY_NAME   = 1;
         final int STAGE              = 2;
@@ -69,9 +70,8 @@ public class ExcelFileGenerator {
         final int SECOND_ROUND_RIGHT = 5;
         final int SECOND_ROUND_LEFT  = 6;
         final int SECOND_HALL        = 7;
-        // The excel document
+
         schedule = new XSSFWorkbook();
-        // The excel sheet to put data in
         XSSFSheet sheet = schedule.createSheet("schedule sheet");
         // setup sheet (page) properties
         sheet.getPrintSetup().setPaperSize(PrintSetup.A4_PAPERSIZE);
@@ -86,9 +86,9 @@ public class ExcelFileGenerator {
                 + "("  + ENMonths.get(date.getMonth().toString()) + " " + date.getDayOfMonth()
                 /* Each week has two days. [names.length] is the sum of mid-week and sunday meeting days. Therefore,
                    the total number of weeks is equal to [names.length / 2] */
-                + ", " + date.getYear() + " → " + ENMonths.get(date.plusWeeks(names.length / 2 - 1).plusDays(6).getMonth().toString())
-                + " "  + date.plusWeeks(names.length / 2 - 1).plusDays(6).getDayOfMonth()
-                + ", " + date.plusWeeks(names.length / 2 - 1).plusDays(6).getYear() + ") "
+                + ", " + date.getYear() + " → " + ENMonths.get(date.plusWeeks((names.length / 2) - 1).plusDays(daysBetweenMeetingDays).getMonth().toString())
+                + " "  + date.plusWeeks(names.length / 2 - 1).plusDays(daysBetweenMeetingDays).getDayOfMonth()
+                + ", " + date.plusWeeks(names.length / 2 - 1).plusDays(daysBetweenMeetingDays).getYear() + ") "
         );
         formattedText.applyFont(font);
         font.setFontHeightInPoints((short) 14);
@@ -141,16 +141,16 @@ public class ExcelFileGenerator {
              To include the name of the next month in the cell, the month after
              6 days must be calculated and compared with the month on Monday */
             weekMonth     = AMMonths.get(date.getMonthValue());
-            monthOnSunday = AMMonths.get(date.plusDays(6).getMonthValue());
+            monthOnSunday = AMMonths.get(date.plusDays(daysBetweenMeetingDays).getMonthValue());
             /* Here, the months are compared and the appropriate week-span is put.
              The if block is important because week-spans are calculated once for
              every week. No need to calculate again on the sunday of the same week*/
             row.createCell(WEEK_SPAN);
-            if (isMid_Week(day)) {
+            if (isMidweek(day)) {
                 if (weekMonth.equals(monthOnSunday))
-                    formattedText.setString(weekMonth + " " + date.getDayOfMonth() + " - " + date.plusDays(6).getDayOfMonth());
+                    formattedText.setString(weekMonth + " " + date.getDayOfMonth() + " - " + date.plusDays(daysBetweenMeetingDays).getDayOfMonth());
                 else
-                    formattedText.setString(weekMonth + " " + date.getDayOfMonth() + " - " + monthOnSunday + " " + date.plusDays(6).getDayOfMonth());
+                    formattedText.setString(weekMonth + " " + date.getDayOfMonth() + " - " + monthOnSunday + " " + date.plusDays(daysBetweenMeetingDays).getDayOfMonth());
                 formattedText.applyFont(font);
                 row.getCell(row.getLastCellNum() - 1).setCellValue(formattedText);
                 sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum() + 1, 0, 0));
@@ -159,10 +159,10 @@ public class ExcelFileGenerator {
             }
             row.getCell(row.getLastCellNum() - 1).setCellStyle(getCellStyle(true, true, false));
             // put the name of the day in the next cell
-            if (isMid_Week(day))
-                row.createCell(row.getLastCellNum()).setCellValue(" " + meetingDay);
+            if (isMidweek(day))
+                row.createCell(row.getLastCellNum()).setCellValue(" " + midweekMeetingDay);
             else
-                row.createCell(row.getLastCellNum()).setCellValue(" " + days.get(7));
+                row.createCell(row.getLastCellNum()).setCellValue(" " + weekendMeetingDay);
             row.getCell(row.getLastCellNum() - 1).setCellStyle(getCellStyle(false, true, false));
             // put the names of members in the next loop
             for (int j = STAGE, k = 0; j <= SECOND_HALL; j++, k++) {
@@ -198,7 +198,7 @@ public class ExcelFileGenerator {
         return true;
     }
 
-    private boolean isMid_Week(int day) {
+    private boolean isMidweek(int day) {
         return day % 2 == 0;
     }
 

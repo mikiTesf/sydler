@@ -41,7 +41,7 @@
         </constraints>
         <properties>
           <editable value="false"/>
-          <text value="&#10;- The first checkbox controls the calculation of&#10;  the factor that is used to decide the rate at&#10;  which a member should appear in any role. If it&#10;  is checked, the scheduler assigns those members&#10;  with less roles to the roles they are registered&#10;  for more frequently.&#10;&#10;- The second checkbox allows you to decide weather&#10;  the member to be assigned to assist a 2nd hall&#10;  meeting should be chosen from those members who&#10;  rotated the mic during the 1st round mic-rotation&#10;  or from any available member who may or may not&#10;  have appeared at a role that day.&#10;"/>
+          <text value="- የመጀመሪያውን አመልካች ሳጥን መጠቀም ድልድሉ ፍትሀዊ አንዲሆን&#10;  ቢያስችልም፤ ሁሉም ሚናዎች ላይ ያልተመደቡትን የድምጽ ክፍሉ&#10;  አባላት በመጀመሪያዎቹ ሳምንታት ውስጥ በተደጋጋሚ አንዲደርሳቸው&#10;  ያደርጋል&#10;&#10;- The second checkbox allows you to decide weather&#10;  the member to be assigned to assist a 2nd hall&#10;  meeting should be chosen from those members who&#10;  rotated the mic during the 1st round mic-rotation&#10;  or from any available member who may or may not&#10;  have appeared at a role that day.&#10;"/>
         </properties>
       </component>
       <component id="7241f" class="javax.swing.JCheckBox" binding="controlCounterCheckbox">

@@ -2,14 +2,14 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="view.GeneratorGUI">
   <tabbedpane id="8446d" binding="tabbedPane">
     <constraints>
-      <xy x="13" y="20" width="457" height="312"/>
+      <xy x="13" y="20" width="573" height="312"/>
     </constraints>
     <properties>
       <enabled value="true"/>
     </properties>
     <border type="none"/>
     <children>
-      <grid id="817d0" layout-manager="GridLayoutManager" row-count="6" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="817d0" layout-manager="GridLayoutManager" row-count="7" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <tabbedpane title="ፕሮግራም"/>
@@ -76,10 +76,10 @@
               <horizontalAlignment value="0"/>
               <horizontalTextPosition value="0"/>
               <labelFor value="d7b9a"/>
-              <text value="&lt;html&gt;የስብሰባ:&lt;br/&gt;ቀን&lt;/html&gt;"/>
+              <text value="&lt;html&gt;የአገልግሎት&lt;br/&gt;ስብሰባ ቀን&lt;/html&gt;"/>
             </properties>
           </component>
-          <component id="d7b9a" class="javax.swing.JComboBox" binding="meetingDayMidweekComboBox" default-binding="true">
+          <component id="d7b9a" class="javax.swing.JComboBox" binding="midweekMeetingDayComboBox">
             <constraints>
               <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -98,7 +98,7 @@
           </component>
           <component id="847df" class="javax.swing.JLabel">
             <constraints>
-              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <labelFor value="56cc"/>
@@ -107,23 +107,13 @@
           </component>
           <component id="56cc" class="javax.swing.JSpinner" binding="howManyWeeksSpinner" default-binding="true">
             <constraints>
-              <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties/>
           </component>
-          <component id="71338" class="javax.swing.JButton" binding="generateButton" default-binding="true">
-            <constraints>
-              <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="18" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <font swing-font="Button.font"/>
-              <icon value="icons/generateExcel.png"/>
-              <text value="አዘጋጅ"/>
-            </properties>
-          </component>
           <vspacer id="b81db">
             <constraints>
-              <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+              <grid row="6" column="3" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
             </constraints>
           </vspacer>
           <component id="94d51" class="javax.swing.JComboBox" binding="monthComboBox">
@@ -149,7 +139,7 @@
           </component>
           <component id="75119" class="javax.swing.JLabel">
             <constraints>
-              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <enabled value="false"/>
@@ -159,7 +149,7 @@
           </component>
           <component id="d087e" class="javax.swing.JLabel">
             <constraints>
-              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <enabled value="false"/>
@@ -168,18 +158,55 @@
           </component>
           <component id="118b" class="javax.swing.JLabel">
             <constraints>
-              <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="2" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <enabled value="false"/>
               <text value="የመጀመሪያዎቹ 3 መሙያዎች ውስጥ አስገባ"/>
             </properties>
           </component>
-          <component id="30f01" class="javax.swing.JToolBar$Separator">
+          <component id="f6a2" class="javax.swing.JComboBox" binding="weekendMeetingDayComboBox">
             <constraints>
-              <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
-            <properties/>
+            <properties>
+              <enabled value="false"/>
+              <model>
+                <item value="እሁድ"/>
+                <item value="ሰኞ"/>
+                <item value="ማክሰኞ"/>
+                <item value="ዕሮብ"/>
+                <item value="ሐሙስ"/>
+                <item value="አርብ"/>
+                <item value="ቅዳሜ"/>
+              </model>
+            </properties>
+          </component>
+          <component id="7a073" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="&lt;html&gt;የሕዝብ&lt;br/&gt;ስብሰባ ቀን:&lt;/html&gt;"/>
+            </properties>
+          </component>
+          <component id="407bf" class="javax.swing.JCheckBox" binding="otherSundayMeetingDayCheckbox">
+            <constraints>
+              <grid row="4" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="ሌላ"/>
+            </properties>
+          </component>
+          <component id="71338" class="javax.swing.JButton" binding="generateButton" default-binding="true">
+            <constraints>
+              <grid row="5" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="18" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <font swing-font="Button.font"/>
+              <icon value="icons/generateExcel.png"/>
+              <text value="አዘጋጅ"/>
+            </properties>
           </component>
         </children>
       </grid>
