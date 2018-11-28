@@ -96,7 +96,7 @@ public class Member {
         this.canRotateMic = canRotateMic;
     }
 
-    public boolean canBeSecondHall() {
+    public boolean canBe2ndHall() {
         return canAssist2ndHall;
     }
 

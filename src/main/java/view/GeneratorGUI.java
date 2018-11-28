@@ -1,5 +1,6 @@
 package view;
 
+import controller.Initializer;
 import domain.Member;
 import controller.ExcelFileGenerator;
 
@@ -20,7 +21,7 @@ class GeneratorGUI extends JFrame {
     private final JFrame frame = this;
     private JSpinner daySpinner;
     private JSpinner yearSpinner;
-    private JComboBox meetingDayMidweekComboBox;
+    private JComboBox midweekMeetingDayComboBox;
     private JSpinner howManyWeeksSpinner;
     private JButton generateButton;
     private JTextField FirstNameTextField;
@@ -37,8 +38,12 @@ class GeneratorGUI extends JFrame {
     private JTabbedPane tabbedPane;
     private JScrollPane scrollPane;
     private JComboBox<String> monthComboBox;
+    private JComboBox weekendMeetingDayComboBox;
+    private JCheckBox otherSundayMeetingDayCheckbox;
     private String savePath = "/home/miki/Desktop/";
     private final HashMap<String, Integer> AMMonths;
+    private final int ID_COLUMN = 0;
+
 
     private GeneratorGUI() {
         AMMonths = new HashMap<>(12);
@@ -58,7 +63,7 @@ class GeneratorGUI extends JFrame {
         tableModel = new DefaultTableModel() {
           @Override
           public boolean isCellEditable(int row, int column) {
-              return column != 0;
+              return column != ID_COLUMN;
           }
         };
     }
@@ -72,13 +77,25 @@ class GeneratorGUI extends JFrame {
         setTitle("የድምጽ ክፍል ፕሮግራም አመንጪ");
 
         JMenuBar menuBar    = new JMenuBar();
+
+        GeneratorSettings settings = new GeneratorSettings();
         AboutForm aboutForm = new AboutForm();
 
-        JMenu fileMenu      = new JMenu("File");
-        JMenuItem exitItem  = new JMenuItem("Exit...");
+        JMenu fileMenu            = new JMenu("File");
+        JMenuItem exitItem        = new JMenuItem("Exit...");
+        JMenuItem preferencesItem = new JMenuItem("Preferences...");
 
         JMenu aboutMenu     = new JMenu("Help");
         JMenuItem aboutItem = new JMenuItem("About...");
+
+        //noinspection Convert2Lambda
+        preferencesItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                settings.setLocationRelativeTo(frame);
+                settings.setVisible(true);
+            }
+        });
 
         //noinspection Convert2Lambda
         exitItem.addActionListener(new ActionListener() {
@@ -97,6 +114,7 @@ class GeneratorGUI extends JFrame {
             }
         });
 
+        fileMenu.add(preferencesItem);
         fileMenu.add(exitItem);
 
         aboutMenu.add(aboutItem);
@@ -105,6 +123,13 @@ class GeneratorGUI extends JFrame {
         menuBar.add(aboutMenu);
 
         setJMenuBar(menuBar);
+
+        otherSundayMeetingDayCheckbox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                weekendMeetingDayComboBox.setEnabled(otherSundayMeetingDayCheckbox.isSelected());
+            }
+        });
 
         //noinspection Convert2Lambda
         generateButton.addActionListener(new ActionListener() {
@@ -121,14 +146,19 @@ class GeneratorGUI extends JFrame {
                 if (choice == JFileChooser.CANCEL_OPTION)
                     return;
                 savePath = saveLocation.getSelectedFile().getPath();
-                LocalDateTime date = LocalDateTime.of(
+                LocalDateTime beginDate = LocalDateTime.of(
                         (int) yearSpinner.getValue(),
                         AMMonths.get(Objects.requireNonNull(monthComboBox.getSelectedItem()).toString()),
                         (int) daySpinner.getValue(), 0, 0
                 );
                 ExcelFileGenerator excelFileGenerator = new ExcelFileGenerator((int) howManyWeeksSpinner.getValue());
                 //noinspection ConstantConditions
-                if (excelFileGenerator.makeExcel (date , meetingDayMidweekComboBox.getSelectedItem().toString(), savePath)) {
+                if (excelFileGenerator.makeExcel (
+                        beginDate ,
+                        midweekMeetingDayComboBox.getSelectedItem().toString(),
+                        weekendMeetingDayComboBox.getSelectedItem().toString(),
+                        savePath))
+                {
                     JOptionPane.showMessageDialog(frame, "ፕሮግራሙ ተፈጥሯል", "ተሳክቷል", JOptionPane.INFORMATION_MESSAGE);
                     return;
                 }
@@ -136,6 +166,7 @@ class GeneratorGUI extends JFrame {
 
             }
         });
+
 
         tableModel.addColumn("#");
         tableModel.addColumn("ስም");
@@ -145,20 +176,22 @@ class GeneratorGUI extends JFrame {
         tableModel.addColumn("የእሁድ ልዩነት");
         membersTable.setModel(tableModel);
 
-        membersTable.getColumnModel().getColumn(0).setMinWidth(50);
-        membersTable.getColumnModel().getColumn(0).setMaxWidth(50);
+        final int FULL_NAME = 1, STAGE = 2, MIC = 3, HALL2 = 4, SUNDAY_EXCEPTION = 5;
 
-        membersTable.getColumnModel().getColumn(2).setCellEditor(membersTable.getDefaultEditor(Boolean.class));
-        membersTable.getColumnModel().getColumn(2).setCellRenderer(membersTable.getDefaultRenderer(Boolean.class));
+        membersTable.getColumnModel().getColumn(ID_COLUMN).setMinWidth(50);
+        membersTable.getColumnModel().getColumn(ID_COLUMN).setMaxWidth(50);
 
-        membersTable.getColumnModel().getColumn(3).setCellEditor(membersTable.getDefaultEditor(Boolean.class));
-        membersTable.getColumnModel().getColumn(3).setCellRenderer(membersTable.getDefaultRenderer(Boolean.class));
+        membersTable.getColumnModel().getColumn(STAGE).setCellEditor(membersTable.getDefaultEditor(Boolean.class));
+        membersTable.getColumnModel().getColumn(STAGE).setCellRenderer(membersTable.getDefaultRenderer(Boolean.class));
 
-        membersTable.getColumnModel().getColumn(4).setCellEditor(membersTable.getDefaultEditor(Boolean.class));
-        membersTable.getColumnModel().getColumn(4).setCellRenderer(membersTable.getDefaultRenderer(Boolean.class));
+        membersTable.getColumnModel().getColumn(MIC).setCellEditor(membersTable.getDefaultEditor(Boolean.class));
+        membersTable.getColumnModel().getColumn(MIC).setCellRenderer(membersTable.getDefaultRenderer(Boolean.class));
 
-        membersTable.getColumnModel().getColumn(5).setCellEditor(membersTable.getDefaultEditor(Boolean.class));
-        membersTable.getColumnModel().getColumn(5).setCellRenderer(membersTable.getDefaultRenderer(Boolean.class));
+        membersTable.getColumnModel().getColumn(HALL2).setCellEditor(membersTable.getDefaultEditor(Boolean.class));
+        membersTable.getColumnModel().getColumn(HALL2).setCellRenderer(membersTable.getDefaultRenderer(Boolean.class));
+
+        membersTable.getColumnModel().getColumn(SUNDAY_EXCEPTION).setCellEditor(membersTable.getDefaultEditor(Boolean.class));
+        membersTable.getColumnModel().getColumn(SUNDAY_EXCEPTION).setCellRenderer(membersTable.getDefaultRenderer(Boolean.class));
 
         membersTable.getTableHeader().setReorderingAllowed(false);
         membersTable.getTableHeader().setResizingAllowed(true);
@@ -167,12 +200,12 @@ class GeneratorGUI extends JFrame {
             List<Member> allMembers = Member.getDao().queryForAll();
             Object[] memberProperties = new Object[6];
             for (Member member : allMembers) {
-                memberProperties[0] = member.getId();
-                memberProperties[1] = member.getFirstName() + " " + member.getLastName();
-                memberProperties[2] = member.canBeStage();
-                memberProperties[3] = member.canRotateMic();
-                memberProperties[4] = member.canBeSecondHall();
-                memberProperties[5] = member.hasSundayException();
+                memberProperties[ID_COLUMN]        = member.getId();
+                memberProperties[FULL_NAME]        = member.getFirstName() + " " + member.getLastName();
+                memberProperties[STAGE]            = member.canBeStage();
+                memberProperties[MIC]              = member.canRotateMic();
+                memberProperties[HALL2]            = member.canBe2ndHall();
+                memberProperties[SUNDAY_EXCEPTION] = member.hasSundayException();
                 tableModel.addRow(memberProperties);
             }
         } catch (SQLException e) {
@@ -181,7 +214,7 @@ class GeneratorGUI extends JFrame {
 
         membersTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         Dimension tableDimension = membersTable.getPreferredSize();
-        scrollPane.setPreferredSize(new Dimension((int) tableDimension.getWidth(), (int) tableDimension.getHeight() + 40));
+        scrollPane.setPreferredSize(new Dimension((int) tableDimension.getWidth(), 190));
 
         daySpinner.setModel(new SpinnerNumberModel(1, 1, 31, 1));
         yearSpinner.setModel(new SpinnerNumberModel(2018, 2018, 3000, 1));
@@ -204,15 +237,15 @@ class GeneratorGUI extends JFrame {
                 member.setCanAssist2ndHall(a2ndHallCheckBox.isSelected());
                 member.setSundayException(sundayExceptionCheckBox.isSelected());
                 if (member.save()) {
-                    JOptionPane.showMessageDialog(GeneratorGUI.getFrames()[0], member.getFirstName() + " ተጨምሯል");
+                    JOptionPane.showMessageDialog(GeneratorGUI.getFrames()[0], "\"" + member.getFirstName() + "\" ተጨምሯል");
                     GeneratorGUI.this.clearAddFields();
                 }
-                memberProperties[0] = member.getId();
-                memberProperties[1] = member.getFirstName() + " " + member.getLastName();
-                memberProperties[2] = member.canBeStage();
-                memberProperties[3] = member.canRotateMic();
-                memberProperties[4] = member.canBeSecondHall();
-                memberProperties[5] = member.hasSundayException();
+                memberProperties[ID_COLUMN]        = member.getId();
+                memberProperties[FULL_NAME]        = member.getFirstName() + " " + member.getLastName();
+                memberProperties[STAGE]            = member.canBeStage();
+                memberProperties[MIC]              = member.canRotateMic();
+                memberProperties[HALL2]            = member.canBe2ndHall();
+                memberProperties[SUNDAY_EXCEPTION] = member.hasSundayException();
                 tableModel.addRow(memberProperties);
                 // handling duplicateFirstName attribute issue(s)
                 try {
@@ -247,7 +280,7 @@ class GeneratorGUI extends JFrame {
                 } catch (SQLException e1) {
                     System.out.println(e1.getMessage());
                 }
-                JOptionPane.showMessageDialog(frame, "የ" + member.getFirstName() + " አይነታዎች ተዘምነዋል");
+                JOptionPane.showMessageDialog(frame, "የ \"" + member.getFirstName() + "\" አይነታዎች ተዘምነዋል");
             }
         });
 
@@ -272,7 +305,7 @@ class GeneratorGUI extends JFrame {
                     tableModel.removeRow(selectedRow);
                     JOptionPane.showMessageDialog(
                             frame,
-                            member.getFirstName() + " ወጥቷል...",
+                            "\"" + member.getFirstName() + "\" ወጥቷል...",
                             "",
                             JOptionPane.INFORMATION_MESSAGE
                     );
@@ -297,8 +330,8 @@ class GeneratorGUI extends JFrame {
     private boolean validMemberInfo() {
         /* as the input is likely to be constructed using Amharic letters,
          I see no way I can use regex to test for it's validity */
-        boolean validFirstName = !FirstNameTextField.getText().equals("");
-        boolean validLastName  = !lastNameTextField.getText().equals("");
+        boolean validFirstName = !FirstNameTextField.getText().isEmpty();
+        boolean validLastName  = !lastNameTextField.getText().isEmpty();
         return validFirstName && validLastName;
     }
 
@@ -344,8 +377,12 @@ class GeneratorGUI extends JFrame {
         sundayExceptionCheckBox.setSelected(false);
     }
 
-
     public static void main(String[] args) {
+        System.setProperty("com.j256.ormlite.logger.level", "INFO");
+
+        Initializer initializer = new Initializer();
+        initializer.initialize();
+
         GeneratorGUI gui = new GeneratorGUI();
         gui.setupGUI();
     }
