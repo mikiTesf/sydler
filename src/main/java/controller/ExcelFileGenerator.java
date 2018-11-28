@@ -60,6 +60,8 @@ public class ExcelFileGenerator {
     }
 
     public boolean makeExcel(LocalDateTime date, String midweekMeetingDay, String weekendMeetingDay, String savePath) {
+        if (names == null) return false;
+
         String filePath = savePath + "/" + date.getDayOfMonth() + "_" + date.getMonth() + "_" + date.getYear() + ".xlsx";
         final int daysBetweenMeetingDays = dayNameToNumber.get(weekendMeetingDay) - dayNameToNumber.get(midweekMeetingDay);
         final int WEEK_SPAN          = 0;

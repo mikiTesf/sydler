@@ -250,9 +250,7 @@ class GeneratorGUI extends JFrame {
                 // handling duplicateFirstName attribute issue(s)
                 try {
                     updateDuplicateAttributeOnAddition(member);
-                } catch (SQLException e1) {
-                    e1.printStackTrace();
-                }
+                } catch (SQLException e1) { e1.printStackTrace(); }
             }
         });
 
@@ -298,9 +296,7 @@ class GeneratorGUI extends JFrame {
                 Member member = new Member();
                 try {
                     member = Member.getDao().queryForId(memberID);
-                } catch (SQLException e1) {
-                    e1.printStackTrace();
-                }
+                } catch (SQLException e1) { e1.printStackTrace(); }
                 if (Member.remove(memberID)) {
                     tableModel.removeRow(selectedRow);
                     JOptionPane.showMessageDialog(
@@ -313,9 +309,7 @@ class GeneratorGUI extends JFrame {
 
                 try {
                     updateDuplicateAttributeOnDelete(member);
-                } catch (SQLException e1) {
-                    e1.printStackTrace();
-                }
+                } catch (SQLException e1) { e1.printStackTrace(); }
             }
         });
 
@@ -343,9 +337,7 @@ class GeneratorGUI extends JFrame {
                 try {
                     _member.setHasDuplicateFirstName(true);
                     Member.getDao().update(_member);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+                } catch (SQLException e) { e.printStackTrace(); }
             }
         }
     }

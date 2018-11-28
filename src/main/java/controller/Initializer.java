@@ -28,17 +28,13 @@ public class Initializer {
                 // String JSONContent = new String(Files.readAllBytes(Paths.get("settings.json")));
                 writer.write(settings.toString());
                 writer.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            } catch (IOException e) { e.printStackTrace(); }
         }
         /* if the JSON file exists read it's content and initialize the settings */
         String JSONFileContent = "";
         try (BufferedReader reader = new BufferedReader(new FileReader(settingsFile))) {
             JSONFileContent = reader.readLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        } catch (IOException e) { e.printStackTrace(); }
         settings = new JSONObject(JSONFileContent);
     }
 }

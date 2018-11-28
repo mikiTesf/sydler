@@ -40,9 +40,7 @@ public class GeneratorSettings extends JFrame {
                 try (FileWriter writer = new FileWriter(Initializer.settingsFile)) {
                     writer.write(Initializer.settings.toString());
                     writer.close();
-                } catch (IOException _e) {
-                    _e.printStackTrace();
-                }
+                } catch (IOException _e) { _e.printStackTrace(); }
             }
 
             @Override

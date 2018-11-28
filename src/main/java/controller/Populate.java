@@ -65,9 +65,7 @@ public class Populate {
                     try {
                         firstRoundMembers.add(Member.getDao().queryForId(scheduleGrid[day][ROUND1_ROW1]));
                         firstRoundMembers.add(Member.getDao().queryForId(scheduleGrid[day][ROUND1_ROW2]));
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
+                    } catch (SQLException e) { e.printStackTrace(); }
                     memberList   = firstRoundMembers;
                     ID_RANK_PAIR = ID_RANK_ROUND1;
                 }
@@ -194,6 +192,8 @@ public class Populate {
     }
 
     String[][] getNameGrid() {
+        if (allMembers.isEmpty()) return null;
+
         final int ROUND2_ROW1 = 3, ROUND2_ROW2 = 4;
         String[][] nameGrid = new String[scheduleGrid.length][scheduleGrid[0].length];
 
