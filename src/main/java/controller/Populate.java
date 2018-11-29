@@ -42,8 +42,8 @@ public class Populate {
         *  in a week and the 6 is the number of roles */
         scheduleGrid = new int[2 * weeks][6];
         // the preferences set by the user must be fetched from the JSON file before proceeding
-        COUNT_FROM_ALL_ROLES  = Initializer.settings.getBoolean(Initializer.COUNT_FROM_ALL_KEY);
-        CHOOSE_FROM_1ST_ROUND = Initializer.settings.getBoolean(Initializer.CHOOSE_FROM_1ST_ROUND_KEY);
+        COUNT_FROM_ALL_ROLES  = SettingInitializer.settings.getBoolean(SettingInitializer.KEY_COUNT_FROM_ALL);
+        CHOOSE_FROM_1ST_ROUND = SettingInitializer.settings.getBoolean(SettingInitializer.KEY_CHOOSE_FROM_1ST_ROUND);
     }
 
     /********************************* column populating method *********************************/

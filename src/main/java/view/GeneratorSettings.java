@@ -9,7 +9,7 @@ import java.awt.event.WindowListener;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import controller.Initializer;
+import controller.SettingInitializer;
 
 public class GeneratorSettings extends JFrame {
     private JPanel panel1;
@@ -20,8 +20,8 @@ public class GeneratorSettings extends JFrame {
     GeneratorSettings () {
         checkBoxPurposeDescribingTextArea.setEditable(false);
 
-        boolean countAllAppearances       = Initializer.settings.getBoolean(Initializer.COUNT_FROM_ALL_KEY);
-        boolean choose2ndHallFrom1stRound = Initializer.settings.getBoolean(Initializer.CHOOSE_FROM_1ST_ROUND_KEY);
+        boolean countAllAppearances       = SettingInitializer.settings.getBoolean(SettingInitializer.KEY_COUNT_FROM_ALL);
+        boolean choose2ndHallFrom1stRound = SettingInitializer.settings.getBoolean(SettingInitializer.KEY_CHOOSE_FROM_1ST_ROUND);
 
         controlCounterCheckbox.setSelected(countAllAppearances);
         control2ndHallChooserCheckbox.setSelected(choose2ndHallFrom1stRound);
@@ -32,13 +32,13 @@ public class GeneratorSettings extends JFrame {
                 final boolean COUNT_FROM_ALL_NEW_VALUE        = controlCounterCheckbox.isSelected();
                 final boolean CHOOSE_FROM_1ST_ROUND_NEW_VALUE = control2ndHallChooserCheckbox.isSelected();
 
-                Initializer.settings.remove(Initializer.COUNT_FROM_ALL_KEY);
-                Initializer.settings.remove(Initializer.CHOOSE_FROM_1ST_ROUND_KEY);
-                Initializer.settings.put(Initializer.COUNT_FROM_ALL_KEY, COUNT_FROM_ALL_NEW_VALUE);
-                Initializer.settings.put(Initializer.CHOOSE_FROM_1ST_ROUND_KEY, CHOOSE_FROM_1ST_ROUND_NEW_VALUE);
+                SettingInitializer.settings.remove(SettingInitializer.KEY_COUNT_FROM_ALL);
+                SettingInitializer.settings.remove(SettingInitializer.KEY_CHOOSE_FROM_1ST_ROUND);
+                SettingInitializer.settings.put(SettingInitializer.KEY_COUNT_FROM_ALL, COUNT_FROM_ALL_NEW_VALUE);
+                SettingInitializer.settings.put(SettingInitializer.KEY_CHOOSE_FROM_1ST_ROUND, CHOOSE_FROM_1ST_ROUND_NEW_VALUE);
 
-                try (FileWriter writer = new FileWriter(Initializer.settingsFile)) {
-                    writer.write(Initializer.settings.toString());
+                try (FileWriter writer = new FileWriter(SettingInitializer.settingsFile)) {
+                    writer.write(SettingInitializer.settings.toString());
                     writer.close();
                 } catch (IOException _e) { _e.printStackTrace(); }
             }

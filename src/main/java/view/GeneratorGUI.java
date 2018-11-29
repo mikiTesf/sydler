@@ -1,7 +1,7 @@
 package view;
 
 import controller.ExcelFileGenerator;
-import controller.Initializer;
+import controller.SettingInitializer;
 import domain.Member;
 
 import javax.swing.*;
@@ -43,7 +43,6 @@ class GeneratorGUI extends JFrame {
     private final HashMap<String, Integer> AMMonths;
     private final int ID_COLUMN = 0;
 
-
     private GeneratorGUI() {
         AMMonths = new HashMap<>(12);
         AMMonths.put("ጥር", 1);
@@ -65,6 +64,8 @@ class GeneratorGUI extends JFrame {
               return column != ID_COLUMN;
           }
         };
+
+        SettingInitializer.initialize();
     }
 
     private void setupGUI() {
@@ -381,10 +382,6 @@ class GeneratorGUI extends JFrame {
 
     public static void main(String[] args) {
         System.setProperty("com.j256.ormlite.logger.level", "INFO");
-
-        Initializer initializer = new Initializer();
-        initializer.initialize();
-
         GeneratorGUI gui = new GeneratorGUI();
         gui.setupGUI();
     }

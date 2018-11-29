@@ -76,7 +76,7 @@
               <horizontalAlignment value="0"/>
               <horizontalTextPosition value="0"/>
               <labelFor value="d7b9a"/>
-              <text value="&lt;html&gt;የአገልግሎት&lt;br/&gt;ስብሰባ ቀን&lt;/html&gt;"/>
+              <text value="&lt;html&gt;የአገልግሎት&lt;br/&gt;ስብሰባ ቀን:&lt;/html&gt;"/>
             </properties>
           </component>
           <component id="d7b9a" class="javax.swing.JComboBox" binding="midweekMeetingDayComboBox">
