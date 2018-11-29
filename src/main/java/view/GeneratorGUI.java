@@ -1,10 +1,12 @@
 package view;
 
+import controller.ExcelFileGenerator;
 import controller.Initializer;
 import domain.Member;
-import controller.ExcelFileGenerator;
 
-import java.awt.Dimension;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -13,9 +15,6 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 
 class GeneratorGUI extends JFrame {
     private final JFrame frame = this;
@@ -153,16 +152,27 @@ class GeneratorGUI extends JFrame {
                 );
                 ExcelFileGenerator excelFileGenerator = new ExcelFileGenerator((int) howManyWeeksSpinner.getValue());
                 //noinspection ConstantConditions
-                if (excelFileGenerator.makeExcel (
-                        beginDate ,
+                final int RETURN_STATUS = excelFileGenerator.makeExcel(
+                        beginDate,
                         midweekMeetingDayComboBox.getSelectedItem().toString(),
                         weekendMeetingDayComboBox.getSelectedItem().toString(),
-                        savePath))
-                {
-                    JOptionPane.showMessageDialog(frame, "ፕሮግራሙ ተፈጥሯል", "ተሳክቷል", JOptionPane.INFORMATION_MESSAGE);
-                    return;
+                        savePath
+                );
+
+                switch (RETURN_STATUS) {
+                    case 0: // success status
+                        JOptionPane.showMessageDialog(frame, "ፕሮግራሙ ተፈጥሯል", "ተሳክቷል", JOptionPane.INFORMATION_MESSAGE);
+                        break;
+                    case 1:// could not save
+                        JOptionPane.showMessageDialog(frame, "ሰነዱን ማስቀመጥ አልተቻለም", "ስህተት", JOptionPane.ERROR_MESSAGE);
+                        break;
+                    case 2:// empty array
+                        JOptionPane.showMessageDialog(frame, "ምንም የድምጽ ክፍል አባላት አልተገኙም", "ስህተት", JOptionPane.ERROR_MESSAGE);
+                        break;
+                    default:// unknown problem
+                        JOptionPane.showMessageDialog(frame, "ያልታወቀ ችግር ተፈጥሯል", "ስህተት", JOptionPane.ERROR_MESSAGE);
+                        break;
                 }
-                JOptionPane.showMessageDialog(frame, "ያልታወቀ ችግር ተፈጥሯል", "ስህተት", JOptionPane.ERROR_MESSAGE);
 
             }
         });

@@ -41,7 +41,7 @@
                     </constraints>
                     <properties>
                       <font name="Maven Pro" size="22" style="1"/>
-                      <text value="Schedule Generator 1.0.3"/>
+                      <text value="Schedule Generator 1.0.4"/>
                     </properties>
                   </component>
                   <component id="128f3" class="javax.swing.JLabel">
@@ -50,7 +50,7 @@
                     </constraints>
                     <properties>
                       <font name="Maven Pro" size="16" style="0"/>
-                      <text value="Built on October 16, 2018"/>
+                      <text value="Built on November 29, 2018"/>
                     </properties>
                   </component>
                   <component id="55ffc" class="javax.swing.JLabel">
@@ -90,7 +90,7 @@
                 </constraints>
                 <properties>
                   <font name="Maven Pro" size="18" style="1"/>
-                  <text value="What's new in v1.0.3?"/>
+                  <text value="What's new in v1.0.4?"/>
                 </properties>
               </component>
               <scrollpane id="e0ed8">
@@ -100,13 +100,13 @@
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <component id="285f2" class="javax.swing.JTextPane" binding="columnHeadersInTheTextPane" default-binding="true">
+                  <component id="285f2" class="javax.swing.JTextPane" binding="errorOrSuccessMessagesTextPane" default-binding="true">
                     <constraints/>
                     <properties>
                       <editable value="false"/>
                       <enabled value="true"/>
-                      <font size="15"/>
-                      <text value="- Column headers in the excel document&#10;  now have a light gray background color&#10;&#10;- Members that share first name(s) will&#10;  have their full names written in the&#10;  corresponding cell(s)&#10;&#10;- Icons added to the buttons in the UI"/>
+                      <font size="14"/>
+                      <text value="- Error or success messages associated&#10;  with the generation of the Excel&#10;  document are propelry communicated&#10;  to the user&#10;&#10;- An option to change the weekend meeting&#10;  day added (some congregations may&#10;  decide to do it on Saturdays)"/>
                     </properties>
                   </component>
                 </children>

@@ -9,7 +9,7 @@ class AboutForm extends JFrame {
 
     private JPanel panel;
     @SuppressWarnings("unused")
-    private JTextPane columnHeadersInTheTextPane;
+    private JTextPane errorOrSuccessMessagesTextPane;
 
     AboutForm () {
         this.setContentPane(panel);

@@ -59,8 +59,10 @@ public class ExcelFileGenerator {
         ENMonths.put("AUGUST", "ነሐሴ");
     }
 
-    public boolean makeExcel(LocalDateTime date, String midweekMeetingDay, String weekendMeetingDay, String savePath) {
-        if (names == null) return false;
+    public int makeExcel(LocalDateTime date, String midweekMeetingDay, String weekendMeetingDay, String savePath) {
+        final int SUCCESS_STATUS = 0, COULD_NOT_SAVE_FILE_ERROR = 1, EMPTY_ARRAY_ERROR = 2;
+
+        if (names == null) return EMPTY_ARRAY_ERROR;
 
         String filePath = savePath + "/" + date.getDayOfMonth() + "_" + date.getMonth() + "_" + date.getYear() + ".xlsx";
         final int daysBetweenMeetingDays = dayNameToNumber.get(weekendMeetingDay) - dayNameToNumber.get(midweekMeetingDay);
@@ -195,9 +197,9 @@ public class ExcelFileGenerator {
             out.close();
         } catch (IOException e) {
             System.out.println(e.getMessage());
-            return false;
+            return COULD_NOT_SAVE_FILE_ERROR;
         }
-        return true;
+        return SUCCESS_STATUS;
     }
 
     private boolean isMidweek(int day) {
