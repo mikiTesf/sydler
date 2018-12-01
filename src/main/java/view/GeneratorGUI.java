@@ -128,6 +128,9 @@ class GeneratorGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 weekendMeetingDayComboBox.setEnabled(otherSundayMeetingDayCheckbox.isSelected());
+                if (!otherSundayMeetingDayCheckbox.isSelected()) {
+                    weekendMeetingDayComboBox.setSelectedIndex(0);
+                }
             }
         });
 
@@ -135,6 +138,7 @@ class GeneratorGUI extends JFrame {
         generateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                generateButton.setEnabled(false);
                 JFileChooser saveLocation = new JFileChooser();
                 saveLocation.setDialogTitle("Excel ሰነዱ የት ይቀመጥ?");
                 saveLocation.setCurrentDirectory(new File("/home/miki/Desktop/"));
@@ -143,8 +147,9 @@ class GeneratorGUI extends JFrame {
                 saveLocation.setAcceptAllFileFilterUsed(false);
 
                 int choice = saveLocation.showDialog(frame, "save");
-                if (choice == JFileChooser.CANCEL_OPTION)
+                if (choice == JFileChooser.CANCEL_OPTION) {
                     return;
+                }
                 savePath = saveLocation.getSelectedFile().getPath();
                 LocalDateTime beginDate = LocalDateTime.of(
                         (int) yearSpinner.getValue(),
@@ -159,6 +164,7 @@ class GeneratorGUI extends JFrame {
                         weekendMeetingDayComboBox.getSelectedItem().toString(),
                         savePath
                 );
+                generateButton.setEnabled(true);
 
                 switch (RETURN_STATUS) {
                     case 0: // success status
@@ -174,7 +180,6 @@ class GeneratorGUI extends JFrame {
                         JOptionPane.showMessageDialog(frame, "ያልታወቀ ችግር ተፈጥሯል", "ስህተት", JOptionPane.ERROR_MESSAGE);
                         break;
                 }
-
             }
         });
 
