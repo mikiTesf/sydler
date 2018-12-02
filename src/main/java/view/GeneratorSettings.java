@@ -11,7 +11,7 @@ import java.io.IOException;
 
 import controller.SettingInitializer;
 
-public class GeneratorSettings extends JFrame {
+class GeneratorSettings extends JFrame {
     private JPanel panel1;
     private JCheckBox controlCounterCheckbox;
     private JCheckBox control2ndHallChooserCheckbox;

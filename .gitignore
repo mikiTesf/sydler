@@ -1,9 +1,8 @@
 database/
-scheduleGenerator_mathematicalApproach.iml
-scheduleGenerator_mathematicalApproach.ipr
-scheduleGenerator_mathematicalApproach.iws
+settings/
+soundSystemScheduleGenerator.iml
+soundSystemScheduleGenerator.ipr
+soundSystemScheduleGenerator.iws
 target/
 out/
-.ideaDataSources/
 dataSources/
-icons/

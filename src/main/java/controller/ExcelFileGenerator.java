@@ -102,39 +102,40 @@ public class ExcelFileGenerator {
         sheet.addMergedRegion(new CellRangeAddress(programTitleRow.getRowNum(), programTitleRow.getRowNum(), WEEK_SPAN, SECOND_HALL));
         // the titles in each column get initialized next
         Row headerRow = sheet.createRow(sheet.getLastRowNum() + 1);
+        CellStyle headerRowCellStyle = getCellStyle(true, true, true);
         // put column names at the header of the sheet
         font.setFontHeightInPoints((short) 10);
         formattedText.setString("ሳምንት");
         formattedText.applyFont(font);
         headerRow.createCell(WEEK_SPAN).setCellValue(formattedText);
-        headerRow.getCell(WEEK_SPAN).setCellStyle(getCellStyle(true, true, true));
+        headerRow.getCell(WEEK_SPAN).setCellStyle(headerRowCellStyle);
 
         formattedText.setString("ቀን");
         formattedText.applyFont(font);
         headerRow.createCell(MEETING_DAY_NAME).setCellValue(formattedText);
-        headerRow.getCell(MEETING_DAY_NAME).setCellStyle(getCellStyle(true, true, true));
+        headerRow.getCell(MEETING_DAY_NAME).setCellStyle(headerRowCellStyle);
 
         formattedText.setString("መድረክ");
         formattedText.applyFont(font);
         headerRow.createCell(STAGE).setCellValue(formattedText);
-        headerRow.getCell(STAGE).setCellStyle(getCellStyle(true, true, true));
+        headerRow.getCell(STAGE).setCellStyle(headerRowCellStyle);
 
         formattedText.setString("በመጀመሪያው ዙር");
         formattedText.applyFont(font);
         headerRow.createCell(FIRST_ROUND_RIGHT).setCellValue(formattedText);
-        sheet.addMergedRegion(new CellRangeAddress(headerRow.getRowNum(), headerRow.getRowNum(), 3, 4));
-        headerRow.getCell(FIRST_ROUND_RIGHT).setCellStyle(getCellStyle(true, true, true));
+        sheet.addMergedRegion(new CellRangeAddress(headerRow.getRowNum(), headerRow.getRowNum(), FIRST_ROUND_RIGHT, FIRST_ROUND_LEFT));
+        headerRow.getCell(FIRST_ROUND_RIGHT).setCellStyle(headerRowCellStyle);
 
         formattedText.setString("በሁለተኛው ዙር");
         formattedText.applyFont(font);
         headerRow.createCell(SECOND_ROUND_RIGHT).setCellValue(formattedText);
-        sheet.addMergedRegion(new CellRangeAddress(headerRow.getRowNum(), headerRow.getRowNum(), 5, 6));
-        headerRow.getCell(SECOND_ROUND_RIGHT).setCellStyle(getCellStyle(true, true, true));
+        sheet.addMergedRegion(new CellRangeAddress(headerRow.getRowNum(), headerRow.getRowNum(), SECOND_ROUND_RIGHT, SECOND_ROUND_LEFT));
+        headerRow.getCell(SECOND_ROUND_RIGHT).setCellStyle(headerRowCellStyle);
 
         formattedText.setString("በሁለተኛው አዳራሽ");
         formattedText.applyFont(font);
         headerRow.createCell(SECOND_HALL).setCellValue(formattedText);
-        headerRow.getCell(SECOND_HALL).setCellStyle(getCellStyle(true, true, true));
+        headerRow.getCell(SECOND_HALL).setCellStyle(headerRowCellStyle);
 
         String weekMonth, monthOnSunday;
         /* the following is the main for loop that fills the schedule by populating it with
@@ -157,7 +158,7 @@ public class ExcelFileGenerator {
                     formattedText.setString(weekMonth + " " + date.getDayOfMonth() + " - " + monthOnSunday + " " + date.plusDays(daysBetweenMeetingDays).getDayOfMonth());
                 formattedText.applyFont(font);
                 row.getCell(row.getLastCellNum() - 1).setCellValue(formattedText);
-                sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum() + 1, 0, 0));
+                sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum() + 1, WEEK_SPAN, WEEK_SPAN));
                 // change date for next week
                 date = date.plusDays(7);
             }
@@ -210,8 +211,8 @@ public class ExcelFileGenerator {
         XSSFCellStyle cellStyle = schedule.createCellStyle();
 
         cellStyle.setWrapText(true);
-        cellStyle.setAlignment(centerAligned ? HorizontalAlignment.CENTER : HorizontalAlignment.LEFT);
         cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        cellStyle.setAlignment(centerAligned ? HorizontalAlignment.CENTER : HorizontalAlignment.LEFT);
 
         if (fullyBordered) {
             cellStyle.setBorderTop(BorderStyle.THIN);

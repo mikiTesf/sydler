@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Collections;
 import java.util.Random;
 
-public class Populate {
+class Populate {
     private final int[][] scheduleGrid;
     private final HashMap<Integer, Double> ID_RANK_ALL;
     private final HashMap<Integer, Double> ID_RANK_ROUND1;
@@ -18,10 +18,10 @@ public class Populate {
     private final int ROUND1_ROW2 = 2;
     private final int HALL2       = 5;
     private List<Member> allMembers;
-    private List<Member> firstRoundMembers;
+    private final List<Member> firstRoundMembers;
     // calculation settings
-    private boolean COUNT_FROM_ALL_ROLES;
-    private boolean CHOOSE_FROM_1ST_ROUND;
+    private final boolean COUNT_FROM_ALL_ROLES;
+    private final boolean CHOOSE_FROM_1ST_ROUND;
 
     Populate(int weeks) {
         try {
@@ -33,8 +33,8 @@ public class Populate {
         }
 
         firstRoundMembers = new ArrayList<>(2);
-        ID_RANK_ALL    = new HashMap<>();
-        ID_RANK_ROUND1 = new HashMap<>();
+        ID_RANK_ALL       = new HashMap<>();
+        ID_RANK_ROUND1    = new HashMap<>();
         for (Member member : allMembers) {
             ID_RANK_ALL.put(member.getId(), 1.0);
         }

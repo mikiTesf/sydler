@@ -8,7 +8,7 @@ class DBConnection {
     private static ConnectionSource connectionSource;
     static {
         // C:\scheduleDB\
-        String dbURL = "jdbc:sqlite:src/main/resources/database/members.db";
+        String dbURL = "jdbc:sqlite:database/members.db";
         try {
             connectionSource = new JdbcConnectionSource(dbURL);
         } catch (SQLException e){

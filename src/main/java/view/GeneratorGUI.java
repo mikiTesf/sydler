@@ -65,7 +65,6 @@ class GeneratorGUI extends JFrame {
           }
         };
 
-        SettingInitializer.initialize();
     }
 
     private void setupGUI() {
@@ -140,14 +139,16 @@ class GeneratorGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 generateButton.setEnabled(false);
                 JFileChooser saveLocation = new JFileChooser();
+                saveLocation.setDialogType(JFileChooser.SAVE_DIALOG);
                 saveLocation.setDialogTitle("Excel ሰነዱ የት ይቀመጥ?");
-                saveLocation.setCurrentDirectory(new File("/home/miki/Desktop/"));
+                saveLocation.setCurrentDirectory(new File(System.getProperty("user.home")));
                 saveLocation.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                 saveLocation.setMultiSelectionEnabled(false);
                 saveLocation.setAcceptAllFileFilterUsed(false);
 
                 int choice = saveLocation.showDialog(frame, "save");
                 if (choice == JFileChooser.CANCEL_OPTION) {
+                    generateButton.setEnabled(true);
                     return;
                 }
                 savePath = saveLocation.getSelectedFile().getPath();
@@ -182,7 +183,6 @@ class GeneratorGUI extends JFrame {
                 }
             }
         });
-
 
         tableModel.addColumn("#");
         tableModel.addColumn("ስም");
@@ -386,6 +386,7 @@ class GeneratorGUI extends JFrame {
     }
 
     public static void main(String[] args) {
+        SettingInitializer.initialize();
         System.setProperty("com.j256.ormlite.logger.level", "INFO");
         GeneratorGUI gui = new GeneratorGUI();
         gui.setupGUI();
