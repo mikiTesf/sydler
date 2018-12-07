@@ -234,7 +234,8 @@ class GeneratorGUI extends JFrame {
 
         daySpinner.setModel(new SpinnerNumberModel(1, 1, 31, 1));
         yearSpinner.setModel(new SpinnerNumberModel(2018, 2018, 3000, 1));
-        howManyWeeksSpinner.setModel(new SpinnerNumberModel(1, 1, 100, 1));
+        // the maximum number of weeks for which the generated table won't exceed an A4 paper is 22
+        howManyWeeksSpinner.setModel(new SpinnerNumberModel(22, 1, 100, 1));
 
         //noinspection Convert2Lambda
         addMemberButton.addActionListener(new ActionListener() {
@@ -350,10 +351,8 @@ class GeneratorGUI extends JFrame {
                 .eq("firstName", member.getFirstName()).query();
         if (members.size() > 1) {
             for (Member _member : members) {
-                try {
-                    _member.setHasDuplicateFirstName(true);
-                    Member.getDao().update(_member);
-                } catch (SQLException e) { e.printStackTrace(); }
+                _member.setHasDuplicateFirstName(true);
+                Member.getDao().update(_member);
             }
         }
     }
@@ -388,7 +387,6 @@ class GeneratorGUI extends JFrame {
     public static void main(String[] args) {
         SettingInitializer.initialize();
         System.setProperty("com.j256.ormlite.logger.level", "INFO");
-        GeneratorGUI gui = new GeneratorGUI();
-        gui.setupGUI();
+        new GeneratorGUI().setupGUI();
     }
 }

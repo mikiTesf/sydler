@@ -38,7 +38,7 @@ public class Member {
         }
     }
 
-    // a no-arg constructor (required by ORMLITE - I still don't know the reason)
+    // this no-arg constructor is required by ORMLITE
     public Member() {
         this.setHasDuplicateFirstName(false);
         this.setId(-1);

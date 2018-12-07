@@ -22,6 +22,10 @@ class Populate {
     // calculation settings
     private final boolean COUNT_FROM_ALL_ROLES;
     private final boolean CHOOSE_FROM_1ST_ROUND;
+    // conventional values representing a member's qualification for a criteria
+    private final double LEAST  = 0;
+    private final double NORMAL = 1;
+    private final double BEST   = 2;
 
     Populate(int weeks) {
         try {
@@ -32,14 +36,14 @@ class Populate {
             System.out.println(e.getMessage());
         }
 
-        firstRoundMembers = new ArrayList<>(2);
+        firstRoundMembers = new ArrayList<>();
         ID_RANK_ALL       = new HashMap<>();
         ID_RANK_ROUND1    = new HashMap<>();
         for (Member member : allMembers) {
-            ID_RANK_ALL.put(member.getId(), 1.0);
+            ID_RANK_ALL.put(member.getId(), NORMAL);
         }
         /* the 2 below is the number of meeting days
-        *  in a week and the 6 is the number of roles */
+           in a week and the 6 is the number of roles */
         scheduleGrid = new int[2 * weeks][6];
         // the preferences set by the user must be fetched from the JSON file before proceeding
         COUNT_FROM_ALL_ROLES  = SettingInitializer.settings.getBoolean(SettingInitializer.KEY_COUNT_FROM_ALL);
@@ -98,7 +102,7 @@ class Populate {
     /******************************* variable calculating methods *******************************/
 
     private double qualify(boolean qualify) {
-        return qualify ? 1 : 0;
+        return qualify ? NORMAL : LEAST;
     }
 
     private double isOccupied(int day, int memberID) {
@@ -106,17 +110,17 @@ class Populate {
         for (int role = STAGE; role <= HALL2; role++) {
             occupied = occupied || (scheduleGrid[day][role] == memberID);
             /* The schedule generator is built around what I would like to call 'The Stage Policy'.
-             The Stage Policy: A a person who is assigned to manage the stage that day
-             should not play any other role as he will be busy (especially on mid-week meeting days).
-             Therefore, 'isOccupied' must return the least possible value in such cases */
-            if (role == STAGE && occupied)
-                return 0;
+               The Stage Policy: A a person who is assigned to manage the stage that day
+               should not play any other role as he will be busy (especially on mid-week meeting days).
+               Therefore, 'isOccupied' must return the least possible value in such cases */
+            if ((role == STAGE) && occupied)
+                return LEAST;
         }
-        return occupied ? 1 : 2;
+        return occupied ? NORMAL : BEST;
     }
 
     private double sundayException(int day, boolean exception) {
-        return (isSunday(day) && exception) ? 1 : 2;
+        return (isSunday(day) && exception) ? NORMAL : BEST;
     }
 
     private double distance(int memberID, int day, int role) {
@@ -183,7 +187,7 @@ class Populate {
         Random random  = new Random();
         ArrayList<Integer> maxValuedIDs = new ArrayList<>();
 
-        for (Integer memberID : ID_RANK_PAIR.keySet()) {
+        for (int memberID : ID_RANK_PAIR.keySet()) {
             if (ID_RANK_PAIR.get(memberID) == maxRank)
                 maxValuedIDs.add(memberID);
         }
@@ -208,7 +212,7 @@ class Populate {
             for (int role = STAGE; role <= HALL2; role++) {
                 try {
                     /* to avoid an NPE the ID values for Sunday's 2nd Hall assignment,
-                     which are 0, must be skipped */
+                       which are 0, must be skipped */
                     if (scheduleGrid[day][role] == 0) continue;
 
                     Member member = Member.getDao().queryForId(scheduleGrid[day][role]);

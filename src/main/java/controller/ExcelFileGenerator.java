@@ -13,10 +13,10 @@ import java.util.HashMap;
 
 public class ExcelFileGenerator {
     private final String[][] names;
+    private final HashMap<String, Integer> dayNameToNumber;
     private final HashMap<Integer, String> AMMonths;
     private final HashMap<String, String> ENMonths;
     private XSSFWorkbook schedule;
-    private final HashMap<String, Integer> dayNameToNumber;
 
     public ExcelFileGenerator(int weeks) {
         names = new Populate(weeks).getNameGrid();
@@ -149,37 +149,37 @@ public class ExcelFileGenerator {
             monthOnSunday = AMMonths.get(date.plusDays(daysBetweenMeetingDays).getMonthValue());
             /* Here, the months are compared and the appropriate week-span is put.
              The if block is important because week-spans are calculated once for
-             every week. No need to calculate again on the sunday of the same week*/
+             every week. No need to calculate again on the Sunday of the same week*/
             row.createCell(WEEK_SPAN);
+            row.createCell(MEETING_DAY_NAME);
             if (isMidweek(day)) {
                 if (weekMonth.equals(monthOnSunday))
                     formattedText.setString(weekMonth + " " + date.getDayOfMonth() + " - " + date.plusDays(daysBetweenMeetingDays).getDayOfMonth());
                 else
                     formattedText.setString(weekMonth + " " + date.getDayOfMonth() + " - " + monthOnSunday + " " + date.plusDays(daysBetweenMeetingDays).getDayOfMonth());
                 formattedText.applyFont(font);
-                row.getCell(row.getLastCellNum() - 1).setCellValue(formattedText);
+                row.getCell(WEEK_SPAN).setCellValue(formattedText);
                 sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum() + 1, WEEK_SPAN, WEEK_SPAN));
+                // the name of the day comes on the next cell
+                row.createCell(MEETING_DAY_NAME).setCellValue(" " + midweekMeetingDay);
+            } else {
+                row.createCell(MEETING_DAY_NAME).setCellValue(" " + weekendMeetingDay);
                 // change date for next week
                 date = date.plusDays(7);
             }
-            row.getCell(row.getLastCellNum() - 1).setCellStyle(getCellStyle(true, true, false));
-            // put the name of the day in the next cell
-            if (isMidweek(day))
-                row.createCell(row.getLastCellNum()).setCellValue(" " + midweekMeetingDay);
-            else
-                row.createCell(row.getLastCellNum()).setCellValue(" " + weekendMeetingDay);
-            row.getCell(row.getLastCellNum() - 1).setCellStyle(getCellStyle(false, true, false));
+            row.getCell(WEEK_SPAN).setCellStyle(getCellStyle(true, true, false));
+            row.getCell(MEETING_DAY_NAME).setCellStyle(getCellStyle(false, true, false));
             // put the names of members in the next loop
-            for (int j = STAGE, k = 0; j <= SECOND_HALL; j++, k++) {
-                row.createCell(j);
-                row.getCell(j).setCellStyle(getCellStyle(false, true, false));
+            for (int column = STAGE, k = 0; column <= SECOND_HALL; column++, k++) {
+                row.createCell(column);
+                row.getCell(column).setCellStyle(getCellStyle(false, true, false));
                 if (!(names[day][k] == null)) {
-                    row.getCell(j).setCellValue(" " + names[day][k]);
+                    row.getCell(column).setCellValue(" " + names[day][k]);
                 }
             }
         }
         System.out.println("excel sheet populated...");
-        
+
         sheet.autoSizeColumn(WEEK_SPAN);
         sheet.autoSizeColumn(MEETING_DAY_NAME);
         sheet.autoSizeColumn(STAGE);
@@ -188,8 +188,6 @@ public class ExcelFileGenerator {
         sheet.autoSizeColumn(SECOND_ROUND_RIGHT);
         sheet.autoSizeColumn(SECOND_ROUND_LEFT);
         sheet.autoSizeColumn(SECOND_HALL);
-
-        sheet.setFitToPage(true);
 
         try {
             FileOutputStream out = new FileOutputStream(new File(filePath));
