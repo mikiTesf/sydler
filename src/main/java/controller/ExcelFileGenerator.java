@@ -13,22 +13,12 @@ import java.util.HashMap;
 
 public class ExcelFileGenerator {
     private final String[][] names;
-    private final HashMap<String, Integer> dayNameToNumber;
     private final HashMap<Integer, String> AMMonths;
     private final HashMap<String, String> ENMonths;
     private XSSFWorkbook schedule;
 
     public ExcelFileGenerator(int weeks) {
         names = new Populate(weeks).getNameGrid();
-
-        dayNameToNumber = new HashMap<>();
-        dayNameToNumber.put("ሰኞ", 1);
-        dayNameToNumber.put("ማክሰኞ", 2);
-        dayNameToNumber.put("ዕሮብ", 3);
-        dayNameToNumber.put("ሐሙስ", 4);
-        dayNameToNumber.put("አርብ", 5);
-        dayNameToNumber.put("ቅዳሜ", 6);
-        dayNameToNumber.put("እሁድ", 7);
 
         AMMonths = new HashMap<>(12);
         AMMonths.put(1, "ጥር");
@@ -63,9 +53,8 @@ public class ExcelFileGenerator {
         final int SUCCESS_STATUS = 0, COULD_NOT_SAVE_FILE_ERROR = 1, EMPTY_ARRAY_ERROR = 2;
 
         if (names == null) return EMPTY_ARRAY_ERROR;
-
-        String filePath = savePath + "/" + date.getDayOfMonth() + "_" + date.getMonth() + "_" + date.getYear() + ".xlsx";
-        final int daysBetweenMeetingDays = dayNameToNumber.get(weekendMeetingDay) - dayNameToNumber.get(midweekMeetingDay);
+        // SSS - Sound System Schedule
+        String filePath = savePath + "/SSS_" + date.getDayOfMonth() + "_" + date.getMonth() + "_" + date.getYear() + ".xlsx";
         final int WEEK_SPAN          = 0;
         final int MEETING_DAY_NAME   = 1;
         final int STAGE              = 2;
@@ -87,12 +76,12 @@ public class ExcelFileGenerator {
         Row programTitleRow = sheet.createRow(0);
         formattedText.setString(
                 "የአዲስ ሰፈር ጉባኤ የድምጽ ክፍል ፕሮግራም\n"
-                + "("  + ENMonths.get(date.getMonth().toString()) + " " + date.getDayOfMonth()
-                /* Each week has two days. [names.length] is the sum of mid-week and sunday meeting days. Therefore,
-                   the total number of weeks is equal to [names.length / 2] */
-                + ", " + date.getYear() + " → " + ENMonths.get(date.plusWeeks((names.length / 2) - 1).plusDays(daysBetweenMeetingDays).getMonth().toString())
-                + " "  + date.plusWeeks(names.length / 2 - 1).plusDays(daysBetweenMeetingDays).getDayOfMonth()
-                + ", " + date.plusWeeks(names.length / 2 - 1).plusDays(daysBetweenMeetingDays).getYear() + ") "
+                + "("  + ENMonths.get(date.getMonth().toString()) + " " + date.getDayOfMonth() + ", " + date.getYear()
+                /* Each week has two days. "names.length" is the sum of mid-week and Sunday meeting days. Therefore,
+                   the total number of weeks is equal to (names.length / 2) */
+                + " → " + ENMonths.get(date.plusWeeks((names.length / 2) - 1).plusDays(6).getMonth().toString())
+                + " "  + date.plusWeeks(names.length / 2 - 1).plusDays(6).getDayOfMonth()
+                + ", " + date.plusWeeks(names.length / 2 - 1).plusDays(6).getYear() + ") "
         );
         formattedText.applyFont(font);
         font.setFontHeightInPoints((short) 14);
@@ -146,7 +135,7 @@ public class ExcelFileGenerator {
              To include the name of the next month in the cell, the month after
              6 days must be calculated and compared with the month on Monday */
             weekMonth     = AMMonths.get(date.getMonthValue());
-            monthOnSunday = AMMonths.get(date.plusDays(daysBetweenMeetingDays).getMonthValue());
+            monthOnSunday = AMMonths.get(date.plusDays(6).getMonthValue());
             /* Here, the months are compared and the appropriate week-span is put.
              The if block is important because week-spans are calculated once for
              every week. No need to calculate again on the Sunday of the same week*/
@@ -154,9 +143,9 @@ public class ExcelFileGenerator {
             row.createCell(MEETING_DAY_NAME);
             if (isMidweek(day)) {
                 if (weekMonth.equals(monthOnSunday))
-                    formattedText.setString(weekMonth + " " + date.getDayOfMonth() + " - " + date.plusDays(daysBetweenMeetingDays).getDayOfMonth());
+                    formattedText.setString(weekMonth + " " + date.getDayOfMonth() + " - " + date.plusDays(6).getDayOfMonth());
                 else
-                    formattedText.setString(weekMonth + " " + date.getDayOfMonth() + " - " + monthOnSunday + " " + date.plusDays(daysBetweenMeetingDays).getDayOfMonth());
+                    formattedText.setString(weekMonth + " " + date.getDayOfMonth() + " - " + monthOnSunday + " " + date.plusDays(6).getDayOfMonth());
                 formattedText.applyFont(font);
                 row.getCell(WEEK_SPAN).setCellValue(formattedText);
                 sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum() + 1, WEEK_SPAN, WEEK_SPAN));
@@ -165,7 +154,7 @@ public class ExcelFileGenerator {
             } else {
                 row.createCell(MEETING_DAY_NAME).setCellValue(" " + weekendMeetingDay);
                 // change date for next week
-                date = date.plusDays(7);
+                date = date.plusWeeks(1);
             }
             row.getCell(WEEK_SPAN).setCellStyle(getCellStyle(true, true, false));
             row.getCell(MEETING_DAY_NAME).setCellStyle(getCellStyle(false, true, false));

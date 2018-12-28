@@ -45,7 +45,7 @@ class Populate {
         /* the 2 below is the number of meeting days
            in a week and the 6 is the number of roles */
         scheduleGrid = new int[2 * weeks][6];
-        // the preferences set by the user must be fetched from the JSON file before proceeding
+        // the preferences set by the user must be read from the settings file before proceeding
         COUNT_FROM_ALL_ROLES  = SettingInitializer.settings.getBoolean(SettingInitializer.KEY_COUNT_FROM_ALL);
         CHOOSE_FROM_1ST_ROUND = SettingInitializer.settings.getBoolean(SettingInitializer.KEY_CHOOSE_FROM_1ST_ROUND);
     }
@@ -216,8 +216,8 @@ class Populate {
                     if (scheduleGrid[day][role] == 0) continue;
 
                     Member member = Member.getDao().queryForId(scheduleGrid[day][role]);
-                    nameGrid[day][role] = (member.hasDuplicateFirstName() ?
-                            member.getFirstName() + "\n" + member.getLastName() : member.getFirstName());
+                    nameGrid[day][role] = member.hasDuplicateFirstName() ?
+                            member.getFirstName() + "\n" + member.getLastName() : member.getFirstName();
                 } catch (SQLException e) {
                     System.out.println(e.getMessage());
                 }

@@ -6,3 +6,5 @@ soundSystemScheduleGenerator.iws
 target/
 out/
 dataSources/
+.idea/
+scheduleGenerator.iml

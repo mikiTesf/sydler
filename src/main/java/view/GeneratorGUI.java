@@ -77,8 +77,8 @@ class GeneratorGUI extends JFrame {
 
         JMenuBar menuBar    = new JMenuBar();
 
-        GeneratorSettings settings = new GeneratorSettings();
-        AboutForm aboutForm = new AboutForm();
+        GeneratorSettings settings = new GeneratorSettings(this);
+        AboutForm aboutForm = new AboutForm(this);
 
         JMenu fileMenu            = new JMenu("File");
         JMenuItem exitItem        = new JMenuItem("Exit...");
@@ -91,6 +91,7 @@ class GeneratorGUI extends JFrame {
         preferencesItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                setEnabled(false);
                 settings.setLocationRelativeTo(frame);
                 settings.setVisible(true);
             }
@@ -109,6 +110,7 @@ class GeneratorGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 aboutForm.getFrame().setLocationRelativeTo(frame);
+                setEnabled(false);
                 aboutForm.getFrame().setVisible(true);
             }
         });
@@ -123,6 +125,7 @@ class GeneratorGUI extends JFrame {
 
         setJMenuBar(menuBar);
 
+        //noinspection Convert2Lambda
         otherSundayMeetingDayCheckbox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -137,7 +140,6 @@ class GeneratorGUI extends JFrame {
         generateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                generateButton.setEnabled(false);
                 JFileChooser saveLocation = new JFileChooser();
                 saveLocation.setDialogType(JFileChooser.SAVE_DIALOG);
                 saveLocation.setDialogTitle("Excel ሰነዱ የት ይቀመጥ?");
@@ -147,17 +149,17 @@ class GeneratorGUI extends JFrame {
                 saveLocation.setAcceptAllFileFilterUsed(false);
 
                 int choice = saveLocation.showDialog(frame, "save");
-                if (choice == JFileChooser.CANCEL_OPTION) {
-                    generateButton.setEnabled(true);
-                    return;
-                }
-                savePath = saveLocation.getSelectedFile().getPath();
+                if (choice == JFileChooser.CANCEL_OPTION) return;
+
+                generateButton.setEnabled(false);
+
                 LocalDateTime beginDate = LocalDateTime.of(
                         (int) yearSpinner.getValue(),
                         AMMonths.get(Objects.requireNonNull(monthComboBox.getSelectedItem()).toString()),
                         (int) daySpinner.getValue(), 0, 0
                 );
                 ExcelFileGenerator excelFileGenerator = new ExcelFileGenerator((int) howManyWeeksSpinner.getValue());
+                savePath = saveLocation.getSelectedFile().getPath();
                 //noinspection ConstantConditions
                 final int RETURN_STATUS = excelFileGenerator.makeExcel(
                         beginDate,

@@ -4,6 +4,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JCheckBox;
 import javax.swing.JTextArea;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.FileWriter;
@@ -17,7 +18,7 @@ class GeneratorSettings extends JFrame {
     private JCheckBox control2ndHallChooserCheckbox;
     private JTextArea checkBoxPurposeDescribingTextArea;
 
-    GeneratorSettings () {
+    GeneratorSettings (JFrame frame) {
         checkBoxPurposeDescribingTextArea.setEditable(false);
 
         boolean countAllAppearances       = SettingInitializer.settings.getBoolean(SettingInitializer.KEY_COUNT_FROM_ALL);
@@ -26,9 +27,10 @@ class GeneratorSettings extends JFrame {
         controlCounterCheckbox.setSelected(countAllAppearances);
         control2ndHallChooserCheckbox.setSelected(choose2ndHallFrom1stRound);
 
-        addWindowListener(new WindowListener() {
+        addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
+                frame.setEnabled(true);
                 final boolean COUNT_FROM_ALL_NEW_VALUE        = controlCounterCheckbox.isSelected();
                 final boolean CHOOSE_FROM_1ST_ROUND_NEW_VALUE = control2ndHallChooserCheckbox.isSelected();
 
@@ -42,19 +44,6 @@ class GeneratorSettings extends JFrame {
                     writer.close();
                 } catch (IOException _e) { _e.printStackTrace(); }
             }
-
-            @Override
-            public void windowOpened(WindowEvent e) {}
-            @Override
-            public void windowClosed(WindowEvent e) {}
-            @Override
-            public void windowIconified(WindowEvent e) {}
-            @Override
-            public void windowDeiconified(WindowEvent e) {}
-            @Override
-            public void windowActivated(WindowEvent e) {}
-            @Override
-            public void windowDeactivated(WindowEvent e) {}
         });
 
         setContentPane(panel1);
