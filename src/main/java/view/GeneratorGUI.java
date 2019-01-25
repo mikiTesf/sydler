@@ -243,7 +243,7 @@ class GeneratorGUI extends JFrame {
         addMemberButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (!validMemberInfo()) {
+                if (invalidMemberInfo()) {
                     JOptionPane.showMessageDialog(frame, "የወንድም ሙሉ ስም አልተሞላም", "ስህተት", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
@@ -340,12 +340,12 @@ class GeneratorGUI extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    private boolean validMemberInfo() {
+    private boolean invalidMemberInfo() {
         /* as the input is likely to be constructed using Amharic letters,
          I see no way I can use regex to test for it's validity */
-        boolean validFirstName = !FirstNameTextField.getText().isEmpty();
-        boolean validLastName  = !lastNameTextField.getText().isEmpty();
-        return validFirstName && validLastName;
+        boolean invalidFirstName = FirstNameTextField.getText().isEmpty();
+        boolean invalidLastName  = lastNameTextField.getText().isEmpty();
+        return invalidFirstName || invalidLastName;
     }
 
     private void updateDuplicateAttributeOnAddition(Member member) throws SQLException {

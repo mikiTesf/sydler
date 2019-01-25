@@ -6,7 +6,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JTextArea;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -41,7 +40,6 @@ class GeneratorSettings extends JFrame {
 
                 try (FileWriter writer = new FileWriter(SettingInitializer.settingsFile)) {
                     writer.write(SettingInitializer.settings.toString());
-                    writer.close();
                 } catch (IOException _e) { _e.printStackTrace(); }
             }
         });

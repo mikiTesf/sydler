@@ -11,7 +11,7 @@ class AboutForm extends JFrame {
 
     private JPanel panel;
     @SuppressWarnings("unused")
-    private JTextPane newOnThisVersionDescriptionTextPane;
+    private JTextPane whatsNewTextPane;
 
     AboutForm (JFrame frame) {
         this.setContentPane(panel);

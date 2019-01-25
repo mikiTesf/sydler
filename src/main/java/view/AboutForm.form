@@ -100,13 +100,13 @@
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <component id="285f2" class="javax.swing.JTextPane" binding="newOnThisVersionDescriptionTextPane" default-binding="true">
+                  <component id="285f2" class="javax.swing.JTextPane" binding="whatsNewTextPane">
                     <constraints/>
                     <properties>
                       <editable value="false"/>
                       <enabled value="true"/>
                       <font size="14"/>
-                      <text value="- Added settings that control the way&#10;  a schedule gets generated. The program&#10;  persists the settings using a JSON file&#10;&#10;- An option to change the weekend meeting&#10;  day added (some congregations may&#10;  decide to do it on Saturdays)&#10;&#10;- Error or success messages associated&#10;  with the generation of the Excel&#10;  document are propelry communicated&#10;  to the user"/>
+                      <text value="- Added settings that control the way   a schedule gets generated. The program   persists the settings using a JSON file  - An option to change the weekend meeting   day added (some congregations may   decide to do it on Saturdays)  - Error or success messages associated   with the generation of the Excel   document are properly communicated   to the user"/>
                     </properties>
                   </component>
                 </children>

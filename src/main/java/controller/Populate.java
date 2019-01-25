@@ -3,11 +3,7 @@ package controller;
 import domain.Member;
 
 import java.sql.SQLException;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Collections;
-import java.util.Random;
+import java.util.*;
 
 class Populate {
     private final int[][] scheduleGrid;
@@ -39,7 +35,7 @@ class Populate {
         firstRoundMembers = new ArrayList<>();
         ID_RANK_ALL       = new HashMap<>();
         ID_RANK_ROUND1    = new HashMap<>();
-        for (Member member : allMembers) {
+        for (Member member : Objects.requireNonNull(allMembers)) {
             ID_RANK_ALL.put(member.getId(), NORMAL);
         }
         /* the 2 below is the number of meeting days

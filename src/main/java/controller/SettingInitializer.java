@@ -30,7 +30,6 @@ public class SettingInitializer {
 
             try (FileWriter writer = new FileWriter(settingsFile)) {
                 writer.write(settings.toString());
-                writer.close();
             } catch (IOException e) { e.printStackTrace(); }
         }
         /* if the JSON file exists read it's content and initialize the settings */
