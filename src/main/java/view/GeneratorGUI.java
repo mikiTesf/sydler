@@ -199,17 +199,10 @@ class GeneratorGUI extends JFrame {
         membersTable.getColumnModel().getColumn(ID_COLUMN).setMinWidth(50);
         membersTable.getColumnModel().getColumn(ID_COLUMN).setMaxWidth(50);
 
-        membersTable.getColumnModel().getColumn(STAGE).setCellEditor(membersTable.getDefaultEditor(Boolean.class));
-        membersTable.getColumnModel().getColumn(STAGE).setCellRenderer(membersTable.getDefaultRenderer(Boolean.class));
-
-        membersTable.getColumnModel().getColumn(MIC).setCellEditor(membersTable.getDefaultEditor(Boolean.class));
-        membersTable.getColumnModel().getColumn(MIC).setCellRenderer(membersTable.getDefaultRenderer(Boolean.class));
-
-        membersTable.getColumnModel().getColumn(HALL2).setCellEditor(membersTable.getDefaultEditor(Boolean.class));
-        membersTable.getColumnModel().getColumn(HALL2).setCellRenderer(membersTable.getDefaultRenderer(Boolean.class));
-
-        membersTable.getColumnModel().getColumn(SUNDAY_EXCEPTION).setCellEditor(membersTable.getDefaultEditor(Boolean.class));
-        membersTable.getColumnModel().getColumn(SUNDAY_EXCEPTION).setCellRenderer(membersTable.getDefaultRenderer(Boolean.class));
+        renderTableColumnAsCheckbox(STAGE);
+        renderTableColumnAsCheckbox(MIC);
+        renderTableColumnAsCheckbox(HALL2);
+        renderTableColumnAsCheckbox(SUNDAY_EXCEPTION);
 
         membersTable.getTableHeader().setReorderingAllowed(false);
         membersTable.getTableHeader().setResizingAllowed(true);
@@ -375,6 +368,11 @@ class GeneratorGUI extends JFrame {
                 Member.getDao().update(_member);
             }
         }
+    }
+
+    private void renderTableColumnAsCheckbox (int columnIndex) {
+        membersTable.getColumnModel().getColumn(columnIndex).setCellEditor(membersTable.getDefaultEditor(Boolean.class));
+        membersTable.getColumnModel().getColumn(columnIndex).setCellRenderer(membersTable.getDefaultRenderer(Boolean.class));
     }
 
     private void clearAddFields() {
