@@ -81,7 +81,9 @@
             <constraints>
               <tabbedpane title="What's New"/>
             </constraints>
-            <properties/>
+            <properties>
+              <background color="-1"/>
+            </properties>
             <border type="none"/>
             <children>
               <component id="ed5d5" class="javax.swing.JLabel">
@@ -97,16 +99,21 @@
                 <constraints>
                   <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>
-                <properties/>
+                <properties>
+                  <background color="-921103"/>
+                </properties>
                 <border type="none"/>
                 <children>
-                  <component id="285f2" class="javax.swing.JTextPane" binding="whatsNewTextPane">
+                  <component id="6bf3f" class="javax.swing.JLabel" binding="whatsNewLabel">
                     <constraints/>
                     <properties>
-                      <editable value="false"/>
-                      <enabled value="true"/>
-                      <font size="14"/>
-                      <text value="- Added settings that control the way   a schedule gets generated. The program   persists the settings using a JSON file  - An option to change the weekend meeting   day added (some congregations may   decide to do it on Saturdays)  - Error or success messages associated   with the generation of the Excel   document are properly communicated   to the user"/>
+                      <background color="-921103"/>
+                      <font size="14" style="0"/>
+                      <horizontalAlignment value="2"/>
+                      <horizontalTextPosition value="2"/>
+                      <text value="&lt;html&gt;&#10;&#10;&lt;li&gt;&#10;Added settings that control the way a schedule &lt;br/&gt;&#10;gets generated. The program persists the &lt;br/&gt;&#10;settings using a JSON file&#10;&lt;/li&gt;&#10;&lt;br/&gt;&#10;&lt;li&gt;&#10;An option to change the weekend meeting day &lt;br/&gt;&#10;added (some congregations may decide to do it &lt;br/&gt;&#10;on Saturdays)&#10;&lt;/li&gt;&#10;&lt;br/&gt;&#10;&lt;li&gt;&#10;Error or success messages associated with the &lt;br/&gt;&#10;generation of the Excel document are properly &lt;br/&gt;&#10;communicated to the user&#10;&lt;/li&gt;&#10;&#10;&lt;/html&gt;"/>
+                      <verticalAlignment value="0"/>
+                      <verticalTextPosition value="0"/>
                     </properties>
                   </component>
                 </children>

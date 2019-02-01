@@ -142,7 +142,8 @@
               <grid row="0" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <enabled value="false"/>
+              <background color="-16777216"/>
+              <enabled value="true"/>
               <horizontalAlignment value="0"/>
               <text value="ፕሮግራሙ እንዲጀምር በተፈለገበት ሳምንት"/>
             </properties>
@@ -152,7 +153,8 @@
               <grid row="1" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <enabled value="false"/>
+              <background color="-16777216"/>
+              <enabled value="true"/>
               <text value="ውስጥ ያለውን ሰኞ ቀን፤ በስተግራ ባሉት"/>
             </properties>
           </component>
@@ -161,7 +163,8 @@
               <grid row="2" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <enabled value="false"/>
+              <background color="-16777216"/>
+              <enabled value="true"/>
               <text value="የመጀመሪያዎቹ 3 መሙያዎች ውስጥ አስገባ"/>
             </properties>
           </component>

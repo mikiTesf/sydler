@@ -41,7 +41,7 @@ class GeneratorGUI extends JFrame {
     private JCheckBox otherSundayMeetingDayCheckbox;
     private String savePath = "/home/miki/Desktop/";
     private final HashMap<String, Integer> AMMonths;
-    private final int ID_COLUMN = 0;
+    private final int ID_COLUMN = 0, STAGE = 2, MIC = 3, HALL2 = 4, SUNDAY_EXCEPTION = 5;
 
     private GeneratorGUI() {
         AMMonths = new HashMap<>(12);
@@ -75,7 +75,7 @@ class GeneratorGUI extends JFrame {
         }
         setTitle("የድምጽ ክፍል ፕሮግራም አመንጪ");
 
-        JMenuBar menuBar    = new JMenuBar();
+        JMenuBar menuBar = new JMenuBar();
 
         GeneratorSettings settings = new GeneratorSettings(this);
         AboutForm aboutForm = new AboutForm(this);
@@ -124,6 +124,43 @@ class GeneratorGUI extends JFrame {
         menuBar.add(aboutMenu);
 
         setJMenuBar(menuBar);
+
+        tableModel.addColumn("#");
+        tableModel.addColumn("ስም");
+        tableModel.addColumn("መድረክ");
+        tableModel.addColumn("ድምጽ ማጉያ");
+        tableModel.addColumn("ሁለተኛው አዳራሽ");
+        tableModel.addColumn("የእሁድ ልዩነት");
+        membersTable.setModel(tableModel);
+
+        membersTable.getColumnModel().getColumn(ID_COLUMN).setMinWidth(50);
+        membersTable.getColumnModel().getColumn(ID_COLUMN).setMaxWidth(50);
+
+        renderTableColumnAsCheckbox(STAGE);
+        renderTableColumnAsCheckbox(MIC);
+        renderTableColumnAsCheckbox(HALL2);
+        renderTableColumnAsCheckbox(SUNDAY_EXCEPTION);
+
+        membersTable.getTableHeader().setReorderingAllowed(false);
+        membersTable.getTableHeader().setResizingAllowed(true);
+
+        try {
+            List<Member> allMembers = Member.getDao().queryForAll();
+            for (Member member : allMembers) {
+                addTableRowForMember(member);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        membersTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        Dimension tableDimension = membersTable.getPreferredSize();
+        scrollPane.setPreferredSize(new Dimension((int) tableDimension.getWidth(), 190));
+
+        daySpinner.setModel(new SpinnerNumberModel(1, 1, 31, 1));
+        yearSpinner.setModel(new SpinnerNumberModel(2018, 2018, 3000, 1));
+        // the maximum number of weeks for which the generated table won't exceed an A4 paper is 22
+        howManyWeeksSpinner.setModel(new SpinnerNumberModel(22, 1, 100, 1));
 
         //noinspection Convert2Lambda
         otherSundayMeetingDayCheckbox.addActionListener(new ActionListener() {
@@ -186,52 +223,6 @@ class GeneratorGUI extends JFrame {
             }
         });
 
-        tableModel.addColumn("#");
-        tableModel.addColumn("ስም");
-        tableModel.addColumn("መድረክ");
-        tableModel.addColumn("ድምጽ ማጉያ");
-        tableModel.addColumn("ሁለተኛው አዳራሽ");
-        tableModel.addColumn("የእሁድ ልዩነት");
-        membersTable.setModel(tableModel);
-
-        final int FULL_NAME = 1, STAGE = 2, MIC = 3, HALL2 = 4, SUNDAY_EXCEPTION = 5;
-
-        membersTable.getColumnModel().getColumn(ID_COLUMN).setMinWidth(50);
-        membersTable.getColumnModel().getColumn(ID_COLUMN).setMaxWidth(50);
-
-        renderTableColumnAsCheckbox(STAGE);
-        renderTableColumnAsCheckbox(MIC);
-        renderTableColumnAsCheckbox(HALL2);
-        renderTableColumnAsCheckbox(SUNDAY_EXCEPTION);
-
-        membersTable.getTableHeader().setReorderingAllowed(false);
-        membersTable.getTableHeader().setResizingAllowed(true);
-
-        try {
-            List<Member> allMembers = Member.getDao().queryForAll();
-            Object[] memberProperties = new Object[6];
-            for (Member member : allMembers) {
-                memberProperties[ID_COLUMN]        = member.getId();
-                memberProperties[FULL_NAME]        = member.getFirstName() + " " + member.getLastName();
-                memberProperties[STAGE]            = member.canBeStage();
-                memberProperties[MIC]              = member.canRotateMic();
-                memberProperties[HALL2]            = member.canBe2ndHall();
-                memberProperties[SUNDAY_EXCEPTION] = member.hasSundayException();
-                tableModel.addRow(memberProperties);
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-
-        membersTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        Dimension tableDimension = membersTable.getPreferredSize();
-        scrollPane.setPreferredSize(new Dimension((int) tableDimension.getWidth(), 190));
-
-        daySpinner.setModel(new SpinnerNumberModel(1, 1, 31, 1));
-        yearSpinner.setModel(new SpinnerNumberModel(2018, 2018, 3000, 1));
-        // the maximum number of weeks for which the generated table won't exceed an A4 paper is 22
-        howManyWeeksSpinner.setModel(new SpinnerNumberModel(22, 1, 100, 1));
-
         //noinspection Convert2Lambda
         addMemberButton.addActionListener(new ActionListener() {
             @Override
@@ -241,7 +232,6 @@ class GeneratorGUI extends JFrame {
                     return;
                 }
                 Member member             = new Member();
-                Object[] memberProperties = new Object[6];
                 member.setFirstName(FirstNameTextField.getText());
                 member.setLastName(lastNameTextField.getText());
                 member.setCanBeStage(stageCheckBox.isSelected());
@@ -250,15 +240,9 @@ class GeneratorGUI extends JFrame {
                 member.setSundayException(sundayExceptionCheckBox.isSelected());
                 if (member.save()) {
                     JOptionPane.showMessageDialog(GeneratorGUI.getFrames()[0], "\"" + member.getFirstName() + "\" ተጨምሯል");
-                    GeneratorGUI.this.clearAddFields();
+                    GeneratorGUI.this.clearInputFields();
                 }
-                memberProperties[ID_COLUMN]        = member.getId();
-                memberProperties[FULL_NAME]        = member.getFirstName() + " " + member.getLastName();
-                memberProperties[STAGE]            = member.canBeStage();
-                memberProperties[MIC]              = member.canRotateMic();
-                memberProperties[HALL2]            = member.canBe2ndHall();
-                memberProperties[SUNDAY_EXCEPTION] = member.hasSundayException();
-                tableModel.addRow(memberProperties);
+                addTableRowForMember(member);
                 // handling duplicateFirstName attribute issue(s)
                 try {
                     updateDuplicateAttributeOnAddition(member);
@@ -375,7 +359,20 @@ class GeneratorGUI extends JFrame {
         membersTable.getColumnModel().getColumn(columnIndex).setCellRenderer(membersTable.getDefaultRenderer(Boolean.class));
     }
 
-    private void clearAddFields() {
+    private void addTableRowForMember(Member member) {
+        final int FULL_NAME = 1;
+        Object[] memberAttributes = new Object[6];
+
+        memberAttributes[ID_COLUMN]        = member.getId();
+        memberAttributes[FULL_NAME]        = member.getFirstName() + " " + member.getLastName();
+        memberAttributes[STAGE]            = member.canBeStage();
+        memberAttributes[MIC]              = member.canRotateMic();
+        memberAttributes[HALL2]            = member.canBe2ndHall();
+        memberAttributes[SUNDAY_EXCEPTION] = member.hasSundayException();
+        tableModel.addRow(memberAttributes);
+    }
+
+    private void clearInputFields() {
         FirstNameTextField.setText("");
         lastNameTextField.setText("");
         stageCheckBox.setSelected(false);
