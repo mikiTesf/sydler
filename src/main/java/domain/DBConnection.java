@@ -5,13 +5,15 @@ import com.j256.ormlite.support.ConnectionSource;
 import java.sql.SQLException;
 
 class DBConnection {
-    private static ConnectionSource connectionSource;
-    static {
+    private static final ConnectionSource connectionSource = initializeConnectionSource();
+
+    private static ConnectionSource initializeConnectionSource () {
         String dbURL = "jdbc:sqlite:database/members.db";
         try {
-            connectionSource = new JdbcConnectionSource(dbURL);
+            return new JdbcConnectionSource(dbURL);
         } catch (SQLException e){
             System.out.println(e.getMessage());
+            return null;
         }
     }
 

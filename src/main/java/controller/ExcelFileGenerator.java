@@ -1,8 +1,19 @@
 package controller;
 
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
 import java.awt.Color;
 import java.io.File;
@@ -159,11 +170,11 @@ public class ExcelFileGenerator {
             row.getCell(WEEK_SPAN).setCellStyle(getCellStyle(true, true, false));
             row.getCell(MEETING_DAY_NAME).setCellStyle(getCellStyle(false, true, false));
             // put the names of members in the next loop
-            for (int column = STAGE, k = 0; column <= SECOND_HALL; column++, k++) {
+            for (int column = STAGE, role = 0; column <= SECOND_HALL; column++, role++) {
                 row.createCell(column);
                 row.getCell(column).setCellStyle(getCellStyle(false, true, false));
-                if (!(names[day][k] == null)) {
-                    row.getCell(column).setCellValue(" " + names[day][k]);
+                if (!(names[day][role] == null)) {
+                    row.getCell(column).setCellValue(" " + names[day][role]);
                 }
             }
         }

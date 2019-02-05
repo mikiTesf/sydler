@@ -22,7 +22,7 @@ given day to another role on that same day because he could get really busy.
 
 The algorithm uses a mathematical formula to help it decide the member it should assign to a role next. The formula is:
 
-![Formula for "Assignment Factor"](http://www.sciweavers.org/upload/Tex2Img_1548944487/render.png)
+![Formula for "Assignment Factor"](https://github.com/mikiTesf/soundSystemScheduleGenerator/blob/master/docs/asf_equation.png)
 
 |symbol|meaning  |
 |--|--|
@@ -36,7 +36,9 @@ The algorithm uses a mathematical formula to help it decide the member it should
 
 The A<sub>sf</sub> (rank) of each member is calculated right before the program chooses one for a role. Depending on
 the members' rank, the "best" will be the member with the highest A<sub>sf</sub>. In the cases when there are multiple
-members with equal A<sub>sf</sub> values, then a member will be chosen randomly.
+members with equal A<sub>sf</sub> values, then a member will be chosen randomly. Currently the only role exception a
+member can have is the "Sunday Stage Exception". If a member has this exception, he won't be assigned to manage the
+stage on Sundays (duh!).
 
-Currently the only role exception a member can have is the "Sunday Stage Exception". If a member has this
-exception, he won't be assigned to manage the stage on Sundays (duh!).
+One thing I should mention is that all of the labels and titles in the program are in the Amharic language. You must
+change the values of the Strings in the "view.TitlesAndLabels" class to their equivalent meaning in your language.

@@ -3,7 +3,7 @@ package view;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JCheckBox;
-import javax.swing.JTextArea;
+import javax.swing.JLabel;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.FileWriter;
@@ -11,14 +11,19 @@ import java.io.IOException;
 
 import controller.SettingInitializer;
 
-class GeneratorSettings extends JFrame {
+class PreferenceForm extends JFrame {
     private JPanel panel1;
     private JCheckBox controlCounterCheckbox;
     private JCheckBox control2ndHallChooserCheckbox;
-    private JTextArea checkBoxPurposeDescribingTextArea;
+    private JLabel preferenceDetailsLabel;
+    private JLabel currentSettingsLabel;
 
-    GeneratorSettings (JFrame frame) {
-        checkBoxPurposeDescribingTextArea.setEditable(false);
+    PreferenceForm(JFrame frame) {
+        setTitle(TitlesAndLabels.preferencesFrameTitle);
+        preferenceDetailsLabel.setText(TitlesAndLabels.preferencesDetailsLabel);
+        currentSettingsLabel.setText(TitlesAndLabels.currentSettingsLabel);
+        controlCounterCheckbox.setText(TitlesAndLabels.countPreferenceCheckboxLabel);
+        control2ndHallChooserCheckbox.setText(TitlesAndLabels.hall2PreferenceCheckBoxLabel);
 
         boolean countAllAppearances       = SettingInitializer.settings.getBoolean(SettingInitializer.KEY_COUNT_FROM_ALL);
         boolean choose2ndHallFrom1stRound = SettingInitializer.settings.getBoolean(SettingInitializer.KEY_CHOOSE_FROM_1ST_ROUND);

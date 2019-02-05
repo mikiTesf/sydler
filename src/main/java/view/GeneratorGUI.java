@@ -1,12 +1,11 @@
 package view;
 
 import controller.ExcelFileGenerator;
-import controller.SettingInitializer;
 import domain.Member;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -16,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-class GeneratorGUI extends JFrame {
+public class GeneratorGUI extends JFrame {
     private final JFrame frame = this;
     private JSpinner daySpinner;
     private JSpinner yearSpinner;
@@ -27,7 +26,7 @@ class GeneratorGUI extends JFrame {
     private JTextField lastNameTextField;
     private JCheckBox stageCheckBox;
     private JCheckBox micCheckBox;
-    private JCheckBox a2ndHallCheckBox;
+    private JCheckBox secondHallCheckBox;
     private JCheckBox sundayExceptionCheckBox;
     private JButton addMemberButton;
     private JButton updateMemberButton;
@@ -39,11 +38,45 @@ class GeneratorGUI extends JFrame {
     private JComboBox<String> monthComboBox;
     private JComboBox weekendMeetingDayComboBox;
     private JCheckBox otherSundayMeetingDayCheckbox;
-    private String savePath = "/home/miki/Desktop/";
+    private JLabel informationLabel;
+    private JLabel programStartDayLabel;
+    private JLabel programStartMonthLabel;
+    private JLabel programStartYearLabel;
+    private JLabel serviceMeetingLabel;
+    private JLabel sundayMeetingLabel;
+    private JLabel howManyWeeksSpinnerLabel;
+    private JPanel programTab;
+    private JPanel memberTab;
+    private JLabel firstNameFieldLabel;
+    private JLabel lastNameFieldLabel;
+    private String savePath;
     private final HashMap<String, Integer> AMMonths;
     private final int ID_COLUMN = 0, STAGE = 2, MIC = 3, HALL2 = 4, SUNDAY_EXCEPTION = 5;
 
-    private GeneratorGUI() {
+    public GeneratorGUI() {
+        tabbedPane.setTitleAt(0, TitlesAndLabels.programTabTitle);
+        tabbedPane.setTitleAt(1, TitlesAndLabels.memberTabTitle);
+
+        // program tab labels and titles
+        informationLabel.setText(TitlesAndLabels.requirementDetailsLabel);
+        programStartDayLabel.setText(TitlesAndLabels.daySpinnerLabel);
+        programStartMonthLabel.setText(TitlesAndLabels.monthDropdownLabel);
+        programStartYearLabel.setText(TitlesAndLabels.yearSpinnerLabel);
+        serviceMeetingLabel.setText(TitlesAndLabels.serviceMeetingDropdownLabel);
+        sundayMeetingLabel.setText(TitlesAndLabels.sundayMeetingDropdownLabel);
+        otherSundayMeetingDayCheckbox.setText(TitlesAndLabels.otherSundayMeetingCheckboxLabel);
+        howManyWeeksSpinnerLabel.setText(TitlesAndLabels.howManyWeeksSpinnerLabel);
+        // member tab labels and titles
+        firstNameFieldLabel.setText(TitlesAndLabels.firstNameTextfieldLabel);
+        lastNameFieldLabel.setText(TitlesAndLabels.lastNameTextfieldLabel);
+        stageCheckBox.setText(TitlesAndLabels.stageCheckboxLabel);
+        micCheckBox.setText(TitlesAndLabels.microphoneCheckboxLabel);
+        secondHallCheckBox.setText(TitlesAndLabels.secondHallCheckboxLabel);
+        sundayExceptionCheckBox.setText(TitlesAndLabels.sundayExceptionCheckboxLabel);
+        addMemberButton.setText(TitlesAndLabels.addButtonText);
+        updateMemberButton.setText(TitlesAndLabels.updateButtonTitle);
+        removeMemberButton.setText(TitlesAndLabels.removeButtonTitle);
+
         AMMonths = new HashMap<>(12);
         AMMonths.put("ጥር", 1);
         AMMonths.put("የካቲት", 2);
@@ -59,41 +92,41 @@ class GeneratorGUI extends JFrame {
         AMMonths.put("ታህሳሥ", 12);
 
         tableModel = new DefaultTableModel() {
-          @Override
-          public boolean isCellEditable(int row, int column) {
-              return column != ID_COLUMN;
-          }
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column != ID_COLUMN;
+            }
         };
-
     }
 
-    private void setupGUI() {
+    public void setupAndDrawUI() {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException e) {
             System.out.println(e.getMessage());
         }
-        setTitle("የድምጽ ክፍል ፕሮግራም አመንጪ");
+        setTitle(TitlesAndLabels.generatorFrameTitle);
 
         JMenuBar menuBar = new JMenuBar();
 
-        GeneratorSettings settings = new GeneratorSettings(this);
+        PreferenceForm preferenceForm = new PreferenceForm(this);
         AboutForm aboutForm = new AboutForm(this);
 
-        JMenu fileMenu            = new JMenu("File");
-        JMenuItem exitItem        = new JMenuItem("Exit...");
+        JMenu fileMenu = new JMenu("File");
+        JMenuItem exitItem = new JMenuItem("Exit...");
         JMenuItem preferencesItem = new JMenuItem("Preferences...");
 
-        JMenu aboutMenu     = new JMenu("Help");
+        JMenu aboutMenu = new JMenu("Help");
         JMenuItem aboutItem = new JMenuItem("About...");
 
         //noinspection Convert2Lambda
         preferencesItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // disables itself
                 setEnabled(false);
-                settings.setLocationRelativeTo(frame);
-                settings.setVisible(true);
+                preferenceForm.setLocationRelativeTo(frame);
+                preferenceForm.setVisible(true);
             }
         });
 
@@ -109,8 +142,9 @@ class GeneratorGUI extends JFrame {
         aboutItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                aboutForm.getFrame().setLocationRelativeTo(frame);
+                // disables itself
                 setEnabled(false);
+                aboutForm.getFrame().setLocationRelativeTo(frame);
                 aboutForm.getFrame().setVisible(true);
             }
         });
@@ -173,6 +207,7 @@ class GeneratorGUI extends JFrame {
             }
         });
 
+        generateButton.setText(TitlesAndLabels.generateButtonText);
         //noinspection Convert2Lambda
         generateButton.addActionListener(new ActionListener() {
             @Override
@@ -207,7 +242,7 @@ class GeneratorGUI extends JFrame {
                 generateButton.setEnabled(true);
 
                 switch (RETURN_STATUS) {
-                    case 0: // success status
+                    case 0: // success
                         JOptionPane.showMessageDialog(frame, "ፕሮግራሙ ተፈጥሯል", "ተሳክቷል", JOptionPane.INFORMATION_MESSAGE);
                         break;
                     case 1:// could not save
@@ -231,12 +266,12 @@ class GeneratorGUI extends JFrame {
                     JOptionPane.showMessageDialog(frame, "የወንድም ሙሉ ስም አልተሞላም", "ስህተት", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                Member member             = new Member();
+                Member member = new Member();
                 member.setFirstName(FirstNameTextField.getText());
                 member.setLastName(lastNameTextField.getText());
                 member.setCanBeStage(stageCheckBox.isSelected());
                 member.setCanRotateMic(micCheckBox.isSelected());
-                member.setCanAssist2ndHall(a2ndHallCheckBox.isSelected());
+                member.setCanAssist2ndHall(secondHallCheckBox.isSelected());
                 member.setSundayException(sundayExceptionCheckBox.isSelected());
                 if (member.save()) {
                     JOptionPane.showMessageDialog(GeneratorGUI.getFrames()[0], "\"" + member.getFirstName() + "\" ተጨምሯል");
@@ -246,7 +281,9 @@ class GeneratorGUI extends JFrame {
                 // handling duplicateFirstName attribute issue(s)
                 try {
                     updateDuplicateAttributeOnAddition(member);
-                } catch (SQLException e1) { e1.printStackTrace(); }
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
             }
         });
 
@@ -258,7 +295,7 @@ class GeneratorGUI extends JFrame {
                 if (selectedRow == -1)
                     return;
 
-                Member member          = new Member();
+                Member member = new Member();
                 String[] firstLastName = membersTable.getValueAt(selectedRow, 1).toString().split(" ");
                 member.setId(Integer.parseInt(membersTable.getValueAt(selectedRow, 0).toString()));
                 member.setFirstName(firstLastName[0]);
@@ -283,7 +320,7 @@ class GeneratorGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int selectedRow = membersTable.getSelectedRow();
-                if (selectedRow == -1)  return;
+                if (selectedRow == -1) return;
 
                 int option = JOptionPane.showConfirmDialog(frame, "እርግጠኛ ነህ?", "", JOptionPane.YES_NO_OPTION);
                 if (option == JOptionPane.NO_OPTION) return;
@@ -292,7 +329,9 @@ class GeneratorGUI extends JFrame {
                 Member member = new Member();
                 try {
                     member = Member.getDao().queryForId(memberID);
-                } catch (SQLException e1) { e1.printStackTrace(); }
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
                 if (Member.remove(memberID)) {
                     tableModel.removeRow(selectedRow);
                     JOptionPane.showMessageDialog(
@@ -305,7 +344,9 @@ class GeneratorGUI extends JFrame {
 
                 try {
                     updateDuplicateAttributeOnDelete(member);
-                } catch (SQLException e1) { e1.printStackTrace(); }
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
             }
         });
 
@@ -321,7 +362,7 @@ class GeneratorGUI extends JFrame {
         /* as the input is likely to be constructed using Amharic letters,
          I see no way I can use regex to test for it's validity */
         boolean invalidFirstName = FirstNameTextField.getText().isEmpty();
-        boolean invalidLastName  = lastNameTextField.getText().isEmpty();
+        boolean invalidLastName = lastNameTextField.getText().isEmpty();
         return invalidFirstName || invalidLastName;
     }
 
@@ -336,7 +377,7 @@ class GeneratorGUI extends JFrame {
         }
     }
 
-    private void updateMemberDuplicateAttributeOnUpdate (Member member, String oldName) throws SQLException {
+    private void updateMemberDuplicateAttributeOnUpdate(Member member, String oldName) throws SQLException {
         updateDuplicateAttributeOnAddition(member);
         member.setFirstName(oldName);
         updateDuplicateAttributeOnDelete(member);
@@ -354,7 +395,7 @@ class GeneratorGUI extends JFrame {
         }
     }
 
-    private void renderTableColumnAsCheckbox (int columnIndex) {
+    private void renderTableColumnAsCheckbox(int columnIndex) {
         membersTable.getColumnModel().getColumn(columnIndex).setCellEditor(membersTable.getDefaultEditor(Boolean.class));
         membersTable.getColumnModel().getColumn(columnIndex).setCellRenderer(membersTable.getDefaultRenderer(Boolean.class));
     }
@@ -363,11 +404,11 @@ class GeneratorGUI extends JFrame {
         final int FULL_NAME = 1;
         Object[] memberAttributes = new Object[6];
 
-        memberAttributes[ID_COLUMN]        = member.getId();
-        memberAttributes[FULL_NAME]        = member.getFirstName() + " " + member.getLastName();
-        memberAttributes[STAGE]            = member.canBeStage();
-        memberAttributes[MIC]              = member.canRotateMic();
-        memberAttributes[HALL2]            = member.canBe2ndHall();
+        memberAttributes[ID_COLUMN] = member.getId();
+        memberAttributes[FULL_NAME] = member.getFirstName() + " " + member.getLastName();
+        memberAttributes[STAGE] = member.canBeStage();
+        memberAttributes[MIC] = member.canRotateMic();
+        memberAttributes[HALL2] = member.canBe2ndHall();
         memberAttributes[SUNDAY_EXCEPTION] = member.hasSundayException();
         tableModel.addRow(memberAttributes);
     }
@@ -377,13 +418,7 @@ class GeneratorGUI extends JFrame {
         lastNameTextField.setText("");
         stageCheckBox.setSelected(false);
         micCheckBox.setSelected(false);
-        a2ndHallCheckBox.setSelected(false);
+        secondHallCheckBox.setSelected(false);
         sundayExceptionCheckBox.setSelected(false);
-    }
-
-    public static void main(String[] args) {
-        SettingInitializer.initialize();
-        System.setProperty("com.j256.ormlite.logger.level", "INFO");
-        new GeneratorGUI().setupGUI();
     }
 }
