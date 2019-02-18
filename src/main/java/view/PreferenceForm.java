@@ -19,11 +19,11 @@ class PreferenceForm extends JFrame {
     private JLabel currentSettingsLabel;
 
     PreferenceForm(JFrame frame) {
-        setTitle(TitlesAndLabels.preferencesFrameTitle);
-        preferenceDetailsLabel.setText(TitlesAndLabels.preferencesDetailsLabel);
-        currentSettingsLabel.setText(TitlesAndLabels.currentSettingsLabel);
-        controlCounterCheckbox.setText(TitlesAndLabels.countPreferenceCheckboxLabel);
-        control2ndHallChooserCheckbox.setText(TitlesAndLabels.hall2PreferenceCheckBoxLabel);
+        setTitle(TitlesAndLabels.PREFERENCES_FRAME_TITLE);
+        preferenceDetailsLabel.setText(TitlesAndLabels.PREFERENCES_DETAILS_LABEL);
+        currentSettingsLabel.setText(TitlesAndLabels.CURRENT_SETTINGS_LABEL);
+        controlCounterCheckbox.setText(TitlesAndLabels.COUNT_PREFERENCE_CHECKBOX_LABEL);
+        control2ndHallChooserCheckbox.setText(TitlesAndLabels.HALL2_PREFERENCE_CHECK_BOX_LABEL);
 
         boolean countAllAppearances       = SettingInitializer.settings.getBoolean(SettingInitializer.KEY_COUNT_FROM_ALL);
         boolean choose2ndHallFrom1stRound = SettingInitializer.settings.getBoolean(SettingInitializer.KEY_CHOOSE_FROM_1ST_ROUND);

@@ -18,7 +18,7 @@
           <enabled value="true"/>
           <font name="Maven Pro" size="12"/>
         </properties>
-        <border type="line" title="የፕሮግራሙ ዝርዝሮች" title-justification="1" title-position="2">
+        <border type="empty" title="" title-justification="1" title-position="2">
           <font name="Maven Pro" size="12"/>
           <title-color color="-10128514"/>
           <color color="-10128514"/>
@@ -190,7 +190,7 @@
           </component>
         </children>
       </grid>
-      <grid id="19652" binding="memberTab" layout-manager="GridLayoutManager" row-count="2" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="19652" layout-manager="GridLayoutManager" row-count="2" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <tabbedpane title=""/>
@@ -201,7 +201,7 @@
           <color color="-10128514"/>
         </border>
         <children>
-          <grid id="134dc" layout-manager="GridLayoutManager" row-count="3" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="134dc" binding="newMemberPanel" layout-manager="GridLayoutManager" row-count="3" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -209,7 +209,7 @@
             <properties>
               <font name="Maven Pro" size="12"/>
             </properties>
-            <border type="line" title="ጨምር" title-justification="1" title-position="2">
+            <border type="none" title="" title-justification="1" title-position="2">
               <font name="Maven Pro" size="12"/>
               <title-color color="-10128514"/>
               <color color="-10128514"/>
@@ -301,7 +301,7 @@
               </component>
             </children>
           </grid>
-          <grid id="2f880" layout-manager="GridLayoutManager" row-count="2" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="2f880" binding="tablePanel" layout-manager="GridLayoutManager" row-count="2" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -309,7 +309,7 @@
             <properties>
               <font name="Maven Pro" size="12"/>
             </properties>
-            <border type="line" title="አዘምን ወይም ሰርዝ" title-justification="1" title-position="2">
+            <border type="none" title-justification="1" title-position="2">
               <font name="Maven Pro" size="12"/>
               <title-color color="-10128514"/>
               <color color="-10128514"/>

@@ -25,11 +25,11 @@ decided to name this decision **The Stage Policy**.
 ### The math involved
 The algorithm uses a mathematical formula to help it decide the next member it should assign to a role. The formula is:
 
-![Formula for "Assignment Factor"](/docs/screenshots/asf_equation.png)
+![Formula for "Assignment Factor"](/docs/asf_equation.png)
 
 | **Symbol** | **Representation** |
-|:---:|:---:|
-| A<sub>sf</sub> | Assignment factor (a fancy name for rank) |
+|---|---|
+| A<sub>sf</sub> | Assignment factor (my fancy synonym for rank) |
 | q | The member qualifies for the givens role or not |
 | ψ | The member is occupied today or not |
 | e<sub>x</sub> | The member has a role exception |
@@ -48,7 +48,7 @@ appear on the roles they qualify for quite often (only for the first 4 to 5 meet
 Another control option the program provides has to do with populating the 2nd hall column. By default, the program chooses a member
 who is already on that day's 1st round mic-rotation shift. But that can be changed so that the program chooses any available member
 who qualifies for that role either from those members who are unassigned on that day or, if there are'nt any, from those members different
-from the one assigned to manage the stage on that same day (see [StagePolicy](The Stage Policy)).
+from the one assigned to manage the stage on that same day (see [StagePolicy](#The Stage Policy)).
 
 The above options can be found in "`File`->`Preferences...`"
 

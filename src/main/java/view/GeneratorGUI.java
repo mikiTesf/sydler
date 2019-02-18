@@ -6,6 +6,7 @@ import domain.Member;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.Dimension;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -46,36 +47,43 @@ public class GeneratorGUI extends JFrame {
     private JLabel sundayMeetingLabel;
     private JLabel howManyWeeksSpinnerLabel;
     private JPanel programTab;
-    private JPanel memberTab;
     private JLabel firstNameFieldLabel;
     private JLabel lastNameFieldLabel;
+    private JPanel tablePanel;
+    private JPanel newMemberPanel;
     private String savePath;
     private final HashMap<String, Integer> AMMonths;
     private final int ID_COLUMN = 0, STAGE = 2, MIC = 3, HALL2 = 4, SUNDAY_EXCEPTION = 5;
 
     public GeneratorGUI() {
-        tabbedPane.setTitleAt(0, TitlesAndLabels.programTabTitle);
-        tabbedPane.setTitleAt(1, TitlesAndLabels.memberTabTitle);
+        tabbedPane.setTitleAt(0, TitlesAndLabels.PROGRAM_TAB_TITLE);
+        tabbedPane.setTitleAt(1, TitlesAndLabels.MEMBER_TAB_TITLE);
 
         // program tab labels and titles
-        informationLabel.setText(TitlesAndLabels.requirementDetailsLabel);
-        programStartDayLabel.setText(TitlesAndLabels.daySpinnerLabel);
-        programStartMonthLabel.setText(TitlesAndLabels.monthDropdownLabel);
-        programStartYearLabel.setText(TitlesAndLabels.yearSpinnerLabel);
-        serviceMeetingLabel.setText(TitlesAndLabels.serviceMeetingDropdownLabel);
-        sundayMeetingLabel.setText(TitlesAndLabels.sundayMeetingDropdownLabel);
-        otherSundayMeetingDayCheckbox.setText(TitlesAndLabels.otherSundayMeetingCheckboxLabel);
-        howManyWeeksSpinnerLabel.setText(TitlesAndLabels.howManyWeeksSpinnerLabel);
+        programTab.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(Color.BLACK, 1), TitlesAndLabels.PROGRAM_TAB_TITLE)
+        );
+        informationLabel.setText(TitlesAndLabels.REQUIREMENT_DETAILS_LABEL);
+        programStartDayLabel.setText(TitlesAndLabels.DAY_SPINNER_LABEL);
+        programStartMonthLabel.setText(TitlesAndLabels.MONTH_DROPDOWN_LABEL);
+        programStartYearLabel.setText(TitlesAndLabels.YEAR_SPINNER_LABEL);
+        serviceMeetingLabel.setText(TitlesAndLabels.SERVICE_MEETING_DROPDOWN_LABEL);
+        sundayMeetingLabel.setText(TitlesAndLabels.SUNDAY_MEETING_DROPDOWN_LABEL);
+        otherSundayMeetingDayCheckbox.setText(TitlesAndLabels.OTHER_SUNDAY_MEETING_CHECKBOX_LABEL);
+        howManyWeeksSpinnerLabel.setText(TitlesAndLabels.HOW_MANY_WEEKS_SPINNER_LABEL);
         // member tab labels and titles
-        firstNameFieldLabel.setText(TitlesAndLabels.firstNameTextfieldLabel);
-        lastNameFieldLabel.setText(TitlesAndLabels.lastNameTextfieldLabel);
-        stageCheckBox.setText(TitlesAndLabels.stageCheckboxLabel);
-        micCheckBox.setText(TitlesAndLabels.microphoneCheckboxLabel);
-        secondHallCheckBox.setText(TitlesAndLabels.secondHallCheckboxLabel);
-        sundayExceptionCheckBox.setText(TitlesAndLabels.sundayExceptionCheckboxLabel);
-        addMemberButton.setText(TitlesAndLabels.addButtonText);
-        updateMemberButton.setText(TitlesAndLabels.updateButtonTitle);
-        removeMemberButton.setText(TitlesAndLabels.removeButtonTitle);
+        newMemberPanel.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(Color.BLACK, 1), TitlesAndLabels.MEMBER_BORDER_TITLE)
+        );
+        firstNameFieldLabel.setText(TitlesAndLabels.FIRST_NAME_TEXTFIELD_LABEL);
+        lastNameFieldLabel.setText(TitlesAndLabels.LAST_NAME_TEXTFIELD_LABEL);
+        stageCheckBox.setText(TitlesAndLabels.STAGE_CHECKBOX_LABEL);
+        micCheckBox.setText(TitlesAndLabels.MICROPHONE_CHECKBOX_LABEL);
+        secondHallCheckBox.setText(TitlesAndLabels.SECOND_HALL_CHECKBOX_LABEL);
+        sundayExceptionCheckBox.setText(TitlesAndLabels.SUNDAY_EXCEPTION_CHECKBOX_LABEL);
+        addMemberButton.setText(TitlesAndLabels.ADD_BUTTON_TEXT);
+        updateMemberButton.setText(TitlesAndLabels.UPDATE_BUTTON_TITLE);
+        removeMemberButton.setText(TitlesAndLabels.REMOVE_BUTTON_TITLE);
 
         AMMonths = new HashMap<>(12);
         AMMonths.put("ጥር", 1);
@@ -105,7 +113,7 @@ public class GeneratorGUI extends JFrame {
         } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException e) {
             System.out.println(e.getMessage());
         }
-        setTitle(TitlesAndLabels.generatorFrameTitle);
+        setTitle(TitlesAndLabels.GENERATOR_FRAME_TITLE);
 
         JMenuBar menuBar = new JMenuBar();
 
@@ -159,12 +167,17 @@ public class GeneratorGUI extends JFrame {
 
         setJMenuBar(menuBar);
 
-        tableModel.addColumn("#");
-        tableModel.addColumn("ስም");
-        tableModel.addColumn("መድረክ");
-        tableModel.addColumn("ድምጽ ማጉያ");
-        tableModel.addColumn("ሁለተኛው አዳራሽ");
-        tableModel.addColumn("የእሁድ ልዩነት");
+        tablePanel.setBorder(
+                BorderFactory.createTitledBorder(
+                        BorderFactory.createLineBorder(Color.BLACK, 1), TitlesAndLabels.MEMBER_TABLE_BORDER_TITLE
+                )
+        );
+        tableModel.addColumn(TitlesAndLabels.ID_COLUMN);
+        tableModel.addColumn(TitlesAndLabels.FULL_NAME_COLUMN);
+        tableModel.addColumn(TitlesAndLabels.STAGE_COLUMN);
+        tableModel.addColumn(TitlesAndLabels.MIC_COLUMN);
+        tableModel.addColumn(TitlesAndLabels.HALL2_COLUMN);
+        tableModel.addColumn(TitlesAndLabels.SUNDAY_EXCEPTION_COLUMN);
         membersTable.setModel(tableModel);
 
         membersTable.getColumnModel().getColumn(ID_COLUMN).setMinWidth(50);
@@ -207,14 +220,14 @@ public class GeneratorGUI extends JFrame {
             }
         });
 
-        generateButton.setText(TitlesAndLabels.generateButtonText);
+        generateButton.setText(TitlesAndLabels.GENERATE_BUTTON_TEXT);
         //noinspection Convert2Lambda
         generateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser saveLocation = new JFileChooser();
                 saveLocation.setDialogType(JFileChooser.SAVE_DIALOG);
-                saveLocation.setDialogTitle("Excel ሰነዱ የት ይቀመጥ?");
+                saveLocation.setDialogTitle("Where to save the Excel document?");
                 saveLocation.setCurrentDirectory(new File(System.getProperty("user.home")));
                 saveLocation.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                 saveLocation.setMultiSelectionEnabled(false);
