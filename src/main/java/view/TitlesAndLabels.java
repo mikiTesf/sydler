@@ -3,7 +3,7 @@ package view;
 class TitlesAndLabels {
     // **************************** GeneratorGUI dialog *****************************
     // GeneratorGUI frame title
-    static final String GENERATOR_FRAME_TITLE = "Sound System Schedule Generator";
+    static final String GENERATOR_FRAME_TITLE = "Sydler";
     // program tab labels and titles
     static final String PROGRAM_TAB_TITLE = "Program";
     static final String REQUIREMENT_DETAILS_LABEL = "<html> Using the first three<br/>" +
@@ -59,4 +59,21 @@ class TitlesAndLabels {
             "how many times a member<br/>appeared before </html>";
     static final String HALL2_PREFERENCE_CHECK_BOX_LABEL = "<html> Select the member<br/>to be assigned<br/>" +
             "to the 2nd hall from<br/>the members<br/>who rotated the mic<br/>during the first round </html>";
+    // about form labels
+    static final String NAME_AND_VERSION_LABEL = "Sydler v1.0.4";
+    static final String BUILD_DATE_LABEL = "Built on November 29, 2018";
+    static final String DEVELOPER_EMAIL_LABEL = "(mickyasTesfamichael@gmail.com)";
+    static final String DEVELOPER_NAME_LABEL = "Developed by: Mikyas Tesfamichael";
+    static final String WHATS_NEW_TAB_TITLE = "Whats new in " + NAME_AND_VERSION_LABEL;
+    static final String WHATS_NEW_IN_SYDLER_LIST = "<html> <ul>" +
+            "<li> Added settings that control the way a schedule <br/>" +
+            "gets generated. The program persists the <br/>" +
+            "settings using a JSON file </li> <br/>" +
+            "<li> An option to change the weekend meeting day <br/>" +
+            "added (some congregations may decide to do <br/>" +
+            "it on Saturdays) </li> <br/>" +
+            "<li> Error or success messages associated with the <br/>" +
+            "generation of the Excel document are properly <br/>" +
+            "communicated to the user </li> </ul> </html>";
+
 }

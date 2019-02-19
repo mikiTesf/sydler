@@ -1,10 +1,10 @@
-database/
-settings/
-soundSystemScheduleGenerator.iml
-soundSystemScheduleGenerator.ipr
-soundSystemScheduleGenerator.iws
+# IntelliJ
+.idea/
+dataSources/
 target/
 out/
-dataSources/
-.idea/
-scheduleGenerator.iml
+sydler.iml
+
+# other
+database/
+settings/
