@@ -3,7 +3,7 @@ package view;
 class TitlesAndLabels {
     // **************************** GeneratorGUI dialog *****************************
     // GeneratorGUI frame title
-    static final String generatorFrameTitle = "የድምጽ ክፍል ፕሮግራም አመንጪ";
+    static final String generatorFrameTitle = "Sydler";
     // program tab labels and titles
     static final String programTabTitle         = "ፕሮግራም";
     static final String programBorderTitle      = "የፕሮግራሙ ዝርዝሮች";

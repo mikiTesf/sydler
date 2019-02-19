@@ -1,10 +1,6 @@
 database/
 settings/
-soundSystemScheduleGenerator.iml
-soundSystemScheduleGenerator.ipr
-soundSystemScheduleGenerator.iws
 target/
 out/
-dataSources/
 .idea/
-scheduleGenerator.iml
+sydler.iml
