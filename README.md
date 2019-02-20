@@ -1,5 +1,5 @@
 # Sydler
-This java program is intended to help the brothers who work on the sound system of a JW congregation generate efficient
+This Java program is intended to help the brothers who work on the sound system of a JW congregation generate efficient
 timely schedules. It saves the schedule in a formatted excel document.
 
 |   |   |
