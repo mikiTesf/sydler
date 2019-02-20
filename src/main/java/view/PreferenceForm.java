@@ -4,6 +4,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.FileWriter;
@@ -19,11 +20,14 @@ class PreferenceForm extends JFrame {
     private JLabel currentSettingsLabel;
 
     PreferenceForm(JFrame frame) {
-        setTitle(TitlesAndLabels.preferencesFrameTitle);
-        preferenceDetailsLabel.setText(TitlesAndLabels.preferencesDetailsLabel);
-        currentSettingsLabel.setText(TitlesAndLabels.currentSettingsLabel);
-        controlCounterCheckbox.setText(TitlesAndLabels.countPreferenceCheckboxLabel);
-        control2ndHallChooserCheckbox.setText(TitlesAndLabels.hall2PreferenceCheckBoxLabel);
+        setTitle(MessagesAndTitles.PREFERENCES_FRAME_TITLE);
+        preferenceDetailsLabel.setText(MessagesAndTitles.PREFERENCES_DETAILS_LABEL);
+        preferenceDetailsLabel.setFont(new Font("", Font.PLAIN, 15));
+        currentSettingsLabel.setText(MessagesAndTitles.CURRENT_SETTINGS_LABEL);
+        controlCounterCheckbox.setText(MessagesAndTitles.COUNT_PREFERENCE_CHECKBOX_LABEL);
+        controlCounterCheckbox.setFont(new Font("", Font.PLAIN, 14));
+        control2ndHallChooserCheckbox.setText(MessagesAndTitles.HALL2_PREFERENCE_CHECK_BOX_LABEL);
+        control2ndHallChooserCheckbox.setFont(new Font("", Font.PLAIN, 14));
 
         boolean countAllAppearances       = SettingInitializer.settings.getBoolean(SettingInitializer.KEY_COUNT_FROM_ALL);
         boolean choose2ndHallFrom1stRound = SettingInitializer.settings.getBoolean(SettingInitializer.KEY_CHOOSE_FROM_1ST_ROUND);

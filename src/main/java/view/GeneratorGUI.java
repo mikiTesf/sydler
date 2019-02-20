@@ -6,6 +6,7 @@ import domain.Member;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.Dimension;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -19,7 +20,7 @@ public class GeneratorGUI extends JFrame {
     private final JFrame frame = this;
     private JSpinner daySpinner;
     private JSpinner yearSpinner;
-    private JComboBox midweekMeetingDayComboBox;
+    private JComboBox<String> midweekMeetingDayComboBox;
     private JSpinner howManyWeeksSpinner;
     private JButton generateButton;
     private JTextField FirstNameTextField;
@@ -36,7 +37,7 @@ public class GeneratorGUI extends JFrame {
     private JTabbedPane tabbedPane;
     private JScrollPane scrollPane;
     private JComboBox<String> monthComboBox;
-    private JComboBox weekendMeetingDayComboBox;
+    private JComboBox<String> weekendMeetingDayComboBox;
     private JCheckBox otherSundayMeetingDayCheckbox;
     private JLabel informationLabel;
     private JLabel programStartDayLabel;
@@ -46,36 +47,49 @@ public class GeneratorGUI extends JFrame {
     private JLabel sundayMeetingLabel;
     private JLabel howManyWeeksSpinnerLabel;
     private JPanel programTab;
-    private JPanel memberTab;
     private JLabel firstNameFieldLabel;
     private JLabel lastNameFieldLabel;
+    private JPanel tablePanel;
+    private JPanel newMemberPanel;
     private String savePath;
     private final HashMap<String, Integer> AMMonths;
     private final int ID_COLUMN = 0, STAGE = 2, MIC = 3, HALL2 = 4, SUNDAY_EXCEPTION = 5;
 
     public GeneratorGUI() {
-        tabbedPane.setTitleAt(0, TitlesAndLabels.programTabTitle);
-        tabbedPane.setTitleAt(1, TitlesAndLabels.memberTabTitle);
+        tabbedPane.setTitleAt(0, MessagesAndTitles.PROGRAM_TAB_TITLE);
+        tabbedPane.setTitleAt(1, MessagesAndTitles.MEMBER_TAB_TITLE);
 
         // program tab labels and titles
-        informationLabel.setText(TitlesAndLabels.requirementDetailsLabel);
-        programStartDayLabel.setText(TitlesAndLabels.daySpinnerLabel);
-        programStartMonthLabel.setText(TitlesAndLabels.monthDropdownLabel);
-        programStartYearLabel.setText(TitlesAndLabels.yearSpinnerLabel);
-        serviceMeetingLabel.setText(TitlesAndLabels.serviceMeetingDropdownLabel);
-        sundayMeetingLabel.setText(TitlesAndLabels.sundayMeetingDropdownLabel);
-        otherSundayMeetingDayCheckbox.setText(TitlesAndLabels.otherSundayMeetingCheckboxLabel);
-        howManyWeeksSpinnerLabel.setText(TitlesAndLabels.howManyWeeksSpinnerLabel);
+        programTab.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(Color.GRAY, 1), MessagesAndTitles.PROGRAM_TAB_TITLE)
+        );
+        informationLabel.setText(MessagesAndTitles.REQUIREMENT_DETAILS_LABEL);
+        programStartDayLabel.setText(MessagesAndTitles.DAY_SPINNER_LABEL);
+        programStartMonthLabel.setText(MessagesAndTitles.MONTH_DROPDOWN_LABEL);
+        programStartYearLabel.setText(MessagesAndTitles.YEAR_SPINNER_LABEL);
+        serviceMeetingLabel.setText(MessagesAndTitles.SERVICE_MEETING_DROPDOWN_LABEL);
+        sundayMeetingLabel.setText(MessagesAndTitles.SUNDAY_MEETING_DROPDOWN_LABEL);
+        otherSundayMeetingDayCheckbox.setText(MessagesAndTitles.OTHER_SUNDAY_MEETING_CHECKBOX_LABEL);
+        howManyWeeksSpinnerLabel.setText(MessagesAndTitles.HOW_MANY_WEEKS_SPINNER_LABEL);
         // member tab labels and titles
-        firstNameFieldLabel.setText(TitlesAndLabels.firstNameTextfieldLabel);
-        lastNameFieldLabel.setText(TitlesAndLabels.lastNameTextfieldLabel);
-        stageCheckBox.setText(TitlesAndLabels.stageCheckboxLabel);
-        micCheckBox.setText(TitlesAndLabels.microphoneCheckboxLabel);
-        secondHallCheckBox.setText(TitlesAndLabels.secondHallCheckboxLabel);
-        sundayExceptionCheckBox.setText(TitlesAndLabels.sundayExceptionCheckboxLabel);
-        addMemberButton.setText(TitlesAndLabels.addButtonText);
-        updateMemberButton.setText(TitlesAndLabels.updateButtonTitle);
-        removeMemberButton.setText(TitlesAndLabels.removeButtonTitle);
+        newMemberPanel.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(Color.GRAY, 1), MessagesAndTitles.MEMBER_BORDER_TITLE)
+        );
+        firstNameFieldLabel.setText(MessagesAndTitles.FIRST_NAME_TEXTFIELD_LABEL);
+        lastNameFieldLabel.setText(MessagesAndTitles.LAST_NAME_TEXTFIELD_LABEL);
+        stageCheckBox.setText(MessagesAndTitles.STAGE_CHECKBOX_LABEL);
+        micCheckBox.setText(MessagesAndTitles.MICROPHONE_CHECKBOX_LABEL);
+        secondHallCheckBox.setText(MessagesAndTitles.SECOND_HALL_CHECKBOX_LABEL);
+        sundayExceptionCheckBox.setText(MessagesAndTitles.SUNDAY_EXCEPTION_CHECKBOX_LABEL);
+
+        stageCheckBox.setToolTipText(MessagesAndTitles.STAGE_CHECKBOX_TOOLTIP);
+        micCheckBox.setToolTipText(MessagesAndTitles.MIC_CHECKBOX_TOOLTIP);
+        secondHallCheckBox.setToolTipText(MessagesAndTitles.SECOND_HALL_CHECKBOX_TOOLTIP);
+        sundayExceptionCheckBox.setToolTipText(MessagesAndTitles.SUNDAY_EXCEPTION_CHECKBOX_TOOLTIP);
+
+        addMemberButton.setText(MessagesAndTitles.ADD_BUTTON_TEXT);
+        updateMemberButton.setText(MessagesAndTitles.UPDATE_BUTTON_TITLE);
+        removeMemberButton.setText(MessagesAndTitles.REMOVE_BUTTON_TITLE);
 
         AMMonths = new HashMap<>(12);
         AMMonths.put("ጥር", 1);
@@ -105,7 +119,7 @@ public class GeneratorGUI extends JFrame {
         } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException e) {
             System.out.println(e.getMessage());
         }
-        setTitle(TitlesAndLabels.generatorFrameTitle);
+        setTitle(MessagesAndTitles.GENERATOR_FRAME_TITLE);
 
         JMenuBar menuBar = new JMenuBar();
 
@@ -159,12 +173,17 @@ public class GeneratorGUI extends JFrame {
 
         setJMenuBar(menuBar);
 
-        tableModel.addColumn("#");
-        tableModel.addColumn("ስም");
-        tableModel.addColumn("መድረክ");
-        tableModel.addColumn("ድምጽ ማጉያ");
-        tableModel.addColumn("ሁለተኛው አዳራሽ");
-        tableModel.addColumn("የእሁድ ልዩነት");
+        tablePanel.setBorder(
+                BorderFactory.createTitledBorder(
+                        BorderFactory.createLineBorder(Color.GRAY, 1), MessagesAndTitles.MEMBER_TABLE_BORDER_TITLE
+                )
+        );
+        tableModel.addColumn(MessagesAndTitles.ID_COLUMN);
+        tableModel.addColumn(MessagesAndTitles.FULL_NAME_COLUMN);
+        tableModel.addColumn(MessagesAndTitles.STAGE_COLUMN);
+        tableModel.addColumn(MessagesAndTitles.MIC_COLUMN);
+        tableModel.addColumn(MessagesAndTitles.HALL2_COLUMN);
+        tableModel.addColumn(MessagesAndTitles.SUNDAY_EXCEPTION_COLUMN);
         membersTable.setModel(tableModel);
 
         membersTable.getColumnModel().getColumn(ID_COLUMN).setMinWidth(50);
@@ -196,6 +215,10 @@ public class GeneratorGUI extends JFrame {
         // the maximum number of weeks for which the generated table won't exceed an A4 paper is 22
         howManyWeeksSpinner.setModel(new SpinnerNumberModel(22, 1, 100, 1));
 
+        monthComboBox.setModel(new DefaultComboBoxModel<>(MessagesAndTitles.MONTHS));
+        midweekMeetingDayComboBox.setModel(new DefaultComboBoxModel<>(MessagesAndTitles.MIDWEEK_MEETING_DAYS));
+        weekendMeetingDayComboBox.setModel(new DefaultComboBoxModel<>(MessagesAndTitles.WEEKEND_MEETING_DAYS));
+
         //noinspection Convert2Lambda
         otherSundayMeetingDayCheckbox.addActionListener(new ActionListener() {
             @Override
@@ -207,14 +230,14 @@ public class GeneratorGUI extends JFrame {
             }
         });
 
-        generateButton.setText(TitlesAndLabels.generateButtonText);
+        generateButton.setText(MessagesAndTitles.GENERATE_BUTTON_TEXT);
         //noinspection Convert2Lambda
         generateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser saveLocation = new JFileChooser();
                 saveLocation.setDialogType(JFileChooser.SAVE_DIALOG);
-                saveLocation.setDialogTitle("Excel ሰነዱ የት ይቀመጥ?");
+                saveLocation.setDialogTitle("Where to save the Excel document?");
                 saveLocation.setCurrentDirectory(new File(System.getProperty("user.home")));
                 saveLocation.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                 saveLocation.setMultiSelectionEnabled(false);
@@ -232,7 +255,7 @@ public class GeneratorGUI extends JFrame {
                 );
                 ExcelFileGenerator excelFileGenerator = new ExcelFileGenerator((int) howManyWeeksSpinner.getValue());
                 savePath = saveLocation.getSelectedFile().getPath();
-                //noinspection ConstantConditions
+                // noinspection ConstantConditions
                 final int RETURN_STATUS = excelFileGenerator.makeExcel(
                         beginDate,
                         midweekMeetingDayComboBox.getSelectedItem().toString(),
@@ -243,16 +266,20 @@ public class GeneratorGUI extends JFrame {
 
                 switch (RETURN_STATUS) {
                     case 0: // success
-                        JOptionPane.showMessageDialog(frame, "ፕሮግራሙ ተፈጥሯል", "ተሳክቷል", JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(frame, MessagesAndTitles.SCHEDULE_CREATED_MESSAGE,
+                                MessagesAndTitles.SUCCESS_DIALOGUE_TITLE, JOptionPane.INFORMATION_MESSAGE);
                         break;
-                    case 1:// could not save
-                        JOptionPane.showMessageDialog(frame, "ሰነዱን ማስቀመጥ አልተቻለም", "ስህተት", JOptionPane.ERROR_MESSAGE);
+                    case 1: // could not save file
+                        JOptionPane.showMessageDialog(frame, MessagesAndTitles.COULD_NOT_SAVE_FILE_MESSAGE,
+                                MessagesAndTitles.ERROR_DIALOGUE_TITLE, JOptionPane.ERROR_MESSAGE);
                         break;
-                    case 2:// empty array
-                        JOptionPane.showMessageDialog(frame, "ምንም የድምጽ ክፍል አባላት አልተገኙም", "ስህተት", JOptionPane.ERROR_MESSAGE);
+                    case 2: // database has 0 records (empty array)
+                        JOptionPane.showMessageDialog(frame, MessagesAndTitles.NO_MEMBERS_FOUND_MESSAGE,
+                                MessagesAndTitles.ERROR_DIALOGUE_TITLE, JOptionPane.ERROR_MESSAGE);
                         break;
-                    default:// unknown problem
-                        JOptionPane.showMessageDialog(frame, "ያልታወቀ ችግር ተፈጥሯል", "ስህተት", JOptionPane.ERROR_MESSAGE);
+                    default: // unknown problem
+                        JOptionPane.showMessageDialog(frame, MessagesAndTitles.UNKNOWN_PROBLEM_MESSAGE,
+                                MessagesAndTitles.ERROR_DIALOGUE_TITLE, JOptionPane.ERROR_MESSAGE);
                         break;
                 }
             }
@@ -263,7 +290,8 @@ public class GeneratorGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (invalidMemberInfo()) {
-                    JOptionPane.showMessageDialog(frame, "የወንድም ሙሉ ስም አልተሞላም", "ስህተት", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(frame, MessagesAndTitles.INCOMPLETE_MEMBER_NAME_MESSAGE,
+                            MessagesAndTitles.ERROR_DIALOGUE_TITLE, JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 Member member = new Member();
@@ -274,7 +302,7 @@ public class GeneratorGUI extends JFrame {
                 member.setCanAssist2ndHall(secondHallCheckBox.isSelected());
                 member.setSundayException(sundayExceptionCheckBox.isSelected());
                 if (member.save()) {
-                    JOptionPane.showMessageDialog(GeneratorGUI.getFrames()[0], "\"" + member.getFirstName() + "\" ተጨምሯል");
+                    JOptionPane.showMessageDialog(GeneratorGUI.getFrames()[0], "\"" + member.getFirstName() + "\" added");
                     GeneratorGUI.this.clearInputFields();
                 }
                 addTableRowForMember(member);
@@ -311,7 +339,7 @@ public class GeneratorGUI extends JFrame {
                 } catch (SQLException e1) {
                     System.out.println(e1.getMessage());
                 }
-                JOptionPane.showMessageDialog(frame, "የ \"" + member.getFirstName() + "\" አይነታዎች ተዘምነዋል");
+                JOptionPane.showMessageDialog(frame, member.getFirstName() + "'s attributes updated");
             }
         });
 
@@ -322,7 +350,7 @@ public class GeneratorGUI extends JFrame {
                 int selectedRow = membersTable.getSelectedRow();
                 if (selectedRow == -1) return;
 
-                int option = JOptionPane.showConfirmDialog(frame, "እርግጠኛ ነህ?", "", JOptionPane.YES_NO_OPTION);
+                int option = JOptionPane.showConfirmDialog(frame, "Are you sure?", "", JOptionPane.YES_NO_OPTION);
                 if (option == JOptionPane.NO_OPTION) return;
 
                 int memberID = (int) membersTable.getValueAt(selectedRow, 0);
@@ -336,7 +364,7 @@ public class GeneratorGUI extends JFrame {
                     tableModel.removeRow(selectedRow);
                     JOptionPane.showMessageDialog(
                             frame,
-                            "\"" + member.getFirstName() + "\" ወጥቷል...",
+                            "\"" + member.getFirstName() + "\" removed...",
                             "",
                             JOptionPane.INFORMATION_MESSAGE
                     );

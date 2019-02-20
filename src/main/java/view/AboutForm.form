@@ -35,41 +35,41 @@
                 </properties>
                 <border type="none"/>
                 <children>
-                  <component id="602d5" class="javax.swing.JLabel">
+                  <component id="602d5" class="javax.swing.JLabel" binding="programNameLabel">
                     <constraints>
                       <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
-                      <font name="Maven Pro" size="22" style="1"/>
-                      <text value="Schedule Generator 1.0.4"/>
+                      <font/>
+                      <text value=""/>
                     </properties>
                   </component>
-                  <component id="128f3" class="javax.swing.JLabel">
+                  <component id="128f3" class="javax.swing.JLabel" binding="buildDateLabel">
                     <constraints>
                       <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
-                      <font name="Maven Pro" size="16" style="0"/>
-                      <text value="Built on November 29, 2018"/>
+                      <font/>
+                      <text value=""/>
                     </properties>
                   </component>
-                  <component id="55ffc" class="javax.swing.JLabel">
+                  <component id="55ffc" class="javax.swing.JLabel" binding="developerEmailLabel">
                     <constraints>
                       <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="1" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <horizontalAlignment value="0"/>
                       <horizontalTextPosition value="0"/>
-                      <text value="(mickyasTesfamichael@gmail.com)"/>
+                      <text value=""/>
                     </properties>
                   </component>
-                  <component id="942c3" class="javax.swing.JLabel">
+                  <component id="942c3" class="javax.swing.JLabel" binding="developerNameLabel">
                     <constraints>
                       <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="2" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
-                      <font name="Maven Pro" size="16" style="0"/>
-                      <text value="Developed by: Mikyas Tesfamichael"/>
+                      <font/>
+                      <text value=""/>
                     </properties>
                   </component>
                 </children>
@@ -86,13 +86,13 @@
             </properties>
             <border type="none"/>
             <children>
-              <component id="ed5d5" class="javax.swing.JLabel">
+              <component id="ed5d5" class="javax.swing.JLabel" binding="whatsNewInSydlerLabel">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <font name="Maven Pro" size="18" style="1"/>
-                  <text value="What's new in v1.0.4?"/>
+                  <font/>
+                  <text value=""/>
                 </properties>
               </component>
               <scrollpane id="e0ed8">
@@ -104,14 +104,14 @@
                 </properties>
                 <border type="none"/>
                 <children>
-                  <component id="6bf3f" class="javax.swing.JLabel" binding="whatsNewLabel">
+                  <component id="6bf3f" class="javax.swing.JLabel" binding="newFeaturesListLabel">
                     <constraints/>
                     <properties>
                       <background color="-921103"/>
-                      <font size="14" style="0"/>
+                      <font/>
                       <horizontalAlignment value="2"/>
                       <horizontalTextPosition value="2"/>
-                      <text value="&lt;html&gt;&#10;&#10;&lt;li&gt;&#10;Added settings that control the way a schedule &lt;br/&gt;&#10;gets generated. The program persists the &lt;br/&gt;&#10;settings using a JSON file&#10;&lt;/li&gt;&#10;&lt;br/&gt;&#10;&lt;li&gt;&#10;An option to change the weekend meeting day &lt;br/&gt;&#10;added (some congregations may decide to do it &lt;br/&gt;&#10;on Saturdays)&#10;&lt;/li&gt;&#10;&lt;br/&gt;&#10;&lt;li&gt;&#10;Error or success messages associated with the &lt;br/&gt;&#10;generation of the Excel document are properly &lt;br/&gt;&#10;communicated to the user&#10;&lt;/li&gt;&#10;&#10;&lt;/html&gt;"/>
+                      <text value=""/>
                       <verticalAlignment value="0"/>
                       <verticalTextPosition value="0"/>
                     </properties>

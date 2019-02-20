@@ -1,6 +1,10 @@
-database/
-settings/
+# IntelliJ
+.idea/
+dataSources/
 target/
 out/
-.idea/
 sydler.iml
+
+# other
+database/
+settings/
