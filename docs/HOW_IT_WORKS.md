@@ -1,4 +1,4 @@
-# How does Sound System Schedule Generator work?
+# How does Sydler work?
 The A<sub>sf</sub> of each member is calculated right before the program chooses one for a role. Depending on
 the members' rank, the "best" will be the member with the highest A<sub>sf</sub>. In the cases when there are multiple
 members with equal A<sub>sf</sub> values, then a member will be chosen randomly. The program assumes that there are 5
