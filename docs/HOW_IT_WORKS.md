@@ -18,7 +18,7 @@ tell the program that the congregation conducts second hall presentations is cur
 next release will (you don't have to wait till then. Go ahead and make your changes).
 
 ### The Stage Policy
-One thing I should mention is that the program is designed to never assign the member who is managing the stage on a
+The program is designed to never assign the member who is managing the stage on a
 given day to another role on that same day because he could get really busy; especially on mid-week meeting days. I have
 decided to name this decision **The Stage Policy**.
 
