@@ -1,14 +1,16 @@
 package domain;
 
+import java.io.File;
+import java.sql.SQLException;
+
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
-import java.sql.SQLException;
 
 class DBConnection {
     private static final ConnectionSource connectionSource = initializeConnectionSource();
 
     private static ConnectionSource initializeConnectionSource () {
-        String dbURL = "jdbc:sqlite:database/members.db";
+        String dbURL = "jdbc:sqlite:database" + File.separator + "members.db";
         try {
             return new JdbcConnectionSource(dbURL);
         } catch (SQLException e){

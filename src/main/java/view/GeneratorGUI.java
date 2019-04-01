@@ -253,11 +253,11 @@ public class GeneratorGUI extends JFrame {
                         AMMonths.get(Objects.requireNonNull(monthComboBox.getSelectedItem()).toString()),
                         (int) daySpinner.getValue(), 0, 0
                 );
-                ExcelFileGenerator excelFileGenerator = new ExcelFileGenerator((int) howManyWeeksSpinner.getValue());
+                ExcelFileGenerator excelFileGenerator = new ExcelFileGenerator
+                        ((int) howManyWeeksSpinner.getValue(), beginDate);
                 savePath = saveLocation.getSelectedFile().getPath();
                 // noinspection ConstantConditions
                 final int RETURN_STATUS = excelFileGenerator.makeExcel(
-                        beginDate,
                         midweekMeetingDayComboBox.getSelectedItem().toString(),
                         weekendMeetingDayComboBox.getSelectedItem().toString(),
                         savePath

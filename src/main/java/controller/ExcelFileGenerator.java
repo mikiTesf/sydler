@@ -27,9 +27,20 @@ public class ExcelFileGenerator {
     private final HashMap<Integer, String> AMMonths;
     private final HashMap<String, String> ENMonths;
     private XSSFWorkbook schedule;
+    private XSSFSheet sheet;
+    private LocalDateTime date;
+    private final int WEEK_SPAN          = 0;
+    private final int MEETING_DAY_NAME   = 1;
+    private final int STAGE              = 2;
+    private final int FIRST_ROUND_RIGHT  = 3;
+    private final int FIRST_ROUND_LEFT   = 4;
+    private final int SECOND_ROUND_RIGHT = 5;
+    private final int SECOND_ROUND_LEFT  = 6;
+    private final int SECOND_HALL        = 7;
 
-    public ExcelFileGenerator(int weeks) {
+    public ExcelFileGenerator(int weeks, LocalDateTime date) {
         names = new Populate(weeks).getNameGrid();
+        this.date = date;
 
         AMMonths = new HashMap<>(12);
         AMMonths.put(1, "ጥር");
@@ -60,39 +71,55 @@ public class ExcelFileGenerator {
         ENMonths.put("AUGUST", "ነሐሴ");
     }
 
-    public int makeExcel(LocalDateTime date, String midweekMeetingDay, String weekendMeetingDay, String savePath) {
+    public int makeExcel(String midweekMeetingDay, String weekendMeetingDay, String savePath) {
         final int SUCCESS_STATUS = 0, COULD_NOT_SAVE_FILE_ERROR = 1, EMPTY_ARRAY_ERROR = 2;
 
         if (names == null) return EMPTY_ARRAY_ERROR;
         // SSS - Sound System Schedule
         String filePath = savePath + "/SSS_" + date.getDayOfMonth() + "_" + date.getMonth() + "_" + date.getYear() + ".xlsx";
-        final int WEEK_SPAN          = 0;
-        final int MEETING_DAY_NAME   = 1;
-        final int STAGE              = 2;
-        final int FIRST_ROUND_RIGHT  = 3;
-        final int FIRST_ROUND_LEFT   = 4;
-        final int SECOND_ROUND_RIGHT = 5;
-        final int SECOND_ROUND_LEFT  = 6;
-        final int SECOND_HALL        = 7;
 
         schedule = new XSSFWorkbook();
-        XSSFSheet sheet = schedule.createSheet("schedule sheet");
         // setup sheet (page) properties
+        sheet = schedule.createSheet("schedule sheet");
         sheet.getPrintSetup().setPaperSize(PrintSetup.A4_PAPERSIZE);
-        XSSFRichTextString formattedText = new XSSFRichTextString();
+
+        insertSheetTitle();
+        initializeColumnHeaders();
+        populateSheetWithWeekSpansAndNames(midweekMeetingDay, weekendMeetingDay);
+        resizeAllColumns();
+
+        try {
+            FileOutputStream out = new FileOutputStream(new File(filePath));
+            schedule.write(out);
+            System.out.println("excel file saved under " + filePath + "...");
+            out.close();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            return COULD_NOT_SAVE_FILE_ERROR;
+        }
+        return SUCCESS_STATUS;
+    }
+
+    private boolean isMidweek(int day) {
+        return (day % 2) == 0;
+    }
+
+    private void insertSheetTitle() {
+        // title at the top of sheet
+        Row programTitleRow = sheet.createRow(0);
         XSSFFont font = schedule.createFont();
         font.setBold(true);
         font.setFontHeightInPoints((short) 24);
-        // title at the top of sheet
-        Row programTitleRow = sheet.createRow(0);
+
+        XSSFRichTextString formattedText = new XSSFRichTextString();
         formattedText.setString(
                 "የአዲስ ሰፈር ጉባኤ የድምጽ ክፍል ፕሮግራም\n"
-                + "("  + ENMonths.get(date.getMonth().toString()) + " " + date.getDayOfMonth() + ", " + date.getYear()
+                        + "("  + ENMonths.get(date.getMonth().toString()) + " " + date.getDayOfMonth() + ", " + date.getYear()
                 /* Each week has two days. "names.length" is the sum of mid-week and Sunday meeting days. Therefore,
                    the total number of weeks is equal to (names.length / 2) */
-                + " → " + ENMonths.get(date.plusWeeks((names.length / 2) - 1).plusDays(6).getMonth().toString())
-                + " "  + date.plusWeeks(names.length / 2 - 1).plusDays(6).getDayOfMonth()
-                + ", " + date.plusWeeks(names.length / 2 - 1).plusDays(6).getYear() + ") "
+                        + " → " + ENMonths.get(date.plusWeeks((names.length / 2) - 1).plusDays(6).getMonth().toString())
+                        + " "  + date.plusWeeks(names.length / 2 - 1).plusDays(6).getDayOfMonth()
+                        + ", " + date.plusWeeks(names.length / 2 - 1).plusDays(6).getYear() + ") "
         );
         formattedText.applyFont(font);
         font.setFontHeightInPoints((short) 14);
@@ -100,7 +127,14 @@ public class ExcelFileGenerator {
         programTitleRow.createCell(0).setCellValue(formattedText);
         programTitleRow.getCell(0).setCellStyle(getCellStyle(true, false, false));
         sheet.addMergedRegion(new CellRangeAddress(programTitleRow.getRowNum(), programTitleRow.getRowNum(), WEEK_SPAN, SECOND_HALL));
-        // the titles in each column get initialized next
+    }
+
+    private void initializeColumnHeaders() {
+        XSSFRichTextString formattedText = new XSSFRichTextString();
+        XSSFFont font = schedule.createFont();
+        font.setBold(true);
+        font.setFontHeightInPoints((short) 10);
+
         Row headerRow = sheet.createRow(sheet.getLastRowNum() + 1);
         CellStyle headerRowCellStyle = getCellStyle(true, true, true);
         // put column names at the header of the sheet
@@ -136,6 +170,13 @@ public class ExcelFileGenerator {
         formattedText.applyFont(font);
         headerRow.createCell(SECOND_HALL).setCellValue(formattedText);
         headerRow.getCell(SECOND_HALL).setCellStyle(headerRowCellStyle);
+    }
+
+    private void populateSheetWithWeekSpansAndNames(String midweekMeetingDay, String weekendMeetingDay) {
+        XSSFRichTextString formattedText = new XSSFRichTextString();
+        XSSFFont font = schedule.createFont();
+        font.setBold(true);
+        font.setFontHeightInPoints((short) 10);
 
         String weekMonth, monthOnSunday;
         /* the following is the main for loop that fills the schedule by populating it with
@@ -153,10 +194,13 @@ public class ExcelFileGenerator {
             row.createCell(WEEK_SPAN);
             row.createCell(MEETING_DAY_NAME);
             if (isMidweek(day)) {
-                if (weekMonth.equals(monthOnSunday))
-                    formattedText.setString(weekMonth + " " + date.getDayOfMonth() + " - " + date.plusDays(6).getDayOfMonth());
-                else
-                    formattedText.setString(weekMonth + " " + date.getDayOfMonth() + " - " + monthOnSunday + " " + date.plusDays(6).getDayOfMonth());
+                if (weekMonth.equals(monthOnSunday)) {
+                    formattedText.setString
+                            (weekMonth + " " + date.getDayOfMonth() + " - " + date.plusDays(6).getDayOfMonth());
+                } else {
+                    formattedText.setString
+                            (weekMonth + " " + date.getDayOfMonth() + " - " + monthOnSunday + " " + date.plusDays(6).getDayOfMonth());
+                }
                 formattedText.applyFont(font);
                 row.getCell(WEEK_SPAN).setCellValue(formattedText);
                 sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum() + 1, WEEK_SPAN, WEEK_SPAN));
@@ -179,7 +223,9 @@ public class ExcelFileGenerator {
             }
         }
         System.out.println("excel sheet populated...");
+    }
 
+    private void resizeAllColumns() {
         sheet.autoSizeColumn(WEEK_SPAN);
         sheet.autoSizeColumn(MEETING_DAY_NAME);
         sheet.autoSizeColumn(STAGE);
@@ -188,21 +234,6 @@ public class ExcelFileGenerator {
         sheet.autoSizeColumn(SECOND_ROUND_RIGHT);
         sheet.autoSizeColumn(SECOND_ROUND_LEFT);
         sheet.autoSizeColumn(SECOND_HALL);
-
-        try {
-            FileOutputStream out = new FileOutputStream(new File(filePath));
-            schedule.write(out);
-            System.out.println("excel file saved under " + filePath + "...");
-            out.close();
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-            return COULD_NOT_SAVE_FILE_ERROR;
-        }
-        return SUCCESS_STATUS;
-    }
-
-    private boolean isMidweek(int day) {
-        return day % 2 == 0;
     }
 
     private CellStyle getCellStyle(boolean centerAligned, boolean fullyBordered, boolean filledBackground) {
