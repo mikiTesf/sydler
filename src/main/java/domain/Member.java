@@ -112,6 +112,11 @@ public class Member {
         this.sundayException = sundayException;
     }
 
+    public boolean hasAtLeastOneRole() {
+
+        return (canBeStage || canRotateMic || canAssist2ndHall);
+    }
+
     public boolean save() {
         try {
             memberDao.create(this);

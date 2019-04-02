@@ -54,6 +54,15 @@ public class GeneratorGUI extends JFrame {
     private String savePath;
     private final HashMap<String, Integer> AMMonths;
     private final int ID_COLUMN = 0, STAGE = 2, MIC = 3, HALL2 = 4, SUNDAY_EXCEPTION = 5;
+    private List<Member> allMembers;
+
+    {
+        try {
+            allMembers = Member.getDao().queryForAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     public GeneratorGUI() {
         tabbedPane.setTitleAt(0, MessagesAndTitles.PROGRAM_TAB_TITLE);
@@ -197,13 +206,8 @@ public class GeneratorGUI extends JFrame {
         membersTable.getTableHeader().setReorderingAllowed(false);
         membersTable.getTableHeader().setResizingAllowed(true);
 
-        try {
-            List<Member> allMembers = Member.getDao().queryForAll();
-            for (Member member : allMembers) {
-                addTableRowForMember(member);
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
+        for (Member member : allMembers) {
+            addTableRowForMember(member);
         }
 
         membersTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -260,6 +264,7 @@ public class GeneratorGUI extends JFrame {
                 final int RETURN_STATUS = excelFileGenerator.makeExcel(
                         midweekMeetingDayComboBox.getSelectedItem().toString(),
                         weekendMeetingDayComboBox.getSelectedItem().toString(),
+                        allMembers,
                         savePath
                 );
                 generateButton.setEnabled(true);

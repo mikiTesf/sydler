@@ -1,12 +1,8 @@
 package controller;
 
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.PrintSetup;
+import domain.Member;
+
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -21,6 +17,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 
 public class ExcelFileGenerator {
     private final String[][] names;
@@ -32,10 +29,10 @@ public class ExcelFileGenerator {
     private final int WEEK_SPAN          = 0;
     private final int MEETING_DAY_NAME   = 1;
     private final int STAGE              = 2;
-    private final int FIRST_ROUND_RIGHT  = 3;
-    private final int FIRST_ROUND_LEFT   = 4;
-    private final int SECOND_ROUND_RIGHT = 5;
-    private final int SECOND_ROUND_LEFT  = 6;
+    private final int FIRST_ROUND_LEFT   = 3;
+    private final int FIRST_ROUND_RIGHT  = 4;
+    private final int SECOND_ROUND_LEFT  = 5;
+    private final int SECOND_ROUND_RIGHT = 6;
     private final int SECOND_HALL        = 7;
 
     public ExcelFileGenerator(int weeks, LocalDateTime date) {
@@ -71,31 +68,39 @@ public class ExcelFileGenerator {
         ENMonths.put("AUGUST", "ነሐሴ");
     }
 
-    public int makeExcel(String midweekMeetingDay, String weekendMeetingDay, String savePath) {
+    public int makeExcel(String midweekMeetingDay, String weekendMeetingDay, List<Member> allMembers, String savePath) {
         final int SUCCESS_STATUS = 0, COULD_NOT_SAVE_FILE_ERROR = 1, EMPTY_ARRAY_ERROR = 2;
 
         if (names == null) return EMPTY_ARRAY_ERROR;
-        // SSS - Sound System Schedule
-        String filePath = savePath + "/SSS_" + date.getDayOfMonth() + "_" + date.getMonth() + "_" + date.getYear() + ".xlsx";
+        for (Member member : allMembers) {
+            if (!member.hasAtLeastOneRole()) continue;
+            // SSS - Sound System Schedule
+            String filePath = savePath + "/SSS"
+                    + "_" + member.getFirstName()
+                    + "_" + member.getLastName()
+                    + "_" + date.getMonth()
+                    + "_" + date.getYear() + ".xlsx";
 
-        schedule = new XSSFWorkbook();
-        // setup sheet (page) properties
-        sheet = schedule.createSheet("schedule sheet");
-        sheet.getPrintSetup().setPaperSize(PrintSetup.A4_PAPERSIZE);
+            schedule = new XSSFWorkbook();
+            // setup sheet (page) properties
+            sheet = schedule.createSheet("schedule");
+            sheet.getPrintSetup().setPaperSize(PrintSetup.A4_PAPERSIZE);
 
-        insertSheetTitle();
-        initializeColumnHeaders();
-        populateSheetWithWeekSpansAndNames(midweekMeetingDay, weekendMeetingDay);
-        resizeAllColumns();
+            insertSheetTitle();
+            initializeColumnHeaders();
+            populateSheetWithWeekSpansAndNames(midweekMeetingDay, weekendMeetingDay);
+            resizeAllColumns();
+            highlightMemberNames(sheet, member.getFirstName());
 
-        try {
-            FileOutputStream out = new FileOutputStream(new File(filePath));
-            schedule.write(out);
-            System.out.println("excel file saved under " + filePath + "...");
-            out.close();
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-            return COULD_NOT_SAVE_FILE_ERROR;
+            try {
+                FileOutputStream out = new FileOutputStream(new File(filePath));
+                schedule.write(out);
+                System.out.println("excel file saved under " + filePath + "...");
+                out.close();
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+                return COULD_NOT_SAVE_FILE_ERROR;
+            }
         }
         return SUCCESS_STATUS;
     }
@@ -155,21 +160,32 @@ public class ExcelFileGenerator {
         headerRow.getCell(STAGE).setCellStyle(headerRowCellStyle);
 
         formattedText.setString("በመጀመሪያው ዙር");
-        formattedText.applyFont(font);
-        headerRow.createCell(FIRST_ROUND_RIGHT).setCellValue(formattedText);
-        sheet.addMergedRegion(new CellRangeAddress(headerRow.getRowNum(), headerRow.getRowNum(), FIRST_ROUND_RIGHT, FIRST_ROUND_LEFT));
-        headerRow.getCell(FIRST_ROUND_RIGHT).setCellStyle(headerRowCellStyle);
+        insertRoundDivisionHeader
+                (formattedText, font, headerRow, headerRowCellStyle, FIRST_ROUND_LEFT, FIRST_ROUND_RIGHT);
 
         formattedText.setString("በሁለተኛው ዙር");
-        formattedText.applyFont(font);
-        headerRow.createCell(SECOND_ROUND_RIGHT).setCellValue(formattedText);
-        sheet.addMergedRegion(new CellRangeAddress(headerRow.getRowNum(), headerRow.getRowNum(), SECOND_ROUND_RIGHT, SECOND_ROUND_LEFT));
-        headerRow.getCell(SECOND_ROUND_RIGHT).setCellStyle(headerRowCellStyle);
+        insertRoundDivisionHeader
+                (formattedText, font, headerRow, headerRowCellStyle, SECOND_ROUND_LEFT, SECOND_ROUND_RIGHT);
 
         formattedText.setString("በሁለተኛው አዳራሽ");
         formattedText.applyFont(font);
         headerRow.createCell(SECOND_HALL).setCellValue(formattedText);
         headerRow.getCell(SECOND_HALL).setCellStyle(headerRowCellStyle);
+    }
+
+    private void insertRoundDivisionHeader(
+            XSSFRichTextString formattedText,
+            XSSFFont font,
+            Row headerRow,
+            CellStyle headerRowCellStyle,
+            int roleIndexLeft,
+            int roleIndexRight)
+    {
+        formattedText.applyFont(font);
+        headerRow.createCell(roleIndexLeft).setCellValue(formattedText);
+        sheet.addMergedRegion(new CellRangeAddress
+                (headerRow.getRowNum(), headerRow.getRowNum(), roleIndexLeft, roleIndexRight));
+        headerRow.getCell(roleIndexLeft).setCellStyle(headerRowCellStyle);
     }
 
     private void populateSheetWithWeekSpansAndNames(String midweekMeetingDay, String weekendMeetingDay) {
@@ -234,6 +250,20 @@ public class ExcelFileGenerator {
         sheet.autoSizeColumn(SECOND_ROUND_RIGHT);
         sheet.autoSizeColumn(SECOND_ROUND_LEFT);
         sheet.autoSizeColumn(SECOND_HALL);
+    }
+
+    private void highlightMemberNames(XSSFSheet scheduleSheet, String memberName) {
+        for (Row row : scheduleSheet) {
+            for (Cell cell : row) {
+                if (cell.getStringCellValue().contains(memberName)) {
+                    cell.getCellStyle().setFillBackgroundColor(IndexedColors.LIGHT_GREEN.index);
+                    cell.getCellStyle().setFillForegroundColor(IndexedColors.LIGHT_GREEN.index);
+                    cell.getCellStyle().setFillPattern(FillPatternType.SOLID_FOREGROUND);
+                    // for some unknown reason the Cell's horizontal alignment is being reset to LEFT
+                    cell.getCellStyle().setAlignment(HorizontalAlignment.CENTER);
+                }
+            }
+        }
     }
 
     private CellStyle getCellStyle(boolean centerAligned, boolean fullyBordered, boolean filledBackground) {
