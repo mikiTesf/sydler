@@ -51,7 +51,6 @@ public class GeneratorGUI extends JFrame {
     private JLabel lastNameFieldLabel;
     private JPanel tablePanel;
     private JPanel newMemberPanel;
-    private String savePath;
     private final HashMap<String, Integer> AMMonths;
     private final int ID_COLUMN = 0, STAGE = 2, MIC = 3, HALL2 = 4, SUNDAY_EXCEPTION = 5;
     private List<Member> allMembers;
@@ -239,54 +238,8 @@ public class GeneratorGUI extends JFrame {
         generateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JFileChooser saveLocation = new JFileChooser();
-                saveLocation.setDialogType(JFileChooser.SAVE_DIALOG);
-                saveLocation.setDialogTitle("Where to save the Excel document?");
-                saveLocation.setCurrentDirectory(new File(System.getProperty("user.home")));
-                saveLocation.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                saveLocation.setMultiSelectionEnabled(false);
-                saveLocation.setAcceptAllFileFilterUsed(false);
-
-                int choice = saveLocation.showDialog(frame, "save");
-                if (choice == JFileChooser.CANCEL_OPTION) return;
-
-                generateButton.setEnabled(false);
-
-                LocalDateTime beginDate = LocalDateTime.of(
-                        (int) yearSpinner.getValue(),
-                        AMMonths.get(Objects.requireNonNull(monthComboBox.getSelectedItem()).toString()),
-                        (int) daySpinner.getValue(), 0, 0
-                );
-                ExcelFileGenerator excelFileGenerator = new ExcelFileGenerator
-                        ((int) howManyWeeksSpinner.getValue(), beginDate);
-                savePath = saveLocation.getSelectedFile().getPath();
-                // noinspection ConstantConditions
-                final int RETURN_STATUS = excelFileGenerator.makeExcel(
-                        midweekMeetingDayComboBox.getSelectedItem().toString(),
-                        weekendMeetingDayComboBox.getSelectedItem().toString(),
-                        allMembers,
-                        savePath
-                );
-                generateButton.setEnabled(true);
-
-                switch (RETURN_STATUS) {
-                    case 0: // success
-                        JOptionPane.showMessageDialog(frame, MessagesAndTitles.SCHEDULE_CREATED_MESSAGE,
-                                MessagesAndTitles.SUCCESS_DIALOGUE_TITLE, JOptionPane.INFORMATION_MESSAGE);
-                        break;
-                    case 1: // could not save file
-                        JOptionPane.showMessageDialog(frame, MessagesAndTitles.COULD_NOT_SAVE_FILE_MESSAGE,
-                                MessagesAndTitles.ERROR_DIALOGUE_TITLE, JOptionPane.ERROR_MESSAGE);
-                        break;
-                    case 2: // database has 0 records (empty array)
-                        JOptionPane.showMessageDialog(frame, MessagesAndTitles.NO_MEMBERS_FOUND_MESSAGE,
-                                MessagesAndTitles.ERROR_DIALOGUE_TITLE, JOptionPane.ERROR_MESSAGE);
-                        break;
-                    default: // unknown problem
-                        JOptionPane.showMessageDialog(frame, MessagesAndTitles.UNKNOWN_PROBLEM_MESSAGE,
-                                MessagesAndTitles.ERROR_DIALOGUE_TITLE, JOptionPane.ERROR_MESSAGE);
-                        break;
-                }
+                UIController uiController = new UIController();
+                uiController.execute();
             }
         });
 
@@ -392,8 +345,8 @@ public class GeneratorGUI extends JFrame {
     }
 
     private boolean invalidMemberInfo() {
-        /* as the input is likely to be constructed using Amharic letters,
-         I see no way I can use regex to test for it's validity */
+        // As the input is likely to be constructed using Amharic letters,
+        // I see no way I can use regex to test for it's validity
         boolean invalidFirstName = FirstNameTextField.getText().isEmpty();
         boolean invalidLastName = lastNameTextField.getText().isEmpty();
         return invalidFirstName || invalidLastName;
@@ -429,8 +382,10 @@ public class GeneratorGUI extends JFrame {
     }
 
     private void renderTableColumnAsCheckbox(int columnIndex) {
-        membersTable.getColumnModel().getColumn(columnIndex).setCellEditor(membersTable.getDefaultEditor(Boolean.class));
-        membersTable.getColumnModel().getColumn(columnIndex).setCellRenderer(membersTable.getDefaultRenderer(Boolean.class));
+        membersTable.getColumnModel().getColumn(columnIndex).setCellEditor
+                (membersTable.getDefaultEditor(Boolean.class));
+        membersTable.getColumnModel().getColumn(columnIndex).setCellRenderer
+                (membersTable.getDefaultRenderer(Boolean.class));
     }
 
     private void addTableRowForMember(Member member) {
@@ -453,5 +408,74 @@ public class GeneratorGUI extends JFrame {
         micCheckBox.setSelected(false);
         secondHallCheckBox.setSelected(false);
         sundayExceptionCheckBox.setSelected(false);
+    }
+
+    private class UIController extends SwingWorker<Void, Void> {
+        private int RETURN_STATUS;
+
+        @Override
+        protected Void doInBackground() {
+            JFileChooser saveLocation = new JFileChooser();
+            saveLocation.setDialogType(JFileChooser.SAVE_DIALOG);
+            saveLocation.setDialogTitle("Where to save the Excel document?");
+            saveLocation.setCurrentDirectory(new File(System.getProperty("user.home")));
+            saveLocation.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            saveLocation.setMultiSelectionEnabled(false);
+            saveLocation.setAcceptAllFileFilterUsed(false);
+
+            int choice = saveLocation.showSaveDialog(frame);
+            if (choice == JFileChooser.CANCEL_OPTION) {
+                RETURN_STATUS = -1;
+                return null;
+            }
+
+            generateButton.setEnabled(false);
+
+            LocalDateTime beginDate = LocalDateTime.of(
+                    (int) yearSpinner.getValue(),
+                    AMMonths.get(Objects.requireNonNull(monthComboBox.getSelectedItem()).toString()),
+                    (int) daySpinner.getValue(), 0, 0
+            );
+            ExcelFileGenerator excelFileGenerator = new ExcelFileGenerator
+                    ((int) howManyWeeksSpinner.getValue(), beginDate);
+            String savePath = saveLocation.getSelectedFile().getPath();
+            // noinspection ConstantConditions
+            RETURN_STATUS = excelFileGenerator.makeExcel(
+                    midweekMeetingDayComboBox.getSelectedItem().toString(),
+                    weekendMeetingDayComboBox.getSelectedItem().toString(),
+                    allMembers,
+                    savePath
+            );
+
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            generateButton.setEnabled(true);
+
+            switch (RETURN_STATUS) {
+                case -1: // user canceled operation
+                    JOptionPane.showMessageDialog(frame, MessagesAndTitles.USER_CANCELED_OPERATION_MESSAGE,
+                            "", JOptionPane.INFORMATION_MESSAGE);
+                    break;
+                case 0: // success
+                    JOptionPane.showMessageDialog(frame, MessagesAndTitles.SCHEDULE_CREATED_MESSAGE,
+                            MessagesAndTitles.SUCCESS_DIALOGUE_TITLE, JOptionPane.INFORMATION_MESSAGE);
+                    break;
+                case 1: // could not save file
+                    JOptionPane.showMessageDialog(frame, MessagesAndTitles.COULD_NOT_SAVE_FILE_MESSAGE,
+                            MessagesAndTitles.ERROR_DIALOGUE_TITLE, JOptionPane.ERROR_MESSAGE);
+                    break;
+                case 2: // database has 0 records (empty array)
+                    JOptionPane.showMessageDialog(frame, MessagesAndTitles.NO_MEMBERS_FOUND_MESSAGE,
+                            MessagesAndTitles.ERROR_DIALOGUE_TITLE, JOptionPane.ERROR_MESSAGE);
+                    break;
+                default: // unknown problem
+                    JOptionPane.showMessageDialog(frame, MessagesAndTitles.UNKNOWN_PROBLEM_MESSAGE,
+                            MessagesAndTitles.ERROR_DIALOGUE_TITLE, JOptionPane.ERROR_MESSAGE);
+                    break;
+            }
+        }
     }
 }

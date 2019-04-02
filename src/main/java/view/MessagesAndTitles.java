@@ -85,6 +85,7 @@ class MessagesAndTitles {
     // error and success messages associated with program generation
     static final String SUCCESS_DIALOGUE_TITLE = "Success";
     static final String ERROR_DIALOGUE_TITLE = "Error";
+    static final String USER_CANCELED_OPERATION_MESSAGE = "You canceled the operation";
     static final String SCHEDULE_CREATED_MESSAGE = "Schedule created";
     static final String COULD_NOT_SAVE_FILE_MESSAGE = "Excel file could'nt be saved";
     static final String NO_MEMBERS_FOUND_MESSAGE = "No members found";
