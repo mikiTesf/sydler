@@ -26,7 +26,7 @@ class MessagesAndTitles {
     // member tab labels and titles
     static final String MEMBER_TAB_TITLE = "Member";
     static final String MEMBER_BORDER_TITLE = "Add";
-    static final String FIRST_NAME_TEXTFIELD_LABEL = "Name";
+    static final String FIRST_NAME_TEXTFIELD_LABEL = "<html>First<br/>Name</html>";
     static final String LAST_NAME_TEXTFIELD_LABEL = "<html>Last<br/>Name</html>";
     static final String STAGE_CHECKBOX_LABEL = "Stage";
     static final String MICROPHONE_CHECKBOX_LABEL = "Mic";
