@@ -11,10 +11,13 @@ timely schedules. It saves the schedule in a formatted excel document.
 One thing I should mention is that the names of the days of the week and the months in a year are all in the Amharic language. You must
 change the values of the Strings in the following arrays in the _view.MessagesAndTitles_ class to their equivalent meaning in your language.
 
-    static final String[] MIDWEEK_MEETING_DAYS = {"ሰኞ", "ማክሰኞ", "ዕሮብ", "ሐሙስ", "አርብ", "ቅዳሜ"};
-    static final String[] WEEKEND_MEETING_DAYS = {"እሁድ", "ሰኞ", "ማክሰኞ", "ዕሮብ", "ሐሙስ", "አርብ", "ቅዳሜ"};
-    static final String[] MONTHS = {
-            "መስከረም", "ጥቅምት", "ህዳር", "ታህሳሥ", "ጥር", "የካቲት",
-            "መጋቢት", "ሚያዝያ", "ግንቦት", "ሰኔ", "ሐምሌ", "ነሐሴ"};
-            
+```java
+static final String[] MIDWEEK_MEETING_DAYS = {"ሰኞ", "ማክሰኞ", "ዕሮብ", "ሐሙስ", "አርብ", "ቅዳሜ"};
+static final String[] WEEKEND_MEETING_DAYS = {"እሁድ", "ሰኞ", "ማክሰኞ", "ዕሮብ", "ሐሙስ", "አርብ", "ቅዳሜ"};
+static final String[] MONTHS = {
+				"መስከረም", "ጥቅምት", "ህዳር", "ታህሳሥ", "ጥር", "የካቲት",
+				"መጋቢት", "ሚያዝያ", "ግንቦት", "ሰኔ", "ሐምሌ", "ነሐሴ"
+		   	       };
+```
+
 Read the [*doc*](/docs/HOW_IT_WORKS.md) for details.
