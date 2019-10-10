@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+repositories {
+    mavenLocal()
+    maven {
+        url = 'http://repo.maven.apache.org/maven2'
+    }
+}
+
+dependencies {
+    compile 'com.j256.ormlite:ormlite-jdbc:5.1'
+    compile 'com.j256.ormlite:ormlite-core:5.1'
+    compile 'org.apache.poi:poi-ooxml:3.17'
+    compile 'org.xerial:sqlite-jdbc:3.8.7'
+    compile 'org.json:json:20180813'
+}
+
+group = 'sound-system.schedule.generator'
+version = '2.1'
+sourceCompatibility = '1.8'
+
+mainClassName = 'ScheduleGenerator'
