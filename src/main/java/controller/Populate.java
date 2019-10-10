@@ -27,7 +27,7 @@ class Populate {
         try {
             /* Initially all members start with equal ranks. To fill ID_RANK_ALL
                with memberID:rank pairs, all members must be fetched first */
-            allMembers = Member.getDao().queryForAll();
+            allMembers = Member.memberDao.queryForAll();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -42,8 +42,8 @@ class Populate {
            in a week and the 6 is the number of roles */
         scheduleGrid = new int[2 * weeks][6];
         // the preferences set by the user must be read from the settings file before proceeding
-        COUNT_FROM_ALL_ROLES  = SettingInitializer.settings.getBoolean(SettingInitializer.KEY_COUNT_FROM_ALL);
-        CHOOSE_FROM_1ST_ROUND = SettingInitializer.settings.getBoolean(SettingInitializer.KEY_CHOOSE_FROM_1ST_ROUND);
+        COUNT_FROM_ALL_ROLES  = SettingInitializer.KEY_COUNT_FROM_ALL;
+        CHOOSE_FROM_1ST_ROUND = SettingInitializer.KEY_CHOOSE_FROM_1ST_ROUND;
     }
 
     /********************************* column populating method *********************************/
@@ -63,8 +63,8 @@ class Populate {
                     ID_RANK_ROUND1.put(scheduleGrid[day][ROUND1_ROW1], null);
                     ID_RANK_ROUND1.put(scheduleGrid[day][ROUND1_ROW2], null);
                     try {
-                        firstRoundMembers.add(Member.getDao().queryForId(scheduleGrid[day][ROUND1_ROW1]));
-                        firstRoundMembers.add(Member.getDao().queryForId(scheduleGrid[day][ROUND1_ROW2]));
+                        firstRoundMembers.add(Member.memberDao.queryForId(scheduleGrid[day][ROUND1_ROW1]));
+                        firstRoundMembers.add(Member.memberDao.queryForId(scheduleGrid[day][ROUND1_ROW2]));
                     } catch (SQLException e) { e.printStackTrace(); }
                     memberList   = firstRoundMembers;
                     ID_RANK_PAIR = ID_RANK_ROUND1;
@@ -211,7 +211,7 @@ class Populate {
                        which are 0, must be skipped */
                     if (scheduleGrid[day][role] == 0) continue;
 
-                    Member member = Member.getDao().queryForId(scheduleGrid[day][role]);
+                    Member member = Member.memberDao.queryForId(scheduleGrid[day][role]);
                     nameGrid[day][role] = member.hasDuplicateFirstName() ?
                             member.getFirstName() + "\n" + member.getLastName() : member.getFirstName();
                 } catch (SQLException e) {

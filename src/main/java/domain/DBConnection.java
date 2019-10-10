@@ -10,7 +10,7 @@ class DBConnection {
     private static final ConnectionSource connectionSource = initializeConnectionSource();
 
     private static ConnectionSource initializeConnectionSource () {
-        String dbURL = "jdbc:sqlite:database" + File.separator + "members.db";
+        String dbURL = "jdbc:sqlite:database" + File.separator + "data.sqlite3";
         try {
             return new JdbcConnectionSource(dbURL);
         } catch (SQLException e){

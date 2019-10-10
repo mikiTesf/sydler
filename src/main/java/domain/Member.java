@@ -10,7 +10,7 @@ import java.sql.SQLException;
 
 @DatabaseTable (tableName = "member_info")
 public class Member {
-    private static Dao<Member, Integer> memberDao;
+    public static Dao<Member, Integer> memberDao;
 
     @DatabaseField (generatedId = true)
     private int id;
@@ -42,10 +42,6 @@ public class Member {
     public Member() {
         this.setHasDuplicateFirstName(false);
         this.setId(-1);
-    }
-
-    public static Dao<Member, Integer> getDao() {
-        return memberDao;
     }
 
     public String getFirstName() {

@@ -57,7 +57,7 @@ public class GeneratorGUI extends JFrame {
 
     {
         try {
-            allMembers = Member.getDao().queryForAll();
+            allMembers = Member.memberDao.queryForAll();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -291,8 +291,8 @@ public class GeneratorGUI extends JFrame {
                 member.setCanAssist2ndHall((boolean) membersTable.getValueAt(selectedRow, 4));
                 member.setSundayException((boolean) membersTable.getValueAt(selectedRow, 5));
                 try {
-                    String oldName = Member.getDao().queryForId(member.getId()).getFirstName();
-                    Member.getDao().update(member);
+                    String oldName = Member.memberDao.queryForId(member.getId()).getFirstName();
+                    Member.memberDao.update(member);
                     updateMemberDuplicateAttributeOnUpdate(member, oldName);
                 } catch (SQLException e1) {
                     System.out.println(e1.getMessage());
@@ -314,7 +314,7 @@ public class GeneratorGUI extends JFrame {
                 int memberID = (int) membersTable.getValueAt(selectedRow, 0);
                 Member member = new Member();
                 try {
-                    member = Member.getDao().queryForId(memberID);
+                    member = Member.memberDao.queryForId(memberID);
                 } catch (SQLException e1) {
                     e1.printStackTrace();
                 }
@@ -353,12 +353,12 @@ public class GeneratorGUI extends JFrame {
     }
 
     private void updateDuplicateAttributeOnAddition(Member member) throws SQLException {
-        List<Member> members = Member.getDao().queryBuilder().where()
+        List<Member> members = Member.memberDao.queryBuilder().where()
                 .eq("firstName", member.getFirstName()).query();
         if (members.size() > 1) {
             for (Member _member : members) {
                 _member.setHasDuplicateFirstName(true);
-                Member.getDao().update(_member);
+                Member.memberDao.update(_member);
             }
         }
     }
@@ -370,13 +370,13 @@ public class GeneratorGUI extends JFrame {
     }
 
     private void updateDuplicateAttributeOnDelete(Member member) throws SQLException {
-        List<Member> members = Member.getDao().queryBuilder().where()
+        List<Member> members = Member.memberDao.queryBuilder().where()
                 .eq("firstName", member.getFirstName()).query();
         // if this condition is met, then the returned list will have only one member
         if (members.size() <= 1) {
             for (Member _member : members) {
                 _member.setHasDuplicateFirstName(false);
-                Member.getDao().update(_member);
+                Member.memberDao.update(_member);
             }
         }
     }
