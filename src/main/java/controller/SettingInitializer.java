@@ -1,56 +1,21 @@
 package controller;
 
-import org.json.JSONObject;
+import domain.Settings;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Scanner;
+import java.sql.SQLException;
 
 public class SettingInitializer {
-    private static final String SYSTEM_FILE_SEPARATOR = File.separator;
-    public static final File settingsFile = new File
-            ("settings" + SYSTEM_FILE_SEPARATOR + "settings.json");
 
-    public static JSONObject settings = new JSONObject();
+    public static Settings SETTINGS;
 
-    public static final String KEY_COUNT_FROM_ALL = "countFromAll";
-    public static final String KEY_CHOOSE_FROM_1ST_ROUND = "chooseHall2MemberFrom1stRound";
-
-    public static void initialize () {
-        // setup settings directory and file (JSON)
-        File settingsDirectory = new File("settings" + SYSTEM_FILE_SEPARATOR);
-        if (!settingsDirectory.exists()) {
-            //noinspection ResultOfMethodCallIgnored
-            settingsDirectory.mkdirs();
-        }
-        if (!settingsFile.exists()) {
-            /* the following are default values */
-            settings.put(KEY_COUNT_FROM_ALL, false);
-            settings.put(KEY_CHOOSE_FROM_1ST_ROUND, true);
-
-            try (FileWriter writer = new FileWriter(settingsFile)) {
-                writer.write(settings.toString());
-            } catch (IOException e) { e.printStackTrace(); }
-        }
-        /* if the JSON file exists read it's content and initialize the settings */
-        String JSONFileContent = "{}";
+    static {
         try {
-            JSONFileContent = new Scanner
-                    (new File("settings" + SYSTEM_FILE_SEPARATOR + "settings.json"))
-                    .useDelimiter("\\Z")
-                    .next()
-                    .replaceAll("\n", "");
-        } catch (FileNotFoundException e) {
+            SETTINGS = Settings.getSettingsFromDB();
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-        settings = new JSONObject(JSONFileContent);
-        // setup database directory (directory only)
-        File databaseDirectory = new File("database" + SYSTEM_FILE_SEPARATOR);
-        if (!databaseDirectory.exists()) {
-            //noinspection ResultOfMethodCallIgnored
-            databaseDirectory.mkdirs();
-        }
     }
+
+    public static final boolean KEY_COUNT_FROM_ALL = SETTINGS.isCountFromAllRoles();
+    public static final boolean KEY_CHOOSE_FROM_1ST_ROUND = SETTINGS.isChooseHall2MemberFrom1stRound();
 }

@@ -7,10 +7,10 @@ import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.sql.SQLException;
 
 import controller.SettingInitializer;
+import domain.Settings;
 
 class PreferenceForm extends JFrame {
     private JPanel panel1;
@@ -29,8 +29,8 @@ class PreferenceForm extends JFrame {
         control2ndHallChooserCheckbox.setText(MessagesAndTitles.HALL2_PREFERENCE_CHECK_BOX_LABEL);
         control2ndHallChooserCheckbox.setFont(new Font("", Font.PLAIN, 14));
 
-        boolean countAllAppearances       = SettingInitializer.settings.getBoolean(SettingInitializer.KEY_COUNT_FROM_ALL);
-        boolean choose2ndHallFrom1stRound = SettingInitializer.settings.getBoolean(SettingInitializer.KEY_CHOOSE_FROM_1ST_ROUND);
+        boolean countAllAppearances       = SettingInitializer.KEY_COUNT_FROM_ALL;
+        boolean choose2ndHallFrom1stRound = SettingInitializer.KEY_CHOOSE_FROM_1ST_ROUND;
 
         controlCounterCheckbox.setSelected(countAllAppearances);
         control2ndHallChooserCheckbox.setSelected(choose2ndHallFrom1stRound);
@@ -38,18 +38,16 @@ class PreferenceForm extends JFrame {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                frame.setEnabled(true);
-                final boolean COUNT_FROM_ALL_NEW_VALUE        = controlCounterCheckbox.isSelected();
-                final boolean CHOOSE_FROM_1ST_ROUND_NEW_VALUE = control2ndHallChooserCheckbox.isSelected();
+                frame.setEnabled(false);
 
-                SettingInitializer.settings.remove(SettingInitializer.KEY_COUNT_FROM_ALL);
-                SettingInitializer.settings.remove(SettingInitializer.KEY_CHOOSE_FROM_1ST_ROUND);
-                SettingInitializer.settings.put(SettingInitializer.KEY_COUNT_FROM_ALL, COUNT_FROM_ALL_NEW_VALUE);
-                SettingInitializer.settings.put(SettingInitializer.KEY_CHOOSE_FROM_1ST_ROUND, CHOOSE_FROM_1ST_ROUND_NEW_VALUE);
+                SettingInitializer.SETTINGS.setCountFromAllRoles(controlCounterCheckbox.isSelected());
+                SettingInitializer.SETTINGS.setChooseHall2MemberFrom1stRound(control2ndHallChooserCheckbox.isSelected());
 
-                try (FileWriter writer = new FileWriter(SettingInitializer.settingsFile)) {
-                    writer.write(SettingInitializer.settings.toString());
-                } catch (IOException _e) { _e.printStackTrace(); }
+                try {
+                    Settings.settingsDao.update(SettingInitializer.SETTINGS);
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
             }
         });
 
