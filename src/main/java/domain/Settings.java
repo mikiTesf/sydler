@@ -67,9 +67,9 @@ public class Settings {
 
         if (settings == null) {
             settings = new Settings(true, true);
+            settingsDao.create(settings);
         }
 
-        settingsDao.create(settings);
         return settings;
     }
 }
