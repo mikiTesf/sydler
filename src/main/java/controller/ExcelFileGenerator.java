@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
 
 public class ExcelFileGenerator {
     private final String[][] names;
@@ -42,38 +43,50 @@ public class ExcelFileGenerator {
     private final int SECOND_ROUND_LEFT  = 5;
     private final int SECOND_ROUND_RIGHT = 6;
     private final int SECOND_HALL        = 7;
+    private final Properties EXCEL_TEXTS = new Properties();
 
     public ExcelFileGenerator(int weeks, LocalDateTime beginDate) {
+
+        try {
+            EXCEL_TEXTS.load(getClass().getResourceAsStream("/excelTexts.properties"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         names = new Populate(weeks).getNameGrid();
         this.beginDate = beginDate;
 
         AMMonths = new HashMap<>(12);
-        AMMonths.put(1, "ጥር");
-        AMMonths.put(2, "የካ");
-        AMMonths.put(3, "መጋ");
-        AMMonths.put(4, "ሚያ");
-        AMMonths.put(5, "ግን");
-        AMMonths.put(6, "ሰኔ");
-        AMMonths.put(7, "ሐም");
-        AMMonths.put(8, "ነሐ");
-        AMMonths.put(9, "መስ");
-        AMMonths.put(10, "ጥቅ");
-        AMMonths.put(11, "ህዳ");
-        AMMonths.put(12, "ታህ");
+        AMMonths.put(1, getAbbreviatedMonthName(EXCEL_TEXTS.getProperty("SEPTEMBER")));
+        AMMonths.put(2, getAbbreviatedMonthName(EXCEL_TEXTS.getProperty("OCTOBER")));
+        AMMonths.put(3, getAbbreviatedMonthName(EXCEL_TEXTS.getProperty("NOVEMBER")));
+        AMMonths.put(4, getAbbreviatedMonthName(EXCEL_TEXTS.getProperty("DECEMBER")));
+        AMMonths.put(5, getAbbreviatedMonthName(EXCEL_TEXTS.getProperty("JANUARY")));
+        AMMonths.put(6, getAbbreviatedMonthName(EXCEL_TEXTS.getProperty("FEBRUARY")));
+        AMMonths.put(7, getAbbreviatedMonthName(EXCEL_TEXTS.getProperty("MARCH")));
+        AMMonths.put(8, getAbbreviatedMonthName(EXCEL_TEXTS.getProperty("APRIL")));
+        AMMonths.put(9, getAbbreviatedMonthName(EXCEL_TEXTS.getProperty("MAY")));
+        AMMonths.put(10, getAbbreviatedMonthName(EXCEL_TEXTS.getProperty("JUNE")));
+        AMMonths.put(11, getAbbreviatedMonthName(EXCEL_TEXTS.getProperty("JULY")));
+        AMMonths.put(12, getAbbreviatedMonthName(EXCEL_TEXTS.getProperty("AUGUST")));
 
         ENMonths = new HashMap<>(12);
-        ENMonths.put("SEPTEMBER", "መስከረም");
-        ENMonths.put("OCTOBER", "ጥቅምት");
-        ENMonths.put("NOVEMBER", "ህዳር");
-        ENMonths.put("DECEMBER", "ታህሳሥ");
-        ENMonths.put("JANUARY", "ጥር");
-        ENMonths.put("FEBRUARY", "የካቲት");
-        ENMonths.put("MARCH", "መጋቢት");
-        ENMonths.put("APRIL", "ሚያዝያ");
-        ENMonths.put("MAY", "ግንቦት");
-        ENMonths.put("JUNE", "ሰኔ");
-        ENMonths.put("JULY", "ሐምሌ");
-        ENMonths.put("AUGUST", "ነሐሴ");
+        ENMonths.put("SEPTEMBER", EXCEL_TEXTS.getProperty("SEPTEMBER"));
+        ENMonths.put("OCTOBER", EXCEL_TEXTS.getProperty("OCTOBER"));
+        ENMonths.put("NOVEMBER", EXCEL_TEXTS.getProperty("NOVEMBER"));
+        ENMonths.put("DECEMBER", EXCEL_TEXTS.getProperty("DECEMBER"));
+        ENMonths.put("JANUARY", EXCEL_TEXTS.getProperty("JANUARY"));
+        ENMonths.put("FEBRUARY", EXCEL_TEXTS.getProperty("FEBRUARY"));
+        ENMonths.put("MARCH", EXCEL_TEXTS.getProperty("MARCH"));
+        ENMonths.put("APRIL", EXCEL_TEXTS.getProperty("APRIL"));
+        ENMonths.put("MAY", EXCEL_TEXTS.getProperty("MAY"));
+        ENMonths.put("JUNE", EXCEL_TEXTS.getProperty("JUNE"));
+        ENMonths.put("JULY", EXCEL_TEXTS.getProperty("JULY"));
+        ENMonths.put("AUGUST", EXCEL_TEXTS.getProperty("AUGUST"));
+    }
+
+    private String getAbbreviatedMonthName(String monthName) {
+        return monthName.length() > 2 ? monthName.substring(0, 3) : monthName;
     }
 
     public int makeExcel(
@@ -166,30 +179,30 @@ public class ExcelFileGenerator {
         CellStyle headerRowCellStyle = getCellStyle(true, true, true);
         // put column names at the header of the sheet
         font.setFontHeightInPoints((short) 10);
-        formattedText.setString("ሳምንት");
+        formattedText.setString(EXCEL_TEXTS.getProperty("week.span"));
         formattedText.applyFont(font);
         headerRow.createCell(WEEK_SPAN).setCellValue(formattedText);
         headerRow.getCell(WEEK_SPAN).setCellStyle(headerRowCellStyle);
 
-        formattedText.setString("ቀን");
+        formattedText.setString(EXCEL_TEXTS.getProperty("day"));
         formattedText.applyFont(font);
         headerRow.createCell(MEETING_DAY_NAME).setCellValue(formattedText);
         headerRow.getCell(MEETING_DAY_NAME).setCellStyle(headerRowCellStyle);
 
-        formattedText.setString("መድረክ");
+        formattedText.setString(EXCEL_TEXTS.getProperty("stage"));
         formattedText.applyFont(font);
         headerRow.createCell(STAGE).setCellValue(formattedText);
         headerRow.getCell(STAGE).setCellStyle(headerRowCellStyle);
 
-        formattedText.setString("በመጀመሪያው ዙር");
+        formattedText.setString(EXCEL_TEXTS.getProperty("first.round"));
         insertRoundDivisionHeader
                 (formattedText, font, headerRow, headerRowCellStyle, FIRST_ROUND_LEFT, FIRST_ROUND_RIGHT);
 
-        formattedText.setString("በሁለተኛው ዙር");
+        formattedText.setString(EXCEL_TEXTS.getProperty("second.round"));
         insertRoundDivisionHeader
                 (formattedText, font, headerRow, headerRowCellStyle, SECOND_ROUND_LEFT, SECOND_ROUND_RIGHT);
 
-        formattedText.setString("በሁለተኛው አዳራሽ");
+        formattedText.setString(EXCEL_TEXTS.getProperty("second.hall"));
         formattedText.applyFont(font);
         headerRow.createCell(SECOND_HALL).setCellValue(formattedText);
         headerRow.getCell(SECOND_HALL).setCellStyle(headerRowCellStyle);
@@ -260,6 +273,7 @@ public class ExcelFileGenerator {
                 }
             }
         }
+
         System.out.println("excel sheet populated...");
     }
 
