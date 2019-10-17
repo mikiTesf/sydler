@@ -201,11 +201,13 @@ public class GeneratorGUI extends JFrame {
         };
 
         monthComboBox.setModel(new DefaultComboBoxModel<>(MONTHS));
-        weekendMeetingDayComboBox.setModel(new DefaultComboBoxModel<>((String[]) MEETING_DAYS.toArray()));
+        weekendMeetingDayComboBox.setModel(new DefaultComboBoxModel<>
+                (MEETING_DAYS.toArray(new String[0])));
         // As "day.7" is added first (index = 0) in MEETING_DAYS, it must be removed before
         // adding the content of the ArrayList to the combobox that lists mid-week meeting days
         MEETING_DAYS.remove(0);
-        midweekMeetingDayComboBox.setModel(new DefaultComboBoxModel<>((String[]) MEETING_DAYS.toArray()));
+        midweekMeetingDayComboBox.setModel(new DefaultComboBoxModel<>
+                (MEETING_DAYS.toArray(new String[0])));
 
         addEventListenersToButtons();
 
