@@ -5,6 +5,11 @@ target/
 out/
 sydler.iml
 
+# gradle
+.gradle/
+gradle
+build/
+
 # other
 database/
 settings/

@@ -41,7 +41,7 @@
                     </constraints>
                     <properties>
                       <font/>
-                      <text value=""/>
+                      <text resource-bundle="UITexts" key="program.name.label"/>
                     </properties>
                   </component>
                   <component id="128f3" class="javax.swing.JLabel" binding="buildDateLabel">
@@ -50,7 +50,7 @@
                     </constraints>
                     <properties>
                       <font/>
-                      <text value=""/>
+                      <text resource-bundle="UITexts" key="build.date.label"/>
                     </properties>
                   </component>
                   <component id="55ffc" class="javax.swing.JLabel" binding="developerEmailLabel">
@@ -60,7 +60,7 @@
                     <properties>
                       <horizontalAlignment value="0"/>
                       <horizontalTextPosition value="0"/>
-                      <text value=""/>
+                      <text resource-bundle="UITexts" key="developer.email"/>
                     </properties>
                   </component>
                   <component id="942c3" class="javax.swing.JLabel" binding="developerNameLabel">
@@ -69,7 +69,7 @@
                     </constraints>
                     <properties>
                       <font/>
-                      <text value=""/>
+                      <text resource-bundle="UITexts" key="developer.name"/>
                     </properties>
                   </component>
                 </children>
